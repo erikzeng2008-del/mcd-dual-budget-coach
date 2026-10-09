@@ -1,0 +1,10 @@
+# 防止真实凭据入库（信息安全声明要求：仓库中不得包含真实 Token）
+.env
+.env.*
+mcp-config.json
+mcp-config.local.json
+*.local.json
+
+# 系统与编辑器
+Thumbs.db
+.DS_Store
