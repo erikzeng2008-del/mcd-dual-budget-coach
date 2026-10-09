@@ -16,9 +16,9 @@
 
 | 工具 | 作用 | 调用条件 |
 |---|---|---|
-| `query-nearby-stores` | 查附近可用门店 | 用户给了地址/定位时 |
-| `query-meal-detail` | 查套餐组成与可替换项 | 用户追问套餐内容 / 需要换品时 |
-| `query-my-coupons` | 查用户已有优惠券 | 默认调用（省钱军师本分） |
+| `query-nearby-stores` | 查附近可用门店。**city 与 keyword 必须同时非空**（只传 city 报 600058）；beType=1 自提无 beCode，beType=5 得来速必传 | 用户给了地址/区域时 |
+| `query-meal-detail` | 查套餐/1+1 的 rounds 构成（候选 code + diffPrice 差价） | 组合候选确认环节 |
+| `query-my-coupons` | 查用户已有优惠券（返回 markdown，含用券价格） | 默认调用（省钱军师本分） |
 | `query-store-coupons` | 查当前门店可用券 | 用户想对比门店券时 |
 | `available-coupons` | 查可领取的麦麦省券列表 | 仅用户明确问「有什么券能领」 |
 | `auto-bind-coupons` | 一键领取所有可领券 | 仅用户明确说「帮我领券」，**不默认执行** |
