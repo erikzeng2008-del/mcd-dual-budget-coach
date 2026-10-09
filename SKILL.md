@@ -2,7 +2,7 @@
 name: mcd-dual-budget-coach
 description: 麦门双预算军师——告诉它你有多少钱、能吃多少卡，它基于麦当劳官方 MCP 帮你配出当下最划算最对味的一顿。输入示例：「30 块 600 卡，中午想吃点扎实的」。
 version: 0.2.0
-author: eriksong999
+author: erikzeng2008-del
 ---
 
 # 麦门双预算军师 (McDualBudget Coach)
