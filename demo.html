@@ -6,98 +6,121 @@
 <title>麦门双预算军师 · 现场试吃</title>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    font-family:"Microsoft YaHei","PingFang SC",sans-serif;
-    background:#FFF6E3; color:#1a1a1a; padding:22px 16px 40px;
-  }
-  .wrap { max-width: 940px; margin: 0 auto; }
-  .top { text-align:center; margin-bottom:16px; }
-  .top h1 { font-size:26px; letter-spacing:.5px; }
+  body { font-family:"Microsoft YaHei","PingFang SC",sans-serif; background:#FFF6E3; color:#1a1a1a; padding:20px 16px 44px; }
+  .wrap { max-width: 940px; margin:0 auto; }
+  .top { text-align:center; margin-bottom:14px; }
+  .top h1 { font-size:25px; }
   .top h1 span { color:#DA291C; }
-  .top p { font-size:13px; color:#8a6d3b; margin-top:6px; line-height:1.7; }
-  .presets { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:14px 0 18px; }
-  .presets button {
-    font-family:inherit; font-size:12.5px; cursor:pointer;
-    background:#fff; border:1.5px solid #DA291C; color:#DA291C;
-    padding:6px 14px; border-radius:999px;
-  }
+  .top p { font-size:12.5px; color:#8a6d3b; margin-top:6px; line-height:1.7; }
+  .hide { display:none; }
+
+  .presets { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 16px; }
+  .presets button { font-family:inherit; font-size:12.5px; cursor:pointer; background:#fff;
+    border:1.5px solid #DA291C; color:#DA291C; padding:6px 14px; border-radius:999px; }
   .presets button:hover { background:#DA291C; color:#fff; }
-  .panel {
-    background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:18px 20px;
-  }
+
+  .panel { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:16px 20px; }
   .fields { display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; }
-  .fld { flex:1; min-width:210px; }
+  .fld { flex:1; min-width:200px; }
   .fld label { font-size:13px; font-weight:700; display:block; margin-bottom:8px; }
   .fld label i { font-style:normal; color:#9a8557; font-weight:400; font-size:12px; }
-  .fld input[type=range] { width:100%; accent-color:#DA291C; }
   .fld .val { font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:15px; }
-  .go {
-    margin-top:16px; width:100%; font-family:inherit; font-size:17px; font-weight:800;
-    background:#DA291C; color:#fff; border:none; border-radius:10px; padding:13px; cursor:pointer;
-  }
+  input[type=range] { width:100%; accent-color:#DA291C; }
+  .go { margin-top:14px; width:100%; font-family:inherit; font-size:17px; font-weight:800;
+    background:#DA291C; color:#fff; border:none; border-radius:10px; padding:12px; cursor:pointer; }
   .go:hover { background:#b32219; }
-  .out { margin-top:20px; }
-  .rep-title { font-size:19px; font-weight:800; color:#DA291C; margin-bottom:4px; }
-  .rep-meta { font-size:12px; color:#9a8557; margin-bottom:10px; }
-  .plan { border-bottom:1px dashed #e8dcc0; padding:10px 0; }
-  .plan:last-of-type { border-bottom:none; }
+  .go.done { background:#4CAF50; }
+
+  .rep-title { font-size:19px; font-weight:800; color:#DA291C; }
+  .rep-meta { font-size:12px; color:#9a8557; margin:4px 0 12px; }
+  .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; padding:12px 14px; margin-bottom:10px;
+    cursor:pointer; transition:transform .08s ease, box-shadow .08s ease; }
+  .plan:hover { transform:translateX(3px); box-shadow:3px 3px 0 #FFC72C; }
+  .plan:active { transform:translateX(1px) scale(.995); }
   .plan .l1 { display:flex; align-items:baseline; gap:9px; }
   .tag { flex:0 0 auto; font-size:12px; font-weight:700; background:#FFC72C; padding:2px 9px; border-radius:4px; }
   .tag.alt { background:#fff; border:1.5px solid #DA291C; color:#DA291C; }
-  .nm { font-size:16px; font-weight:700; }
+  .nm { font-size:15.5px; font-weight:700; }
   .pr { margin-left:auto; font-family:Consolas,monospace; font-weight:800; color:#DA291C; white-space:nowrap; }
   .pr i { color:#6b7a3a; font-style:normal; font-size:12.5px; }
-  .sub { font-size:12px; color:#9a8557; margin:2px 0 0 42px; }
+  .cta { font-size:12px; color:#DA291C; font-weight:700; margin:5px 0 0 42px; }
   .metrics { margin-top:12px; border-top:2px solid #1a1a1a; padding-top:10px; }
   .mrow { display:flex; justify-content:space-between; gap:14px; font-size:13.5px; padding:3px 0; }
   .mrow b.m { font-family:Consolas,monospace; font-weight:800; }
-  .warn {
-    margin-top:14px; background:#FFF3D6; border:1.5px dashed #d9b96a;
-    border-radius:10px; padding:10px 14px; font-size:12.5px; color:#7a5c14; line-height:1.8;
-  }
-  .status {
-    margin-top:12px; font-size:12.5px; color:#7a5c14; font-family:Consolas,monospace;
-    background:#FFF3D6; border:1.5px solid #e6cf9d; border-radius:8px; padding:7px 12px;
-  }
+  .status { margin-top:12px; font-size:12.5px; color:#7a5c14; font-family:Consolas,monospace;
+    background:#FFF3D6; border:1.5px solid #e6cf9d; border-radius:8px; padding:7px 12px; }
+  .thin { font-size:12px; color:#b03a2e; margin:4px 0 8px; }
+
+  .back { font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; background:#fff;
+    border:2px solid #1a1a1a; border-radius:999px; padding:7px 16px; margin-bottom:12px; }
+  .back:hover { background:#1a1a1a; color:#fff; }
+  .dhead { background:#1a1a1a; color:#fff; border-radius:12px 12px 0 0; padding:12px 16px;
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .dhead .t { font-size:17px; font-weight:800; }
+  .dhead .s { font-size:12px; color:#FFC72C; font-family:Consolas,monospace; margin-left:auto; }
+  .items { background:#fff; border:2px solid #1a1a1a; border-top:none; padding:4px 16px 12px; }
+  .ic { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px dashed #eee0c0; }
+  .ic:last-child { border-bottom:none; }
+  .ic img { width:74px; height:74px; object-fit:cover; border-radius:10px; border:1.5px solid #e8dcc0; background:#fff; }
+  .ph { width:74px; height:74px; border-radius:10px; border:1.5px dashed #e0cfa0;
+    display:flex; align-items:center; justify-content:center; font-size:30px; background:#FFFBF0; flex:0 0 auto; }
+  .ic .info { flex:1; min-width:0; }
+  .ic .nm2 { font-size:15.5px; font-weight:700; line-height:1.3; }
+  .ic .code { font-size:11px; color:#b3a179; font-family:Consolas,monospace; }
+  .ic .mini { font-size:11.5px; color:#8a7a5c; margin-top:3px; line-height:1.6; }
+  .ic .parts { font-size:11.5px; color:#9a8557; margin-top:3px; }
+  .ic .right { text-align:right; font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:15px; white-space:nowrap; }
+  .ic .right i { display:block; color:#6b7a3a; font-size:12px; font-style:normal; }
+  .nut { background:#FFF3D6; border:2px solid #1a1a1a; border-radius:0 0 12px 12px; padding:12px 16px; }
+  .nut h3 { font-size:15px; margin-bottom:8px; }
+  .ngrid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .ncell { background:#fff; border:1.5px solid #e0cfa0; border-radius:8px; padding:7px 10px; }
+  .ncell .k { font-size:11.5px; color:#8a7a5c; }
+  .ncell .v { font-family:Consolas,monospace; font-weight:800; font-size:15.5px; color:#1a1a1a; }
+  .ncell .p { font-size:11px; color:#6b7a3a; }
+  .bar { height:5px; background:#f0e4c8; border-radius:3px; margin-top:5px; overflow:hidden; }
+  .bar i { display:block; height:100%; background:#FFC72C; }
+  .note { font-size:11.5px; color:#8a6d3b; margin-top:9px; line-height:1.7; }
+  .warn { margin-top:14px; background:#FFF3D6; border:1.5px dashed #d9b96a; border-radius:10px;
+    padding:10px 14px; font-size:12px; color:#7a5c14; line-height:1.8; }
+  .foot { margin-top:16px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
+  .foot a { color:#DA291C; text-decoration:none; }
   @keyframes flash { 0% { background:#FFF9E8; } 100% { background:transparent; } }
   .flash { animation: flash .7s ease-out; }
-  .thin { font-size:12px; color:#b03a2e; margin:4px 0 8px; }
-  .go.done { background:#4CAF50; }
-  .foot { margin-top:18px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
-  .foot a { color:#DA291C; text-decoration:none; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <h1>🍔 麦门双预算军师 · <span>现场试吃</span></h1>
-    <p>说得出「多少钱 + 多少卡」，它就配得出三个能直接下单的组合。<br>下面是同款算法的可玩演示——数据为 2026-10-10 15:29:37 真机实测快照。</p>
+    <p>说得出「多少钱 + 多少卡」，它就配得出三个能直接下单的组合——点任意方案看<b>商品图与营养拆解</b>。<br>数据为 2026-10-10 16:45:23 真机实测快照。</p>
   </div>
-  <div class="presets">
-    <button data-m="30" data-k="600">30 块 600 卡 · 正餐</button>
-    <button data-m="25" data-k="999">25 块 · 不限卡</button>
-    <button data-m="40" data-k="500">500 卡 · 健身餐</button>
-    <button data-m="20" data-k="999">20 块 · 紧预算</button>
-  </div>
-  <div class="panel">
-    <div class="fields">
-      <div class="fld">
-        <label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
-        <input type="range" id="m" min="10" max="60" step="1" value="30">
-      </div>
-      <div class="fld">
-        <label>热量预算 <i>kcal，999=不设限</i> · <span class="val" id="kv">600</span></label>
-        <input type="range" id="k" min="200" max="999" step="10" value="600">
-      </div>
+
+  <div id="v1">
+    <div class="presets">
+      <button data-m="30" data-k="600">30 块 600 卡 · 正餐</button>
+      <button data-m="25" data-k="999">25 块 · 不限卡</button>
+      <button data-m="40" data-k="500">500 卡 · 健身餐</button>
+      <button data-m="20" data-k="999">20 块 · 紧预算</button>
     </div>
-    <button class="go" id="go">配一顿 →</button>
+    <div class="panel">
+      <div class="fields">
+        <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
+          <input type="range" id="m" min="10" max="60" step="1" value="30"></div>
+        <div class="fld"><label>热量预算 <i>kcal，999=不设限</i> · <span class="val" id="kv">600</span></label>
+          <input type="range" id="k" min="200" max="999" step="10" value="600"></div>
+      </div>
+      <button class="go" id="go">配一顿 →</button>
+    </div>
   </div>
-  <div class="out" id="out"></div>
-  <div class="status" id="status">⚙️ 拖动滑块或点「配一顿」，这里会显示每次配餐的实际计算量</div>
+
+  <div id="v2" class="hide"></div>
+  <div id="v3" class="hide"></div>
+
   <div class="warn">
-    ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，菜单/营养/价格均为 2026-10-10 15:29:37 在 麦当劳福州金洲南路餐厅 的实测快照（组合枚举与「最划算/最扎实/最均衡」三档逻辑与 Skill 一致，「最均衡」的均衡点为通用启发式，个例可能与实跑略有差异）。
-    真实版 Skill 直连麦当劳 MCP 实时接口，价格经<code>calculate-price</code> 券后核价、饮品按平台规则挂套餐计算，菜单随时段/门店变化。
-    本页不含任何 Token 或接口凭证。
+    ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，商品图、菜单、营养、价格均为 2026-10-10 16:45:23 在 麦当劳福州金洲南路餐厅 的实测快照
+    （组合枚举与「最划算/最扎实/最均衡」三档逻辑与 Skill 一致，「最均衡」的均衡点为通用启发式，个例可能与实跑略有差异）。
+    真实版 Skill 直连麦当劳 MCP 实时接口，价格经 <code>calculate-price</code> 券后核价，菜单随时段/门店变化。<b>本页不含任何 Token 或接口凭证。</b>
   </div>
   <div class="foot">
     项目源码与完整实测案例（4 场景 11 方案）：<br>
@@ -106,35 +129,35 @@
   </div>
 </div>
 <script>
-const DATA = [{"n":"龙焰芝士棒鸡腿堡三件套","p":29.9,"k":436,"m":1,"d":["中薯条","可乐中杯"]},{"n":"龙焰鸡腿堡三件套","p":26.9,"k":436,"m":1,"d":["中薯条","可乐中杯"]},{"n":"全明星双人分享餐八件套","p":49.9,"k":1706,"m":0,"d":["麦辣鸡腿汉堡","板烧鸡腿堡","麦乐鸡4块","麦辣鸡翅2块","中薯条","可乐中杯"]},{"n":"精选单人餐三件套","p":34.5,"k":827,"m":0,"d":["板烧鸡腿堡","中薯条","可乐中杯"]},{"n":"“泷”运当头四件套","p":91.7,"k":1187,"m":0,"d":["麦辣鸡腿汉堡","可乐中杯","中薯条","奥利奥麦旋风"]},{"n":"人气超值四件套随心选","p":28.0,"k":1091,"m":0,"d":["麦辣鸡腿汉堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"鱼牛汉堡四件套随心选","p":32.0,"k":1119,"m":1,"d":["巨无霸","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"安格斯厚牛堡四件套随心选","p":37.0,"k":1302,"m":1,"d":["芝士安格斯厚牛堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"龙焰芝士棒鸡腿堡四件套","p":32.0,"k":606,"m":1,"d":["中薯条","麦乐鸡4块","可乐中杯"]},{"n":"龙焰鸡腿堡四件套","p":29.0,"k":606,"m":1,"d":["中薯条","麦乐鸡4块","可乐中杯"]},{"n":"麦辣鸡腿堡四件套","p":28.0,"k":1091,"m":1,"d":["麦辣鸡腿汉堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"板烧鸡腿堡四件套","p":28.0,"k":997,"m":1,"d":["板烧鸡腿堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"酥酥多笋卷四件套","p":28.0,"k":948,"m":1,"d":["酥酥多笋卷","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"板烧鸡腿堡三件套","p":34.5,"k":827,"m":1,"d":["板烧鸡腿堡","中薯条","可乐中杯"]},{"n":"麦辣鸡腿汉堡三件套","p":33.5,"k":921,"m":1,"d":["麦辣鸡腿汉堡","中薯条","可乐中杯"]},{"n":"麦香鸡套餐","p":27.5,"k":805,"m":1,"d":["麦香鸡","中薯条","可乐中杯"]},{"n":"酥酥多笋卷三件套","p":32.0,"k":778,"m":1,"d":["酥酥多笋卷","中薯条","可乐中杯"]},{"n":"学生专享汉堡小食随心选","p":28.0,"k":289,"m":1,"d":["中薯条"]},{"n":"薄皮V翅双拼十翅","p":49.9,"k":224,"m":0,"d":["麦辣鸡翅-2块"]},{"n":"堡堡随心拼（7件任选）","p":72.5,"k":856,"m":1,"d":["麦辣鸡腿汉堡","麦辣鸡翅2块","可乐中杯"]},{"n":"人气经典随心配","p":14.9,"k":576,"m":1,"d":["双层吉士汉堡","可乐中杯"]},{"n":"精选超值随心配","p":13.9,"k":532,"m":1,"d":["那么大鸡排（椒盐风味）","可乐中杯"]},{"n":"巨无霸四件套","p":32.0,"k":1119,"m":1,"d":["巨无霸","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"不素之霸双层牛堡四件套","p":32.0,"k":1099,"m":1,"d":["不素之霸双层牛堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"培根蔬萃双层牛堡四件套","p":32.0,"k":1048,"m":1,"d":["培根蔬萃双层牛堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"双层深海鳕鱼堡四件套","p":32.0,"k":1091,"m":1,"d":["原味双层深海鳕鱼堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"不素之霸双层牛堡三件套","p":37.5,"k":929,"m":1,"d":["不素之霸双层牛堡","中薯条","可乐中杯"]},{"n":"巨无霸三件套","p":37.5,"k":949,"m":1,"d":["巨无霸","中薯条","可乐中杯"]},{"n":"培根蔬萃双层牛堡三件套","p":35.5,"k":878,"m":1,"d":["培根蔬萃双层牛堡","中薯条","可乐中杯"]},{"n":"双层深海鳕鱼堡三件套","p":35.5,"k":921,"m":1,"d":["原味双层深海鳕鱼堡","中薯条","可乐中杯"]},{"n":"麦香鱼套餐","p":34.0,"k":761,"m":0,"d":["麦香鱼","中薯条","可乐中杯"]},{"n":"双层吉士汉堡套餐","p":34.0,"k":865,"m":1,"d":["双层吉士汉堡","中薯条","可乐中杯"]},{"n":"吉士汉堡包套餐","p":26.0,"k":730,"m":1,"d":["吉士汉堡包","中薯条","可乐中杯"]},{"n":"牛肉堡单品精选","p":14.0,"k":248,"m":1,"d":["汉堡包"]},{"n":"培根安格斯厚牛堡四件套","p":37.0,"k":1313,"m":1,"d":["培根安格斯厚牛堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"芝士安格斯厚牛堡四件套","p":37.0,"k":1302,"m":1,"d":["芝士安格斯厚牛堡","中薯条","麦乐鸡4块","可乐中杯"]},{"n":"培根安格斯厚牛堡三件套","p":45.5,"k":1143,"m":1,"d":["培根安格斯厚牛堡","中薯条","可乐中杯"]},{"n":"芝士安格斯厚牛堡三件套","p":42.5,"k":1132,"m":1,"d":["芝士安格斯厚牛堡","中薯条","可乐中杯"]},{"n":"麦辣鸡翅4块套餐","p":37.0,"k":660,"m":0,"d":["麦辣鸡翅4块","中薯条","可乐中杯"]},{"n":"麦乐鸡套餐","p":25.5,"k":649,"m":0,"d":["麦乐鸡5块","中薯条","可乐中杯"]},{"n":"大堡口福三件套","p":22.9,"k":436,"m":1,"d":["中薯条","可乐中杯"]},{"n":"汉堡开心乐园餐","p":23.5,"k":536,"m":1,"d":["汉堡包","迷你薯条","小杯玉米杯","纯牛奶"]},{"n":"鱼排堡开心乐园餐","p":24.0,"k":557,"m":1,"d":["鱼排堡","迷你薯条","小杯玉米杯","纯牛奶"]},{"n":"麦乐鸡开心乐园餐","p":25.0,"k":214,"m":0,"d":["苹果片一袋(60g)","小杯玉米杯","纯牛奶"]},{"n":"“堡”你欢乐套餐","p":28.0,"k":450,"m":1,"d":["汉堡包","麦乐鸡4块","苹果片一袋(60g)"]},{"n":"“苹”水相“鱼”套餐","p":36.0,"k":412,"m":1,"d":["麦香鱼","小杯玉米杯","苹果片一袋(60g)","锡兰红茶"]},{"n":"酥脆无双套餐","p":20.0,"k":434,"m":1,"d":["麦麦脆汁鸡-琵琶腿","迷你薯条"]},{"n":"“辣”么快乐套餐","p":24.0,"k":394,"m":1,"d":["麦辣鸡翅2块","麦乐鸡4块"]},{"n":"牛气满满套餐","p":34.0,"k":495,"m":1,"d":["培根蔬萃双层牛堡","小杯玉米杯"]},{"n":"“苹板”支撑Pro套餐","p":39.5,"k":476,"m":1,"d":["板烧鸡腿堡","小杯玉米杯","苹果片一袋(60g)"]},{"n":"麦辣鸡腿汉堡","p":22.5,"k":485,"m":1,"d":[]},{"n":"板烧鸡腿堡","p":23.5,"k":391,"m":1,"d":[]},{"n":"麦香鸡","p":16.5,"k":369,"m":1,"d":[]},{"n":"酥酥多笋卷","p":21.0,"k":342,"m":1,"d":[]},{"n":"巨无霸","p":26.5,"k":513,"m":1,"d":[]},{"n":"双层深海鳕鱼堡","p":24.5,"k":485,"m":1,"d":[]},{"n":"麦香鱼","p":23.0,"k":325,"m":0,"d":[]},{"n":"不素之霸双层牛堡","p":26.5,"k":493,"m":1,"d":[]},{"n":"培根蔬萃双层牛堡","p":24.5,"k":442,"m":1,"d":[]},{"n":"双层吉士汉堡","p":23.0,"k":429,"m":1,"d":[]},{"n":"麦辣鸡翅","p":15.0,"k":224,"m":0,"d":[]},{"n":"麦乐鸡","p":14.5,"k":213,"m":0,"d":[]},{"n":"麦麦脆汁鸡1块","p":15.0,"k":328,"m":0,"d":[]},{"n":"脆薯饼","p":8.5,"k":146,"m":0,"d":[]},{"n":"薯条","p":14.5,"k":289,"m":0,"d":[]},{"n":"玉米杯","p":13.0,"k":87,"m":0,"d":[]},{"n":"苹果片","p":7.0,"k":32,"m":0,"d":[]},{"n":"新地","p":13.0,"k":282,"m":0,"d":[]},{"n":"圆筒冰淇淋","p":5.0,"k":93,"m":0,"d":[]},{"n":"派","p":8.0,"k":232,"m":0,"d":[]}];
+const DATA = [{"n":"麦辣鸡腿堡四件套","p":28.0,"k":485,"kj":2029,"pr":24.0,"f":24.0,"c":42.0,"na":1208.0,"ca":154.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900000891.jpg","parts":[]},{"n":"板烧鸡腿堡四件套","p":28.0,"k":391,"kj":1638,"pr":23.0,"f":17.0,"c":35.0,"na":1041.0,"ca":93.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900000890.jpg","parts":[]},{"n":"酥酥多笋卷四件套","p":28.0,"k":342,"kj":1431,"pr":14.0,"f":15.0,"c":36.0,"na":1044.0,"ca":41.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900000884.jpg","parts":[]},{"n":"板烧鸡腿堡三件套","p":34.5,"k":391,"kj":1638,"pr":23.0,"f":17.0,"c":35.0,"na":1041.0,"ca":93.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900005462.jpg","parts":[]},{"n":"麦辣鸡腿汉堡三件套","p":33.5,"k":485,"kj":2029,"pr":24.0,"f":24.0,"c":42.0,"na":1208.0,"ca":154.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900005456.jpg","parts":[]},{"n":"麦香鸡套餐","p":27.5,"k":369,"kj":1546,"pr":15.0,"f":17.0,"c":39.0,"na":731.0,"ca":73.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900005453.jpg","parts":[]},{"n":"酥酥多笋卷三件套","p":32.0,"k":342,"kj":1431,"pr":14.0,"f":15.0,"c":36.0,"na":1044.0,"ca":41.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/9900015008.jpg","parts":[]},{"n":"麦辣鸡腿汉堡","p":22.5,"k":485,"kj":2029,"pr":24.0,"f":24.0,"c":42.0,"na":1208.0,"ca":154.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/1440.jpg","parts":[]},{"n":"板烧鸡腿堡","p":23.5,"k":391,"kj":1638,"pr":23.0,"f":17.0,"c":35.0,"na":1041.0,"ca":93.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/1406.jpg","parts":[]},{"n":"麦香鸡","p":16.5,"k":369,"kj":1546,"pr":15.0,"f":17.0,"c":39.0,"na":731.0,"ca":73.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/1450.jpg","parts":[]},{"n":"酥酥多笋卷","p":21.0,"k":342,"kj":1431,"pr":14.0,"f":15.0,"c":36.0,"na":1044.0,"ca":41.0,"cat":"鸡肉汉堡/卷","m":1,"img":"demo-assets/521816.jpg","parts":[]},{"n":"人气经典随心配","p":14.9,"k":576,"kj":2412,"pr":27.0,"f":22.0,"c":67.0,"na":1017.0,"ca":242.0,"cat":"随心配1+1","m":1,"img":"demo-assets/9900013304.jpg","parts":[{"n":"双层吉士汉堡","k":429},{"n":"可乐中杯","k":147}]},{"n":"精选超值随心配","p":13.9,"k":532,"kj":2228,"pr":24.0,"f":21.0,"c":60.0,"na":996.0,"ca":23.0,"cat":"随心配1+1","m":1,"img":"demo-assets/9900015568.jpg","parts":[{"n":"那么大鸡排（椒盐风味）","k":385},{"n":"可乐中杯","k":147}]},{"n":"巨无霸四件套","p":32.0,"k":513,"kj":2146,"pr":27.0,"f":26.0,"c":42.0,"na":961.0,"ca":171.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900000888.jpg","parts":[]},{"n":"不素之霸双层牛堡四件套","p":32.0,"k":493,"kj":2062,"pr":28.0,"f":27.0,"c":34.0,"na":1012.0,"ca":75.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900000886.jpg","parts":[]},{"n":"培根蔬萃双层牛堡四件套","p":32.0,"k":442,"kj":1850,"pr":24.0,"f":23.0,"c":34.0,"na":728.0,"ca":73.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900000885.jpg","parts":[]},{"n":"双层深海鳕鱼堡四件套","p":32.0,"k":485,"kj":2029,"pr":28.0,"f":21.0,"c":46.0,"na":917.0,"ca":147.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900000893.jpg","parts":[]},{"n":"不素之霸双层牛堡三件套","p":37.5,"k":493,"kj":2062,"pr":28.0,"f":27.0,"c":34.0,"na":1012.0,"ca":75.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005411.jpg","parts":[]},{"n":"巨无霸三件套","p":37.5,"k":513,"kj":2146,"pr":27.0,"f":26.0,"c":42.0,"na":961.0,"ca":171.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005466.jpg","parts":[]},{"n":"培根蔬萃双层牛堡三件套","p":35.5,"k":442,"kj":1850,"pr":24.0,"f":23.0,"c":34.0,"na":728.0,"ca":73.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005468.jpg","parts":[]},{"n":"双层深海鳕鱼堡三件套","p":35.5,"k":485,"kj":2029,"pr":28.0,"f":21.0,"c":46.0,"na":917.0,"ca":147.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005413.jpg","parts":[]},{"n":"麦香鱼套餐","p":34.0,"k":325,"kj":1359,"pr":16.0,"f":13.0,"c":35.0,"na":556.0,"ca":99.0,"cat":"巨无霸牛鱼肉堡","m":0,"img":"demo-assets/9900005460.jpg","parts":[]},{"n":"双层吉士汉堡套餐","p":34.0,"k":429,"kj":1796,"pr":27.0,"f":22.0,"c":31.0,"na":1017.0,"ca":232.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005464.jpg","parts":[]},{"n":"吉士汉堡包套餐","p":26.0,"k":294,"kj":1231,"pr":16.0,"f":12.0,"c":30.0,"na":673.0,"ca":144.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900005449.jpg","parts":[]},{"n":"巨无霸","p":26.5,"k":513,"kj":2146,"pr":27.0,"f":26.0,"c":42.0,"na":961.0,"ca":171.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/1100.jpg","parts":[]},{"n":"双层深海鳕鱼堡","p":24.5,"k":485,"kj":2029,"pr":28.0,"f":21.0,"c":46.0,"na":917.0,"ca":147.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/9900003586.jpg","parts":[]},{"n":"麦香鱼","p":23.0,"k":325,"kj":1359,"pr":16.0,"f":13.0,"c":35.0,"na":556.0,"ca":99.0,"cat":"巨无霸牛鱼肉堡","m":0,"img":"demo-assets/1600.jpg","parts":[]},{"n":"不素之霸双层牛堡","p":26.5,"k":493,"kj":2062,"pr":28.0,"f":27.0,"c":34.0,"na":1012.0,"ca":75.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/4648.jpg","parts":[]},{"n":"培根蔬萃双层牛堡","p":24.5,"k":442,"kj":1850,"pr":24.0,"f":23.0,"c":34.0,"na":728.0,"ca":73.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/1106.jpg","parts":[]},{"n":"双层吉士汉堡","p":23.0,"k":429,"kj":1796,"pr":27.0,"f":22.0,"c":31.0,"na":1017.0,"ca":232.0,"cat":"巨无霸牛鱼肉堡","m":1,"img":"demo-assets/1120.jpg","parts":[]},{"n":"麦辣鸡翅4块套餐","p":37.0,"k":224,"kj":937,"pr":13.0,"f":15.0,"c":9.0,"na":537.0,"ca":13.0,"cat":"炸鸡","m":0,"img":"demo-assets/9900005451.jpg","parts":[]},{"n":"麦辣鸡翅","p":15.0,"k":224,"kj":937,"pr":13.0,"f":15.0,"c":9.0,"na":537.0,"ca":13.0,"cat":"炸鸡","m":0,"img":"demo-assets/1700.jpg","parts":[]},{"n":"麦乐鸡","p":14.5,"k":213,"kj":890,"pr":12.0,"f":12.0,"c":13.0,"na":422.0,"ca":9.0,"cat":"炸鸡","m":0,"img":"demo-assets/1401.jpg","parts":[]},{"n":"麦麦脆汁鸡1块","p":15.0,"k":328,"kj":1372,"pr":21.0,"f":20.0,"c":16.0,"na":905.0,"ca":24.0,"cat":"炸鸡","m":0,"img":"demo-assets/9900005432.jpg","parts":[]},{"n":"脆薯饼","p":8.5,"k":146,"kj":612,"pr":1.0,"f":9.0,"c":14.0,"na":311.0,"ca":7.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/521741.jpg","parts":[]},{"n":"薯条","p":14.5,"k":289,"kj":1210,"pr":4.0,"f":12.0,"c":38.0,"na":165.0,"ca":18.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/4810.jpg","parts":[]},{"n":"脆脆薯条","p":16.5,"k":279,"kj":1168,"pr":4.0,"f":14.0,"c":32.0,"na":540.0,"ca":13.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/514782.jpg","parts":[]},{"n":"玉米杯","p":13.0,"k":87,"kj":365,"pr":4.0,"f":1.0,"c":12.0,"na":2.0,"ca":10.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/4437.jpg","parts":[]},{"n":"苹果片","p":7.0,"k":32,"kj":133,"pr":0,"f":0,"c":7.0,"na":0,"ca":18.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/6102.jpg","parts":[]},{"n":"新地","p":13.0,"k":282,"kj":1178,"pr":5.0,"f":9.0,"c":44.0,"na":126.0,"ca":182.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/9900008745.jpg","parts":[]},{"n":"圆筒冰淇淋","p":5.0,"k":93,"kj":391,"pr":2.0,"f":3.0,"c":14.0,"na":36.0,"ca":77.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/515837.jpg","parts":[]},{"n":"派","p":8.0,"k":232,"kj":971,"pr":2.0,"f":12.0,"c":28.0,"na":159.0,"ca":7.0,"cat":"小食甜品/其他","m":0,"img":"demo-assets/9900008752.jpg","parts":[]},{"n":"“堡”你欢乐套餐","p":28.0,"k":450,"kj":1884,"pr":23.0,"f":18.0,"c":48.0,"na":864.0,"ca":86.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900011128.jpg","parts":[{"n":"汉堡包","k":248},{"n":"麦乐鸡4块","k":170},{"n":"苹果片一袋(60g)","k":32},{"n":"无糖可口可乐中杯","k":0}]},{"n":"“苹”水相“鱼”套餐","p":36.0,"k":412,"kj":1723,"pr":18.0,"f":14.0,"c":49.0,"na":557.0,"ca":128.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900011121.jpg","parts":[{"n":"麦香鱼","k":325},{"n":"小杯玉米杯","k":53},{"n":"苹果片一袋(60g)","k":32},{"n":"锡兰红茶","k":2}]},{"n":"酥脆无双套餐","p":20.0,"k":434,"kj":1816,"pr":23.0,"f":24.0,"c":31.0,"na":1001.0,"ca":30.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900011126.jpg","parts":[{"n":"麦麦脆汁鸡-琵琶腿","k":328},{"n":"迷你薯条","k":106},{"n":"无糖可口可乐中杯","k":0}]},{"n":"“辣”么快乐套餐","p":24.0,"k":394,"kj":1649,"pr":23.0,"f":25.0,"c":21.0,"na":909.0,"ca":20.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900011123.jpg","parts":[{"n":"麦辣鸡翅2块","k":224},{"n":"麦乐鸡4块","k":170},{"n":"无糖可口可乐中杯","k":0}]},{"n":"牛气满满套餐","p":34.0,"k":495,"kj":2073,"pr":26.0,"f":24.0,"c":42.0,"na":764.0,"ca":79.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900009245.jpg","parts":[{"n":"培根蔬萃双层牛堡","k":442},{"n":"小杯玉米杯","k":53},{"n":"无糖可口可乐中杯","k":0}]},{"n":"“苹板”支撑Pro套餐","p":39.5,"k":476,"kj":1994,"pr":25.0,"f":18.0,"c":50.0,"na":1077.0,"ca":117.0,"cat":"500大卡套餐","m":1,"img":"demo-assets/9900009242.jpg","parts":[{"n":"板烧鸡腿堡","k":391},{"n":"小杯玉米杯","k":53},{"n":"苹果片一袋(60g)","k":32},{"n":"无糖可口可乐中杯","k":0}]}];
+const REF = { kcal: 2150, protein: 65, fat: 60, carb: 275, sodium: 2000, calcium: 800 };
+const REF_NOTE = "参考值取中国居民膳食营养素参考值（成年男性轻体力活动），仅作粗略感知，非营养处方";
 const $ = id => document.getElementById(id);
 const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
-
-function combos() {
-  const out = [];
-  const n = DATA.length;
-  for (let i = 0; i < n; i++) out.push([DATA[i]]);
-  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) out.push([DATA[i], DATA[j]]);
-  for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) for (let k = j + 1; k < n; k++) out.push([DATA[i], DATA[j], DATA[k]]);
-  return out;
-}
-const ALL = combos().filter(c => c.some(x => x.m));
+const money = x => (Math.round(x * 10) / 10).toFixed(1);
+const COMBOS = (() => {
+  const all = [];
+  for (let i = 0; i < DATA.length; i++) all.push([DATA[i]]);
+  for (let i = 0; i < DATA.length; i++) for (let j = i + 1; j < DATA.length; j++) all.push([DATA[i], DATA[j]]);
+  for (let i = 0; i < DATA.length; i++) for (let j = i + 1; j < DATA.length; j++) for (let k = j + 1; k < DATA.length; k++) all.push([DATA[i], DATA[j], DATA[k]]);
+  return all.filter(c => c.some(x => x.m));
+})();
+let PLANS = [];
 
 function pick(moneyCap, kcalCap) {
-  const ok = ALL.filter(c => sum(c, x => x.p) <= moneyCap && sum(c, x => x.k) <= kcalCap);
-  if (!ok.length) return [];
-  const key = c => c.map(x => x.n).sort().join("|");
-  const seen = new Set();
-  const solidFloor = Math.max(250, Math.round(kcalCap * 0.55));
-  const picks = [
-    ["最划算", ok.filter(c => sum(c, x => x.k) >= solidFloor).sort((a, b) => sum(a, x => x.p) - sum(b, x => x.p) || sum(b, x => x.k) - sum(a, x => x.k))],
-    ["最扎实", ok.slice().sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k) || sum(a, x => x.p) - sum(b, x => x.p))],
-    ["最均衡", ok.slice().sort((a, b) => Math.abs(Math.round(kcalCap * 0.85) - sum(a, x => x.k)) - Math.abs(Math.round(kcalCap * 0.85) - sum(b, x => x.k)))],
+  const pass = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap && sum(c, x => x.k) <= kcalCap);
+  if (!pass.length) return [];
+  const seen = new Set(), res = [];
+  const floor = Math.max(250, Math.round(kcalCap * 0.55));
+  const target = Math.round(kcalCap * 0.85);
+  const lists = [
+    ["最划算", pass.filter(c => sum(c, x => x.k) >= floor).sort((a, b) => sum(a, x => x.p) - sum(b, x => x.p) || sum(b, x => x.k) - sum(a, x => x.k))],
+    ["最扎实", pass.slice().sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k) || sum(a, x => x.p) - sum(b, x => x.p))],
+    ["最均衡", pass.slice().sort((a, b) => Math.abs(target - sum(a, x => x.k)) - Math.abs(target - sum(b, x => x.k)) || sum(a, x => x.p) - sum(b, x => x.p))]
   ];
-  const res = [];
-  for (const [label, list] of picks) {
+  for (const [label, list] of lists) {
     for (const c of list) {
-      const kk = key(c);
+      const kk = c.map(x => x.n).sort().join("|");
       if (seen.has(kk)) continue;
       seen.add(kk);
       res.push({ label, items: c, price: sum(c, x => x.p), kcal: sum(c, x => x.k) });
@@ -143,56 +166,90 @@ function pick(moneyCap, kcalCap) {
   }
   return res;
 }
-function fmt(c) {
-  return c.map(x => x.n + (x.d && x.d.length ? "（" + x.d.join(" + ") + "）" : "")).join(" + ");
-}
+const fmt = c => c.map(x => x.n + (x.parts && x.parts.length ? "（" + x.parts.map(p => p.n).join(" + ") + "）" : "")).join(" + ");
+const mrow = (a, b) => '<div class="mrow"><span>' + a + '</span><b class="m">' + b + '</b></div>';
+
 let RUNS = 0;
+function show(id) {
+  ["v1", "v2", "v3"].forEach(x => $(x).classList.toggle("hide", x !== id));
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 function run() {
   const m = +$("m").value, k = +$("k").value;
   $("mv").textContent = m; $("kv").textContent = k === 999 ? "不设限" : k;
   const t0 = performance.now();
-  const plans = pick(m, k);
+  PLANS = pick(m, k);
   const ms = Math.max(1, Math.round(performance.now() - t0));
-  const box = $("out");
   RUNS++;
-  if (!plans.length) {
-    box.innerHTML = '<div class="warn">😵 这个预算在快照菜单里真的配不出来——' + m + ' 元 / ' + (k === 999 ? "不限卡" : k + " 卡") + ' 低于最低可售组合。诚实说：配不出来。要么加钱，要么放宽卡数。</div>';
+  const box = $("v2");
+  if (!PLANS.length) {
+    box.innerHTML = '<div class="rep-title">😵 配不出来</div><div class="rep-meta">' + m + ' 元 / '
+      + (k === 999 ? "不限卡" : k + " 卡") + ' 低于快照菜单里最低可售组合——诚实说：加钱或放宽卡数。</div>';
   } else {
-    const first = plans[0];
-    const budgetLeft = (m - first.price).toFixed(1);
-    const kcalLeft = (k === 999 ? "不限" : (k - first.kcal));
-    const slow = Math.round(first.kcal / 10), swim = Math.round(first.kcal / 8);
-    let html = '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (k === 999 ? "热量不设限" : k + "kcal") + '</div>';
-    html += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-10 15:29:37 · 本地演示（真实版走 MCP 实时核价）</div>';
-    if (plans.length < 3) html += '<div class="thin">⚠️ 这个预算偏紧，只配出 ' + plans.length + ' 个过闸方案——诚实不凑数。</div>';
-    plans.forEach((p, idx) => {
-      const cls = idx === 0 ? "tag" : "tag alt";
-      html += '<div class="plan"><div class="l1"><span class="' + cls + '">' + p.label + '</span>'
+    const f = PLANS[0];
+    const left = (m - f.price).toFixed(1);
+    let h = '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (k === 999 ? "热量不设限" : k + "kcal") + '</div>';
+    h += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-10 16:45:23 · 点任意方案进明细页</div>';
+    if (PLANS.length < 3) h += '<div class="thin">⚠️ 预算偏紧，只配出 ' + PLANS.length + ' 个过闸方案——诚实不凑数。</div>';
+    PLANS.forEach((p, i) => {
+      const cls = i === 0 ? "tag" : "tag alt";
+      h += '<div class="plan" onclick="detail(' + i + ')"><div class="l1"><span class="' + cls + '">' + p.label + '</span>'
         + '<span class="nm">' + fmt(p.items) + '</span>'
-        + '<span class="pr">¥' + p.price.toFixed(1) + ' <i>' + p.kcal + ' kcal</i></span></div></div>';
+        + '<span class="pr">¥' + money(p.price) + ' <i>' + p.kcal + ' kcal</i></span></div>'
+        + '<div class="cta">👉 点这里看这一单的商品图与营养拆解</div></div>';
     });
-    html += '<div class="metrics">';
-    html += mrow("💰 预算执行", "¥" + first.price.toFixed(1) + " / ¥" + m + " · 剩 ¥" + budgetLeft);
-    html += mrow("🔥 热量执行", first.kcal + " / " + (k === 999 ? "不设限" : k) + " kcal · 剩 " + kcalLeft);
-    html += mrow("🏃 运动等价物", "慢跑 " + slow + " 分钟 = 游泳 " + swim + " 分钟");
-    html += mrow("🧧 省钱心情", budgetLeft > 0
-      ? ("还剩 ¥" + budgetLeft + " 余额——" + (k === 999 || first.kcal + 100 <= k ? "够加个小食或升档套餐" : "想吃饱就得看方案二/三"))
-      : "这单正好顶格，干净利落");
-    html += '</div>';
-    box.innerHTML = html;
+    h += '<div class="metrics">';
+    h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
+    h += mrow("🔥 热量执行", f.kcal + " / " + (k === 999 ? "不设限" : k) + " kcal · 剩 " + (k === 999 ? "—" : k - f.kcal));
+    h += mrow("🏃 运动等价物", "慢跑 " + Math.round(f.kcal / 10) + " 分钟 = 游泳 " + Math.round(f.kcal / 8) + " 分钟");
+    h += mrow("🧧 省钱心情", left > 0 ? ("还剩 ¥" + left + " 余额——" + (k === 999 || f.kcal + 100 <= k ? "够加个小食或升档套餐" : "想吃饱就看方案二/三")) : "这单正好顶格，干净利落");
+    h += '</div>';
+    box.innerHTML = h;
   }
-  const pass = ALL.filter(c => c.some(x => x.m) && sum(c, x => x.p) <= m && sum(c, x => x.k) <= k).length;
-  $("status").textContent = "✅ 已按 ¥" + m + " / " + (k === 999 ? "热量不设限" : k + " kcal")
-    + " 配餐 · 本地枚举 " + ALL.length.toLocaleString() + " 个组合，过闸 " + pass + " 个 · 耗时 " + ms
-    + " ms · 第 " + RUNS + " 次";
+  const pass = COMBOS.filter(c => sum(c, x => x.p) <= m && sum(c, x => x.k) <= k).length;
+  box.innerHTML += '<div class="status">✅ 已按 ¥' + m + " / " + (k === 999 ? "热量不设限" : k + " kcal")
+    + " 配餐 · 本地枚举 " + COMBOS.length.toLocaleString() + " 个组合，过闸 " + pass + " 个 · 耗时 " + ms + " ms · 第 " + RUNS + " 次</div>";
+  show("v2");
   box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
-  box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
-function mrow(a, b) { return '<div class="mrow"><span>' + a + '</span><b class="m">' + b + '</b></div>'; }
+function cell(k, v, sub, pct, ref) {
+  const p = Math.min(100, Math.max(0, pct));
+  return '<div class="ncell"><div class="k">' + k + (sub ? " · " + sub : "") + '</div><div class="v">' + v
+    + '</div><div class="p">约 ' + pct + "% 参考值（" + ref + "）</div><div class='bar'><i style='width:" + p + "%'></i></div></div>";
+}
+function detail(i) {
+  const p = PLANS[i];
+  if (!p) return;
+  const nut = {};
+  ["kj", "pr", "f", "c", "na", "ca"].forEach(kk => nut[kk] = sum(p.items, x => x[kk] || 0));
+  let h = '<button class="back" onclick="show(\'v2\')">← 返回战报</button>';
+  h += '<div class="dhead"><span class="t">🍔 ' + p.label + '明细</span><span class="s">¥' + money(p.price) + " · " + p.kcal + " kcal</span></div>";
+  h += '<div class="items">';
+  p.items.forEach(x => {
+    const parts = x.parts && x.parts.length
+      ? '<div class="parts">默认构成：' + x.parts.map(q => q.n + "（" + q.k + " kcal）").join(" + ") + "</div>" : "";
+    const pic = x.img
+      ? '<img src="' + x.img + '" alt="' + x.n + '" onerror="this.outerHTML=\'<div class=&quot;ph&quot;>🍔</div>&quot;\'">'
+      : '<div class="ph">🍔</div>';
+    h += '<div class="ic">' + pic + '<div class="info"><div class="nm2">' + x.n + '</div>'
+      + '<div class="code">' + x.cat + "</div>"
+      + '<div class="mini">蛋白 ' + x.pr + "g · 脂肪 " + x.f + "g · 碳水 " + x.c + "g · 钠 " + x.na + "mg · 钙 " + x.ca + "mg</div>"
+      + parts + '</div><div class="right">¥' + money(x.p) + "<i>" + x.k + " kcal</i></div></div>";
+  });
+  h += '</div><div class="nut"><h3>🔬 这一单的营养拆解（合计）</h3><div class="ngrid">';
+  h += cell("能量", p.kcal + " kcal", nut.kj + " kJ", Math.round(p.kcal / REF.kcal * 100), REF.kcal + " kcal");
+  h += cell("蛋白质", nut.pr.toFixed(1) + " g", "", Math.round(nut.pr / REF.protein * 100), REF.protein + " g");
+  h += cell("脂肪", nut.f.toFixed(1) + " g", "", Math.round(nut.f / REF.fat * 100), REF.fat + " g");
+  h += cell("碳水化合物", nut.c.toFixed(1) + " g", "", Math.round(nut.c / REF.carb * 100), REF.carb + " g");
+  h += cell("钠", nut.na.toFixed(0) + " mg", "", Math.round(nut.na / REF.sodium * 100), REF.sodium + " mg");
+  h += cell("钙", nut.ca.toFixed(0) + " mg", "", Math.round(nut.ca / REF.calcium * 100), REF.calcium + " mg");
+  h += '</div><div class="note">⚠️ 维生素：麦当劳 MCP 营养接口<b>不提供维生素数据</b>，此处不编造。' + REF_NOTE + "。</div></div>";
+  $("v3").innerHTML = h;
+  show("v3");
+}
 function feedback() {
   const g = $("go");
-  g.classList.add("done");
-  g.textContent = "配好了 ✓";
+  g.classList.add("done"); g.textContent = "配好了 ✓";
   clearTimeout(window.__ft);
   window.__ft = setTimeout(() => { g.classList.remove("done"); g.textContent = "配一顿 →"; }, 900);
 }
@@ -200,8 +257,10 @@ document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
   $("m").value = b.dataset.m; $("k").value = b.dataset.k; feedback(); run();
 });
 $("go").onclick = () => { feedback(); run(); };
-$("m").oninput = run; $("k").oninput = run;
+$("m").oninput = () => { if (!$("v1").classList.contains("hide")) run(); };
+$("k").oninput = () => { if (!$("v1").classList.contains("hide")) run(); };
 run();
+if (location.hash === "#detail" && PLANS[0]) detail(0);
 </script>
 </body>
 </html>
