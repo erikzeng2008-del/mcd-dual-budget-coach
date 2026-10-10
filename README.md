@@ -6,9 +6,12 @@
 
 ![WorkBuddy](https://img.shields.io/badge/Built_with-WorkBuddy-blue) ![MCP](https://img.shields.io/badge/Powered_by-麦当劳_MCP-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
-![真机实测战报](examples/battle_reports.png)
+## 它长什么样
 
-> 📸 上图 4 个场景 11 个方案，全部来自 2026-10-10 麦当劳 MCP **真机实测**——每个组合都经 `calculate-price` 实付核验，不是演示数据。完整数字溯源见 [examples/](examples/)。
+![产品界面：一次真实对话](examples/demo-chat.png)
+
+> 这就是它的全部「界面」——**一段对话**。你说「多少钱 + 多少卡 + 想吃啥」，它回你三个能直接下单的组合。
+> 图中顶部那排工具调用链是真实调用麦当劳 MCP 的 5 步（时间→菜单→营养→套餐默认档→逐个核价），价格由 `calculate-price` 实付核验——不是模型编的。这是本项目与「菜单静态表 + 拍脑袋推荐」类工具的根本区别。
 
 ## 为什么做这个
 
@@ -70,6 +73,8 @@
 
 ## 实测案例
 
+![4 场景真机实测战报](examples/battle_reports.png)
+
 全部案例来自真机实测（2026-10-10，麦当劳福州金洲南路餐厅），每个案例包含**完整调用链、每个数字的来源、复现说明**：
 
 | 案例 | 场景 | 看点 |
@@ -106,7 +111,8 @@ mcd-dual-budget-coach/
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
 ├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
 ├── examples/
-│   ├── battle_reports.png    # 4 场景真机实测战报图（本页首图）
+│   ├── demo-chat.png         # 产品界面：一次真实对话（首图）
+│   ├── battle_reports.png    # 4 场景真机实测战报图
 │   ├── case-1-30元600卡.md    # 双闸门实测：数字级溯源
 │   ├── case-2-25元性价比.md   # 只限金额实测
 │   ├── case-3-500卡健身餐.md  # 只限热量实测
