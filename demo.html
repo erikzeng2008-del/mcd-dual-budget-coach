@@ -55,6 +55,14 @@
     margin-top:14px; background:#FFF3D6; border:1.5px dashed #d9b96a;
     border-radius:10px; padding:10px 14px; font-size:12.5px; color:#7a5c14; line-height:1.8;
   }
+  .status {
+    margin-top:12px; font-size:12.5px; color:#7a5c14; font-family:Consolas,monospace;
+    background:#FFF3D6; border:1.5px solid #e6cf9d; border-radius:8px; padding:7px 12px;
+  }
+  @keyframes flash { 0% { background:#FFF9E8; } 100% { background:transparent; } }
+  .flash { animation: flash .7s ease-out; }
+  .thin { font-size:12px; color:#b03a2e; margin:4px 0 8px; }
+  .go.done { background:#4CAF50; }
   .foot { margin-top:18px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
   .foot a { color:#DA291C; text-decoration:none; }
 </style>
@@ -85,6 +93,7 @@
     <button class="go" id="go">配一顿 →</button>
   </div>
   <div class="out" id="out"></div>
+  <div class="status" id="status">⚙️ 拖动滑块或点「配一顿」，这里会显示每次配餐的实际计算量</div>
   <div class="warn">
     ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，菜单/营养/价格均为 2026-10-10 15:29:37 在 麦当劳福州金洲南路餐厅 的实测快照（组合枚举与「最划算/最扎实/最均衡」三档逻辑与 Skill 一致，「最均衡」的均衡点为通用启发式，个例可能与实跑略有差异）。
     真实版 Skill 直连麦当劳 MCP 实时接口，价格经<code>calculate-price</code> 券后核价、饮品按平台规则挂套餐计算，菜单随时段/门店变化。
@@ -137,42 +146,60 @@ function pick(moneyCap, kcalCap) {
 function fmt(c) {
   return c.map(x => x.n + (x.d && x.d.length ? "（" + x.d.join(" + ") + "）" : "")).join(" + ");
 }
+let RUNS = 0;
 function run() {
   const m = +$("m").value, k = +$("k").value;
   $("mv").textContent = m; $("kv").textContent = k === 999 ? "不设限" : k;
+  const t0 = performance.now();
   const plans = pick(m, k);
+  const ms = Math.max(1, Math.round(performance.now() - t0));
   const box = $("out");
+  RUNS++;
   if (!plans.length) {
     box.innerHTML = '<div class="warn">😵 这个预算在快照菜单里真的配不出来——' + m + ' 元 / ' + (k === 999 ? "不限卡" : k + " 卡") + ' 低于最低可售组合。诚实说：配不出来。要么加钱，要么放宽卡数。</div>';
-    return;
+  } else {
+    const first = plans[0];
+    const budgetLeft = (m - first.price).toFixed(1);
+    const kcalLeft = (k === 999 ? "不限" : (k - first.kcal));
+    const slow = Math.round(first.kcal / 10), swim = Math.round(first.kcal / 8);
+    let html = '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (k === 999 ? "热量不设限" : k + "kcal") + '</div>';
+    html += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-10 15:29:37 · 本地演示（真实版走 MCP 实时核价）</div>';
+    if (plans.length < 3) html += '<div class="thin">⚠️ 这个预算偏紧，只配出 ' + plans.length + ' 个过闸方案——诚实不凑数。</div>';
+    plans.forEach((p, idx) => {
+      const cls = idx === 0 ? "tag" : "tag alt";
+      html += '<div class="plan"><div class="l1"><span class="' + cls + '">' + p.label + '</span>'
+        + '<span class="nm">' + fmt(p.items) + '</span>'
+        + '<span class="pr">¥' + p.price.toFixed(1) + ' <i>' + p.kcal + ' kcal</i></span></div></div>';
+    });
+    html += '<div class="metrics">';
+    html += mrow("💰 预算执行", "¥" + first.price.toFixed(1) + " / ¥" + m + " · 剩 ¥" + budgetLeft);
+    html += mrow("🔥 热量执行", first.kcal + " / " + (k === 999 ? "不设限" : k) + " kcal · 剩 " + kcalLeft);
+    html += mrow("🏃 运动等价物", "慢跑 " + slow + " 分钟 = 游泳 " + swim + " 分钟");
+    html += mrow("🧧 省钱心情", budgetLeft > 0
+      ? ("还剩 ¥" + budgetLeft + " 余额——" + (k === 999 || first.kcal + 100 <= k ? "够加个小食或升档套餐" : "想吃饱就得看方案二/三"))
+      : "这单正好顶格，干净利落");
+    html += '</div>';
+    box.innerHTML = html;
   }
-  const first = plans[0];
-  const budgetLeft = (m - first.price).toFixed(1);
-  const kcalLeft = (k === 999 ? "不限" : (k - first.kcal));
-  const slow = Math.round(first.kcal / 10), swim = Math.round(first.kcal / 8);
-  let html = '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (k === 999 ? "热量不设限" : k + "kcal") + '</div>';
-  html += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-10 15:29:37 · 本地演示（真实版走 MCP 实时核价）</div>';
-  plans.forEach((p, idx) => {
-    const cls = idx === 0 ? "tag" : "tag alt";
-    html += '<div class="plan"><div class="l1"><span class="' + cls + '">' + p.label + '</span>'
-      + '<span class="nm">' + fmt(p.items) + '</span>'
-      + '<span class="pr">¥' + p.price.toFixed(1) + ' <i>' + p.kcal + ' kcal</i></span></div></div>';
-  });
-  html += '<div class="metrics">';
-  html += mrow("💰 预算执行", "¥" + first.price.toFixed(1) + " / ¥" + m + " · 剩 ¥" + budgetLeft);
-  html += mrow("🔥 热量执行", first.kcal + " / " + (k === 999 ? "不设限" : k) + " kcal · 剩 " + kcalLeft);
-  html += mrow("🏃 运动等价物", "慢跑 " + slow + " 分钟 = 游泳 " + swim + " 分钟");
-  html += mrow("🧧 省钱心情", budgetLeft > 0
-    ? ("还剩 ¥" + budgetLeft + " 余额——" + (k === 999 || first.kcal + 100 <= k ? "够加个小食或升档套餐" : "想吃饱就得看方案二/三"))
-    : "这单正好顶格，干净利落");
-  html += '</div>';
-  box.innerHTML = html;
+  const pass = ALL.filter(c => c.some(x => x.m) && sum(c, x => x.p) <= m && sum(c, x => x.k) <= k).length;
+  $("status").textContent = "✅ 已按 ¥" + m + " / " + (k === 999 ? "热量不设限" : k + " kcal")
+    + " 配餐 · 本地枚举 " + ALL.length.toLocaleString() + " 个组合，过闸 " + pass + " 个 · 耗时 " + ms
+    + " ms · 第 " + RUNS + " 次";
+  box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
+  box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 function mrow(a, b) { return '<div class="mrow"><span>' + a + '</span><b class="m">' + b + '</b></div>'; }
+function feedback() {
+  const g = $("go");
+  g.classList.add("done");
+  g.textContent = "配好了 ✓";
+  clearTimeout(window.__ft);
+  window.__ft = setTimeout(() => { g.classList.remove("done"); g.textContent = "配一顿 →"; }, 900);
+}
 document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
-  $("m").value = b.dataset.m; $("k").value = b.dataset.k; run();
+  $("m").value = b.dataset.m; $("k").value = b.dataset.k; feedback(); run();
 });
-$("go").onclick = run;
+$("go").onclick = () => { feedback(); run(); };
 $("m").oninput = run; $("k").oninput = run;
 run();
 </script>
