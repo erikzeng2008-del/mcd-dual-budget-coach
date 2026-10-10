@@ -6,6 +6,10 @@
 
 ![WorkBuddy](https://img.shields.io/badge/Built_with-WorkBuddy-blue) ![MCP](https://img.shields.io/badge/Powered_by-麦当劳_MCP-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
+![真机实测战报](examples/battle_reports.png)
+
+> 📸 上图 4 个场景 11 个方案，全部来自 2026-10-10 麦当劳 MCP **真机实测**——每个组合都经 `calculate-price` 实付核验，不是演示数据。完整数字溯源见 [examples/](examples/)。
+
 ## 为什么做这个
 
 想吃麦当劳的人心里都有两杆秤：
@@ -64,6 +68,17 @@
 
 > ⚠️ 菜单随时段/门店变化，每次输出都基于麦当劳 MCP 实时返回（`query-meals` / `list-nutrition-foods` / `calculate-price`），早餐和正餐配出来的组合不一样。
 
+## 实测案例
+
+全部案例来自真机实测（2026-10-10，麦当劳福州金洲南路餐厅），每个案例包含**完整调用链、每个数字的来源、复现说明**：
+
+| 案例 | 场景 | 看点 |
+|---|---|---|
+| [案例 1 · 30元600卡](examples/case-1-30元600卡.md) | 金额+热量双闸门 | ¥13.9 随心配 1+1 = 532 kcal，预算剩一半 |
+| [案例 2 · 25元性价比](examples/case-2-25元性价比.md) | 只限金额 | ¥22.9 干到 808 kcal 的满足感方案 |
+| [案例 3 · 500卡健身餐](examples/case-3-500卡健身餐.md) | 只限热量 | 三方案 434~495 kcal 全过闸，官方大卡档对齐 |
+| [案例 4 · 20元紧预算](examples/case-4-20元紧预算与券日历.md) | 紧预算+券 | 13 张券 0 张今日可用时的诚实处理 + 券日历 |
+
 ## 目标用户
 
 | 人群 | 场景 |
@@ -89,6 +104,13 @@ mcd-dual-budget-coach/
 ├── MCP_INTEGRATION.md        # 麦当劳 MCP 集成说明（Server/Tool/流程/价值）
 ├── mcp-config.example.json   # 脱敏 MCP 配置示例（环境变量占位符）
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
+├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
+├── examples/
+│   ├── battle_reports.png    # 4 场景真机实测战报图（本页首图）
+│   ├── case-1-30元600卡.md    # 双闸门实测：数字级溯源
+│   ├── case-2-25元性价比.md   # 只限金额实测
+│   ├── case-3-500卡健身餐.md  # 只限热量实测
+│   └── case-4-20元紧预算与券日历.md # 紧预算 + 券日历诚实版
 └── references/
     └── tools.md              # 本 Skill 使用的 MCP 工具速查
 ```
