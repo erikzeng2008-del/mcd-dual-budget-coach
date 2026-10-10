@@ -36,6 +36,10 @@
 
 将本仓库的 `SKILL.md` 放入 WorkBuddy 技能目录（或在对话中直接粘贴给 AI 加载）。详细步骤参考 [WorkBuddy 官方文档](https://www.workbuddy.cn/docs/workbuddy/From-Beginner-to-Expert-Guide/Function-Description/Connector)。
 
+### 不想装？先玩一下
+
+直接用浏览器打开仓库里的 **[demo.html](demo.html)**（单文件、零外链、不含任何凭证）：拖动金额/热量滑块或点预设场景，它用 2026-10-10 的实测数据快照现场配餐——**这就是这个 Skill 的算法在浏览器里的样子**。真实版走麦当劳 MCP 实时接口。
+
 ## 使用示例
 
 > 以下战报为 2026-10-09 在「麦当劳福州金洲南路餐厅」的**真实 MCP 实测输出**（非演示数据）：
@@ -110,6 +114,7 @@ mcd-dual-budget-coach/
 ├── mcp-config.example.json   # 脱敏 MCP 配置示例（环境变量占位符）
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
 ├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
+├── demo.html                  # 可交互演示页（浏览器直接打开，零外链无凭证）
 ├── examples/
 │   ├── demo-chat.png         # 产品界面：一次真实对话（首图）
 │   ├── battle_reports.png    # 4 场景真机实测战报图
