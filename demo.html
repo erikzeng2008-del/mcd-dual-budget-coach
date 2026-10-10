@@ -257,10 +257,18 @@ document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
   $("m").value = b.dataset.m; $("k").value = b.dataset.k; feedback(); run();
 });
 $("go").onclick = () => { feedback(); run(); };
-$("m").oninput = () => { if (!$("v1").classList.contains("hide")) run(); };
-$("k").oninput = () => { if (!$("v1").classList.contains("hide")) run(); };
-run();
-if (location.hash === "#detail" && PLANS[0]) detail(0);
+/* 滑块拖动时只更新数字，松开手才出战报——第一页始终是输入页 */
+$("m").oninput = () => { $("mv").textContent = $("m").value; };
+$("k").oninput = () => { $("kv").textContent = $("k").value === 999 ? "不设限" : $("k").value; };
+$("m").onchange = run;
+$("k").onchange = run;
+/* 支持 ?m=30&k=600&view=detail 直接进入某状态（截图/分享用），默认停在第一页 */
+const q = new URLSearchParams(location.search);
+if (q.get("m")) $("m").value = q.get("m");
+if (q.get("k")) $("k").value = q.get("k");
+$("mv").textContent = $("m").value;
+$("kv").textContent = $("k").value === 999 ? "不设限" : $("k").value;
+if (q.get("view")) { run(); if (q.get("view") === "detail") detail(0); }
 </script>
 </body>
 </html>
