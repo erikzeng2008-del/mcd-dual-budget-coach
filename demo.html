@@ -131,14 +131,44 @@
   .panel2 { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:13px 16px; margin-top:12px; }
   .ctitle { font-size:15px; font-weight:800; margin-bottom:8px; }
   .ctitle .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:6px; }
-  .coupons { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
-  .cp { border:1.5px solid #e0cfa0; border-radius:10px; padding:8px 11px; background:#FFFCF4; }
-  .cp.live { border-color:#DA291C; background:#FFF3F2; }
-  .cp .cn { font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:6px; }
-  .cp .cn .badge { font-size:10.5px; font-weight:700; color:#fff; background:#4CAF50;
-    border-radius:999px; padding:1px 8px; }
-  .cp .cv { font-size:11.5px; color:#8a7a5c; margin-top:3px; line-height:1.5; }
-  .cp .cp2 { font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:14px; margin-top:3px; }
+  /* ===== 券卡包（翻钱包式） ===== */
+  .wallet { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  .ticket {
+    position:relative; border-radius:14px; padding:0; overflow:hidden;
+    background:#fff; border:2px solid #1a1a1a;
+    box-shadow:0 2px 0 rgba(26,26,26,.12);
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .ticket:hover { transform:translateY(-2px); box-shadow:0 5px 0 rgba(26,26,26,.15); }
+  .ticket.live { border-color:#DA291C; }
+  .ticket.dim { opacity:.72; }
+  .ticket .tk-top { display:flex; align-items:center; gap:8px; padding:10px 13px 8px; }
+  .ticket.live .tk-top { background:#FFF3F2; }
+  .ticket.dim .tk-top { background:#FBF7EE; }
+  .ticket .tk-name { font-size:14.5px; font-weight:800; line-height:1.3; flex:1; }
+  .ticket .flag {
+    flex:0 0 auto; font-size:10.5px; font-weight:800; border-radius:999px; padding:2px 9px;
+  }
+  .flag.live { background:#4CAF50; color:#fff; }
+  .flag.soon { background:#FFC72C; color:#1a1a1a; }
+  .ticket .tk-price {
+    font-family:var(--f-mono); font-size:26px; font-weight:800; color:#DA291C;
+    padding:0 13px; line-height:1.1; letter-spacing:-.5px;
+  }
+  .ticket .tk-price small { font-size:11px; font-weight:600; color:#8a7a5c; margin-left:4px; letter-spacing:0; }
+  .ticket .tk-foot {
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:7px 13px 9px; border-top:1px dashed #e2d4b4; margin-top:7px;
+  }
+  .ticket .tk-date { font-family:var(--f-mono); font-size:11px; color:#8a7a5c; }
+  .ticket .tk-days { font-size:10.5px; color:#fff; background:#1a1a1a; border-radius:999px; padding:2px 8px; }
+  /* 票根缺口：卡包观感 */
+  .ticket .notch { position:absolute; right:-9px; top:56px; width:18px; height:18px;
+    border-radius:50%; background:#FFF6E3; border:2px solid #1a1a1a; border-left:none; }
+  .wallet-note { font-size:11.5px; color:#a08a63; margin-top:9px; line-height:1.7; }
+  .wall-h { grid-column:1/-1; font-family:var(--f-display); font-size:13px; color:#8a6d3b;
+    margin:2px 0 -2px; display:flex; align-items:center; gap:8px; }
+  .wall-h::after { content:""; flex:1; height:1px; background:#e6d7b8; }
   .sname { font-size:15.5px; font-weight:800; }
   .saddr { font-size:12px; color:#8a7a5c; font-family:Consolas,monospace; margin-top:3px; }
   .snote { font-size:11.5px; color:#a08a63; margin-top:5px; }
@@ -487,17 +517,40 @@ document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
   $("m").value = b.dataset.m; $("k").value = b.dataset.k; syncNums();
 });
 $("go").onclick = () => { feedback(); run(); };
-/* 券：真实 query-my-coupons 返回，今日可用优先 */
+/* 券卡包：真实 query-my-coupons 返回，像翻钱包一样看卡 */
 function renderCoupons() {
   const live = COUPONS.filter(c => c.today_ok);
   const soon = COUPONS.filter(c => !c.today_ok);
-  $("couponn").textContent = live.length ? ("今日可用 " + live.length + " 张 / 共 " + COUPONS.length + " 张") : ("今日暂无可用券，共 " + COUPONS.length + " 张");
-  const line = c => '<div class="cv">' + c.valid.replace(/\s{2,}/g, " ") + '</div>';
-  const card = (c, on) => '<div class="cp' + (on ? " live" : "") + '"><div class="cn">'
-      + (on ? '<span class="badge">今日可用</span>' : "") + c.name + '</div>'
-      + '<div class="cp2">¥' + c.price + '</div>' + line(c) + '</div>';
-  $("couponlist").innerHTML = (live.length ? live.map(c => card(c, true)).join("") : "")
-    + soon.map(c => card(c, false)).join("");
+  $("couponn").textContent = live.length
+    ? ("今日可用 " + live.length + " 张 / 共 " + COUPONS.length + " 张")
+    : ("今日暂无可用券，共 " + COUPONS.length + " 张");
+  const days = c => {
+    if (!c.today_ok || !c.start || !c.end) return "";
+    const d = Math.max(0, Math.round((new Date(c.end) - new Date(c.start)) / 86400000) + 1);
+    return d + " 天有效";
+  };
+  const shortDate = c => {
+    const m = String(c.valid).match(/(\d{4}-\d{2}-\d{2})\s*([\d:]+)\s*-\s*(\d{4}-\d{2}-\d{2})\s*([\d:]+)/);
+    if (!m) return c.valid.slice(0, 22);
+    const md = s => s.slice(5);
+    return md(m[1]) + " " + m[2].slice(0, 5) + " → " + md(m[3]) + " " + m[4].slice(0, 5);
+  };
+  const card = c => {
+    if (c.today_ok) {
+      return '<div class="ticket live"><div class="notch"></div>'
+        + '<div class="tk-top"><span class="tk-name">' + c.name + '</span><span class="flag live">今日可用</span></div>'
+        + '<div class="tk-price">¥' + c.price + '<small>用券价</small></div>'
+        + '<div class="tk-foot"><span class="tk-date">' + shortDate(c) + '</span>'
+        + '<span class="tk-days">' + days(c) + '</span></div></div>';
+    }
+    return '<div class="ticket dim"><div class="notch"></div>'
+      + '<div class="tk-top"><span class="tk-name">' + c.name + '</span><span class="flag soon">' + (c.start ? c.start.slice(5) + " 生效" : "未生效") + '</span></div>'
+      + '<div class="tk-price">¥' + c.price + '<small>用券价</small></div>'
+      + '<div class="tk-foot"><span class="tk-date">' + shortDate(c) + '</span></div></div>';
+  };
+  $("couponlist").innerHTML =
+    (live.length ? '<div class="wall-h">今天能用</div>' + live.map(card).join("") : "")
+    + (soon.length ? '<div class="wall-h">即将生效（已帮你排进日历）</div>' + soon.map(card).join("") : "");
 }
 /* 省钱心情：优先用今日可用券算真省额 */
 function savingTip(m, f) {
