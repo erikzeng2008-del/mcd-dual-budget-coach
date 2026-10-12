@@ -50,9 +50,30 @@
   .rep-title { font-size:19px; font-weight:800; color:#DA291C; }
   .rep-meta { font-size:12px; color:#9a8557; margin:4px 0 12px; }
   .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; padding:12px 14px; margin-bottom:10px;
-    cursor:pointer; transition:transform .08s ease, box-shadow .08s ease; }
+    cursor:pointer; transition:transform .08s ease, box-shadow .08s ease;
+    display:flex; align-items:center; gap:14px; }
   .plan:hover { transform:translateX(3px); box-shadow:3px 3px 0 #FFC72C; }
   .plan:active { transform:translateX(1px) scale(.995); }
+  .plan .body { flex:1; min-width:0; }
+  .plan .pic { flex:0 0 auto; width:74px; height:74px; }
+  .plan .pic img { width:74px; height:74px; object-fit:cover; border-radius:10px; border:1.5px solid #e0cfa0; background:#fff; }
+  .plan .pic .ph { width:74px; height:74px; border-radius:10px; border:1.5px dashed #e0cfa0;
+    display:flex; align-items:center; justify-content:center; font-size:28px; background:#FFFBF0; }
+  .plan .more { flex:0 0 auto; font-size:11px; color:#c0ae8a; text-align:center; line-height:1.4; }
+
+  /* 商品目录 */
+  .cat { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .cat .ci { background:#fff; border:2px solid #1a1a1a; border-radius:12px; overflow:hidden; cursor:pointer;
+    transition:transform .08s ease, box-shadow .08s ease; }
+  .cat .ci:hover { transform:translateY(-2px); box-shadow:3px 3px 0 #FFC72C; }
+  .cat .ci img { width:100%; height:104px; object-fit:cover; display:block; background:#fff; }
+  .cat .ci .ph { width:100%; height:104px; display:flex; align-items:center; justify-content:center; font-size:30px; background:#FFFBF0; }
+  .cat .ci .b { padding:8px 10px 10px; }
+  .cat .ci .nm3 { font-size:13.5px; font-weight:700; line-height:1.35; min-height:36px; }
+  .cat .ci .pv { font-family:Consolas,monospace; font-weight:800; color:#DA291C; margin-top:4px; font-size:14px; }
+  .cat .ci .pv i { color:#6b7a3a; font-style:normal; font-size:11.5px; }
+  .cat .ci .tg { font-size:10.5px; color:#9a8557; margin-top:2px; }
+  .cat .ci .unk { font-size:10.5px; color:#b03a2e; margin-top:2px; }
   .plan .l1 { display:flex; align-items:baseline; gap:9px; }
   .tag { flex:0 0 auto; font-size:12px; font-weight:700; background:#FFC72C; padding:2px 9px; border-radius:4px; }
   .tag.alt { background:#fff; border:1.5px solid #DA291C; color:#DA291C; }
@@ -121,6 +142,7 @@
     <button class="tab on" data-v="v1"><span class="n">1</span>预算设定</button>
     <button class="tab off" data-v="v2" id="tab2"><span class="n">2</span>战报</button>
     <button class="tab off" data-v="v3" id="tab3"><span class="n">3</span>明细与营养</button>
+    <button class="tab" data-v="v4"><span class="n">4</span>商品目录</button>
   </div>
 
   <div id="v1">
@@ -144,6 +166,12 @@
 
   <div id="v2" class="hide"></div>
   <div id="v3" class="hide"></div>
+
+  <div id="v4" class="hide">
+    <div class="rep-title">📇 商品目录 · <span id="catn"></span> 个可配单品</div>
+    <div class="rep-meta">全部来自麦当劳 MCP 接口的商品图与营养数据 · 点任意商品看它的完整营养明细 · 绿色边框=官方热量档套餐</div>
+    <div class="cat" id="catgrid"></div>
+  </div>
 
   <div class="warn">
     ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，商品图、菜单、营养、价格均为 2026-10-11 15:58:22 在 麦当劳福州金洲南路餐厅 的实测快照
@@ -216,24 +244,69 @@ const mrow = (a, b) => '<div class="mrow"><span>' + a + '</span><b class="m">' +
 
 let RUNS = 0;
 function show(id) {
-  ["v1", "v2", "v3"].forEach(x => $(x).classList.toggle("hide", x !== id));
+  ["v1", "v2", "v3", "v4"].forEach(x => $(x).classList.toggle("hide", x !== id));
   document.querySelectorAll(".tabs .tab").forEach(t => {
     t.classList.toggle("on", t.dataset.v === id);
   });
+  if (id === "v4") renderCat();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 /* 数字版跳转：避免 HTML 属性里嵌套引号把 JS 字符串提前闭合 */
 function goV(n) {
-  const id = n === 1 ? "v1" : n === 2 ? "v2" : "v3";
-  if (id !== "v1" && !PLANS.length) { syncNums(); show("v1"); return; }
+  const id = n === 1 ? "v1" : n === 2 ? "v2" : n === 3 ? "v3" : "v4";
+  if ((id === "v2" || id === "v3") && !PLANS.length) { syncNums(); show("v1"); return; }
   show(id);
+}
+
+/* 商品目录：全部可配单品，点进去看单品明细 */
+let CAT = null;
+function renderCat() {
+  if (CAT) return;
+  const sorted = DATA.slice().sort((a, b) => a.p - b.p);
+  CAT = sorted.map((x, i) => {
+    const pic = x.img ? '<img src="' + x.img + '" alt="' + x.n + '">' : '<div class="ph">🍔</div>';
+    const unk = x.u ? '<div class="unk">MCP 营养表暂无此品数据</div>' : '';
+    return '<div class="ci" onclick="showItem(' + i + ')">' + pic
+      + '<div class="b"><div class="nm3">' + x.n + '</div>'
+      + '<div class="pv">¥' + money(x.p) + ' <i>' + (x.u ? "热量未知" : x.k + " kcal") + '</i></div>'
+      + '<div class="tg">' + x.cat + '</div>' + unk + '</div></div>';
+  });
+  $("catgrid").innerHTML = CAT.join("");
+  $("catn").textContent = DATA.length;
+}
+function showItem(i) {
+  renderCat();
+  const x = DATA.slice().sort((a, b) => a.p - b.p)[i];
+  if (!x) return;
+  let h = "<button class='back' onclick='goV(4)'>← 返回目录</button> <button class='back' onclick='goV(1)' style='margin-left:6px'>← 改预算</button>";
+  h += '<div class="dhead"><span class="t">🍔 ' + x.n + '</span><span class="s">¥' + money(x.p) + " · " + (x.u ? "热量未知" : x.k + " kcal") + "</span></div>";
+  h += '<div class="items"><div class="ic">';
+  h += x.img ? '<img src="' + x.img + '" alt="' + x.n + '">' : '<div class="ph">🍔</div>';
+  h += '<div class="info"><div class="nm2">' + x.n + '</div><div class="code">' + x.cat + '</div>';
+  if (x.parts && x.parts.length) h += '<div class="parts">默认构成：' + x.parts.map(q => q.n + "（" + q.k + " kcal）").join(" + ") + "</div>";
+  h += x.u ? '<div class="mini" style="color:#b03a2e">MCP 营养表暂无此品数据 → 热量不参与闸门计算</div>'
+    : '<div class="mini">蛋白 ' + x.pr + "g · 脂肪 " + x.f + "g · 碳水 " + x.c + "g · 钠 " + x.na + "mg · 钙 " + x.ca + "mg</div>";
+  h += '</div><div class="right">¥' + money(x.p) + "<i>" + (x.u ? "热量未知" : x.k + " kcal") + "</i></div></div></div>";
+  h += '<div class="nut"><h3>🔬 营养拆解</h3><div class="ngrid">';
+  if (x.u) {
+    h += '<div class="ncell" style="grid-column:1/-1;border-color:#d9b96a;background:#FFF9E8"><div class="k">⚠️ 热量数据缺失</div><div class="v" style="font-size:13.5px">MCP 营养表尚未收录此品，六项营养素暂不可用</div></div>';
+  } else {
+    h += cell("能量", x.k + " kcal", x.kj + " kJ", Math.round(x.k / REF.kcal * 100), REF.kcal + " kcal");
+    h += cell("蛋白质", x.pr.toFixed(1) + " g", "", Math.round(x.pr / REF.protein * 100), REF.protein + " g");
+    h += cell("脂肪", x.f.toFixed(1) + " g", "", Math.round(x.f / REF.fat * 100), REF.fat + " g");
+    h += cell("碳水化合物", x.c.toFixed(1) + " g", "", Math.round(x.c / REF.carb * 100), REF.carb + " g");
+    h += cell("钠", x.na.toFixed(0) + " mg", "", Math.round(x.na / REF.sodium * 100), REF.sodium + " mg");
+    h += cell("钙", x.ca.toFixed(0) + " mg", "", Math.round(x.ca / REF.calcium * 100), REF.calcium + " mg");
+  }
+  h += '</div><div class="note">⚠️ 维生素：麦当劳 MCP 营养接口<b>不提供维生素数据</b>，此处不编造。' + REF_NOTE + "。</div></div>";
+  $("v3").innerHTML = h;
+  show("v3");
 }
 /* TAB 点击：战报/明细在没有数据时不给跳 */
 document.querySelectorAll(".tabs .tab").forEach(t => {
   t.onclick = () => {
     const v = t.dataset.v;
-    if (v === "v2" && !PLANS.length) { syncNums(); show("v1"); return; }
-    if (v === "v3" && !PLANS.length) { syncNums(); show("v1"); return; }
+    if ((v === "v2" || v === "v3") && !PLANS.length) { syncNums(); show("v1"); return; }
     show(v);
   };
 });
@@ -261,10 +334,17 @@ function run() {
     if (PLANS.length < 3) h += '<div class="thin">⚠️ 预算偏紧，只配出 ' + PLANS.length + ' 个过闸方案——诚实不凑数。</div>';
     PLANS.forEach((p, i) => {
       const cls = i === 0 ? "tag" : "tag alt";
-      h += '<div class="plan" onclick="detail(' + i + ')"><div class="l1"><span class="' + cls + '">' + p.label + '</span>'
+      const withPic = p.items.find(x => x.img);
+      const pic = withPic
+        ? '<div class="pic"><img src="' + withPic.img + '" alt="' + p.label + '"></div>'
+        : '<div class="pic"><div class="ph">🍔</div></div>';
+      const extra = p.items.length > 1 ? '<div class="more">' + p.items.length + ' 件<br>组成</div>' : '';
+      h += '<div class="plan" onclick="detail(' + i + ')"><div class="body">'
+        + '<div class="l1"><span class="' + cls + '">' + p.label + '</span>'
         + '<span class="nm">' + fmt(p.items) + '</span>'
         + '<span class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></span></div>'
-        + '<div class="cta">👉 点这里看这一单的商品图与营养拆解</div></div>';
+        + '<div class="cta">👉 点这里看这一单的商品图与营养拆解</div></div>'
+        + pic + extra + '</div>';
     });
     h += '<div class="metrics">';
     h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
@@ -351,7 +431,12 @@ const q = new URLSearchParams(location.search);
 if (q.get("m")) $("m").value = q.get("m");
 if (q.get("k")) $("k").value = q.get("k");
 syncNums();
-if (q.get("view")) { run(); if (q.get("view") === "detail") detail(0); }
+if (q.get("view")) {
+  const v = q.get("view");
+  if (v === "cat") { run(); show("v4"); }
+  else if (v === "item") { renderCat(); showItem(0); }
+  else { run(); if (v === "detail") detail(0); }
+}
 </script>
 </body>
 </html>
