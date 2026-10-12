@@ -49,17 +49,24 @@
 
   .rep-title { font-size:19px; font-weight:800; color:#DA291C; }
   .rep-meta { font-size:12px; color:#9a8557; margin:4px 0 12px; }
-  .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; padding:12px 14px; margin-bottom:10px;
-    cursor:pointer; transition:transform .08s ease, box-shadow .08s ease;
-    display:flex; align-items:center; gap:14px; }
-  .plan:hover { transform:translateX(3px); box-shadow:3px 3px 0 #FFC72C; }
-  .plan:active { transform:translateX(1px) scale(.995); }
-  .plan .body { flex:1; min-width:0; }
-  .plan .pic { flex:0 0 auto; width:74px; height:74px; }
-  .plan .pic img { width:74px; height:74px; object-fit:cover; border-radius:10px; border:1.5px solid #e0cfa0; background:#fff; }
-  .plan .pic .ph { width:74px; height:74px; border-radius:10px; border:1.5px dashed #e0cfa0;
-    display:flex; align-items:center; justify-content:center; font-size:28px; background:#FFFBF0; }
-  .plan .more { flex:0 0 auto; font-size:11px; color:#c0ae8a; text-align:center; line-height:1.4; }
+  /* 方案方块：三个方块并排，块内纵向（图上、文字下） */
+  .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; }
+  .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; overflow:hidden;
+    cursor:pointer; display:flex; flex-direction:column;
+    transition:transform .08s ease, box-shadow .08s ease; }
+  .plan:hover { transform:translateY(-3px); box-shadow:3px 3px 0 #FFC72C; }
+  .plan:active { transform:translateY(-1px) scale(.995); }
+  .plan .pic { width:100%; height:138px; border-bottom:2px solid #1a1a1a; background:#fff; }
+  .plan .pic img { width:100%; height:100%; object-fit:cover; display:block; background:#fff; }
+  .plan .pic .ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+    font-size:38px; background:#FFFBF0; }
+  .plan .body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:7px; flex:1; }
+  .plan .top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .plan .nm { font-size:14px; font-weight:700; line-height:1.45; }
+  .plan .pieces { font-size:11px; color:#9a8557; margin-left:auto; }
+  .plan .pr { font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:17px; }
+  .plan .pr i { color:#6b7a3a; font-style:normal; font-size:12px; }
+  .plan .cta { font-size:11.5px; color:#DA291C; font-weight:700; margin-top:auto; }
 
   /* 商品目录 */
   .cat { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
@@ -332,20 +339,21 @@ function run() {
     h += '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (noCap ? "热量不设限" : k + "kcal") + '</div>';
     h += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-11 15:58:22 · 点任意方案进明细页</div>';
     if (PLANS.length < 3) h += '<div class="thin">⚠️ 预算偏紧，只配出 ' + PLANS.length + ' 个过闸方案——诚实不凑数。</div>';
+    h += '<div class="plans">';
     PLANS.forEach((p, i) => {
       const cls = i === 0 ? "tag" : "tag alt";
       const withPic = p.items.find(x => x.img);
       const pic = withPic
         ? '<div class="pic"><img src="' + withPic.img + '" alt="' + p.label + '"></div>'
         : '<div class="pic"><div class="ph">🍔</div></div>';
-      const extra = p.items.length > 1 ? '<div class="more">' + p.items.length + ' 件<br>组成</div>' : '';
-      h += '<div class="plan" onclick="detail(' + i + ')"><div class="body">'
-        + '<div class="l1"><span class="' + cls + '">' + p.label + '</span>'
-        + '<span class="nm">' + fmt(p.items) + '</span>'
-        + '<span class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></span></div>'
-        + '<div class="cta">👉 点这里看这一单的商品图与营养拆解</div></div>'
-        + pic + extra + '</div>';
+      const extra = p.items.length > 1 ? '<span class="pieces">' + p.items.length + ' 件组成</span>' : '';
+      h += '<div class="plan" onclick="detail(' + i + ')">' + pic
+        + '<div class="body"><div class="top"><span class="' + cls + '">' + p.label + '</span>' + extra + '</div>'
+        + '<div class="nm">' + fmt(p.items) + '</div>'
+        + '<div class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></div>'
+        + '<div class="cta">👉 点开看明细与营养拆解</div></div></div>';
     });
+    h += '</div>';
     h += '<div class="metrics">';
     h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
     h += mrow("🔥 热量执行", f.unknown ? "本单含热量未知单品，不做卡数判断"
