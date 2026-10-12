@@ -131,62 +131,7 @@
   .panel2 { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:13px 16px; margin-top:12px; }
   .ctitle { font-size:15px; font-weight:800; margin-bottom:8px; }
   .ctitle .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:6px; }
-  /* ===== 券卡堆（卡牌滑动 · 浅色背景 · 透视纵深 · 甩动吸附回弹） ===== */
-  .deck {
-    position:relative; height:330px; margin:6px auto 4px; max-width:520px; overflow:hidden;
-    perspective:1400px; touch-action:pan-y; cursor:grab;
-  }
-  .deck.dragging { cursor:grabbing; }
-  .dcard {
-    position:absolute; left:50%; top:0; width:340px; height:236px; margin-left:-170px;
-    border-radius:16px; background:#fff; border:2px solid #1a1a1a; overflow:hidden;
-    transform-origin:50% 120%;
-    box-shadow:0 8px 22px rgba(26,26,26,.14), 0 2px 0 rgba(26,26,26,.1);
-    transition:transform .62s cubic-bezier(.22,1.14,.32,1), opacity .45s ease;
-    will-change:transform,opacity;
-    user-select:none;
-  }
-  .dcard.live { border-color:#DA291C; }
-  .dcard.dim { border-color:#c9b48c; }
-  .dcard .tk-top { display:flex; align-items:center; gap:8px; padding:12px 15px 6px; }
-  .dcard.live .tk-top { background:#FFF3F2; }
-  .dcard.dim .tk-top { background:#FBF7EE; }
-  .dcard .tk-name { font-size:15px; font-weight:800; line-height:1.3; flex:1; }
-  .dcard .flag { flex:0 0 auto; font-size:11px; font-weight:800; border-radius:999px; padding:2px 10px; }
-  .flag.live { background:#4CAF50; color:#fff; }
-  .flag.soon { background:#FFC72C; color:#1a1a1a; }
-  .dcard .tk-price { font-family:var(--f-mono); font-size:34px; font-weight:800;
-    color:#DA291C; padding:6px 15px 2px; line-height:1.05; letter-spacing:-1px; }
-  .dcard .tk-price small { font-size:11.5px; font-weight:600; color:#8a7a5c; margin-left:5px; letter-spacing:0; }
-  .dcard .tk-foot { display:flex; align-items:center; justify-content:space-between; gap:8px;
-    padding:9px 15px 12px; border-top:1px dashed #e2d4b4; margin:9px 0 0; }
-  .dcard .tk-date { font-family:var(--f-mono); font-size:11.5px; color:#8a7a5c; }
-  .dcard .tk-days { font-size:11px; color:#fff; background:#1a1a1a; border-radius:999px; padding:2px 9px; }
-  .dcard .ribbon {
-    position:absolute; right:-1px; top:64px; width:16px; height:16px; border-radius:50%;
-    background:#FFF6E3; border:2px solid #1a1a1a; border-right:none;
-  }
-  .deck .dcard.fly { transition:transform .52s cubic-bezier(.3,.9,.2,1), opacity .52s ease; }
-  /* ===== 战报页底部：套餐券区 ===== */
-  .couponzone { margin-top:16px; border-top:2px solid #1a1a1a; padding-top:12px; }
-  .couponzone.none { font-size:12.5px; color:#7a5c14; background:#FFF9E8;
-    border:1.5px dashed #d9b96a; border-radius:10px; padding:10px 13px; line-height:1.7; }
-  .cz-h { font-family:var(--f-display); font-size:15px; margin-bottom:8px; }
-  .cz-h.sub { font-size:12.5px; color:#8a7a5c; margin-top:12px; }
-  .cz-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
-  .cz { border:2px solid #1a1a1a; border-radius:11px; padding:9px 12px; background:#fff; }
-  .cz.live { border-color:#DA291C; background:#FFF9F8; }
-  .cz.dim { opacity:.7; background:#FBF7EE; border-color:#d9c9a8; }
-  .cz .cz-t { display:flex; align-items:flex-start; gap:7px; justify-content:space-between; }
-  .cz .cz-t b { font-size:13px; line-height:1.35; }
-  .cz .cz-p { font-family:var(--f-mono); font-size:17px; font-weight:800; color:#DA291C; margin-top:3px; }
-  .cz .cz-w { font-size:11.5px; color:#8a7a5c; margin-top:3px; line-height:1.55; }
-  .cz-none { font-size:12.5px; color:#7a5c14; background:#FFF9E8; border:1.5px dashed #d9b96a;
-    border-radius:9px; padding:9px 12px; }
-  .deck-hint { text-align:center; font-size:11.5px; color:#a08a63; margin-top:2px; }
-  .couponnote { margin-top:9px; font-size:12.5px; color:#7a5c14; background:#FFF9E8;
-    border:1.5px solid #FFC72C; border-radius:9px; padding:8px 12px; line-height:1.6; }
-  .deck-hint b { color:#DA291C; }
+  /* ===== 券卡包（翻钱包式） ===== */
   .wallet { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
   .ticket {
     position:relative; border-radius:14px; padding:0; overflow:hidden;
@@ -263,6 +208,32 @@
   .warn { margin-top:14px; background:#FFF3D6; border:1.5px dashed #d9b96a; border-radius:10px;
     padding:10px 14px; font-size:12px; color:#7a5c14; line-height:1.8; }
   .foot { margin-top:16px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
+  /* ===== 战报页券区：套餐在上、券在下 ===== */
+  .couponzone { margin-top:16px; border-top:2px solid #1a1a1a; padding-top:12px; }
+  .cz-h { font-family:var(--f-display); font-size:15px; margin-bottom:8px; }
+  .cz-h .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:8px; }
+  .cz-h.sub { font-size:12.5px; color:#8a7a5c; margin-top:14px; }
+  .cz-for { font-size:12.5px; color:#8a6d3b; margin:9px 0 6px; font-weight:700; }
+  .cz-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
+  .cz { border:2px solid #1a1a1a; border-radius:11px; padding:10px 13px; background:#fff; }
+  .cz.live { border-color:#DA291C; background:#FFF9F8; }
+  .cz.miss { opacity:.7; background:#FBF7EE; border-color:#d9c9a8; }
+  .cz .cz-t { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; }
+  .cz .cz-t b { font-size:13.5px; line-height:1.35; }
+  .cz .cz-p { font-family:var(--f-mono); font-size:17px; font-weight:800; color:#DA291C; margin-top:4px; }
+  .cz .cz-w { font-size:11.5px; color:#8a7a5c; margin-top:4px; line-height:1.55; }
+  .cz-none { font-size:12.5px; color:#7a5c14; background:#FFF9E8; border:1.5px dashed #d9b96a;
+    border-radius:9px; padding:10px 13px; line-height:1.7; }
+  .cz-tip { font-size:11.5px; color:#a08a63; }
+  .cz-after { font-family:var(--f-body); font-size:12px; color:#4CAF50; font-weight:700; margin-left:8px; }
+  .cz-apply { margin-top:9px; }
+  .cz-apply button { font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer;
+    background:#FFC72C; color:#1a1a1a; border:2px solid #1a1a1a; border-radius:999px; padding:6px 16px; }
+  .cz-apply button:hover { background:#1a1a1a; color:#fff; }
+  .cz-miss { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+  .flag { flex:0 0 auto; font-size:10.5px; font-weight:800; border-radius:999px; padding:2px 9px; }
+  .flag.live { background:#4CAF50; color:#fff; }
+  .flag.soon { background:#FFC72C; color:#1a1a1a; }
   .foot a { color:#DA291C; text-decoration:none; }
   @keyframes flash { 0% { background:#FFF9E8; } 100% { background:transparent; } }
   .flash { animation: flash .7s ease-out; }
@@ -300,14 +271,7 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
-    <!-- 我的券 + 门店 -->
-    <div class="panel2">
-      <div class="ctitle">🎟️ 我的优惠券 <span class="csub" id="couponn"></span></div>
-      <div class="deck" id="couponlist"></div>
-      <div class="deck-hint" id="deckhint"></div>
-      <div class="couponnote" id="couponnote" style="display:none"></div>
-    </div>
-
+    <!-- 门店 -->
     <div class="panel2">
       <div class="ctitle">🏪 取餐门店</div>
       <div class="sname">麦当劳福州金洲南路餐厅</div>
@@ -511,10 +475,10 @@ function run() {
     h += mrow("🏃 运动等价物", f.unknown ? "—（热量未知，不换算）" : "慢跑 " + Math.round(f.kcal / 10) + " 分钟 = 游泳 " + Math.round(f.kcal / 8) + " 分钟");
     h += mrow("🧧 省钱心情", savingTip(m, f));
     h += '</div>';
+    h += couponStrip(m, PLANS);
     const remain = Math.max(0, pass - SHOWN.size);
     h += '<div style="text-align:center;margin-top:12px"><button class="again" onclick="more()">🔄 换一批'
       + (remain > 0 ? '（还有 ' + remain + ' 个过闸组合没露过脸）' : '（已全部露完，改预算试试）') + '</button></div>';
-    h += couponStrip(m, PLANS);
     box.innerHTML = h;
   }
   box.innerHTML += '<div class="status">✅ 已按 ¥' + m + " / " + (noCap ? "热量不设限" : k + " kcal")
@@ -575,219 +539,104 @@ document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
   $("m").value = b.dataset.m; $("k").value = b.dataset.k; syncNums();
 });
 $("go").onclick = () => { feedback(); run(); };
-/* ===== 券卡堆：甩动切换 · 顶卡旋转飞出 · 下一张顶上回弹 · 两侧透视 ===== */
-let DECK = [];        // 全部券（今日可用在前）
-let DI = 0;           // 当前顶卡索引
-let DX = 0, DRAG = false, STARTX = 0, MOVED = 0, VEL = 0, LASTX = 0, LASTT = 0;
-
-function deckMarkup(c) {
-  const d1 = String(c.valid).match(/(\d{4}-\d{2}-\d{2})\s*([\d:]+)\s*-\s*(\d{4}-\d{2}-\d{2})\s*([\d:]+)/);
-  const md = s => s.slice(5);
-  const date = d1 ? md(d1[1]) + " " + d1[2].slice(0, 5) + " → " + md(d1[3]) + " " + d1[4].slice(0, 5) : c.valid.slice(0, 24);
-  let days = "";
-  if (c.today_ok && c.start && c.end) {
-    const n = Math.max(0, Math.round((new Date(c.end) - new Date(c.start)) / 86400000) + 1);
-    days = '<span class="tk-days">' + n + ' 天有效</span>';
-  }
-  const flag = c.today_ok ? '<span class="flag live">今日可用</span>'
-    : '<span class="flag soon">' + (c.start ? c.start.slice(5) + " 生效" : "未生效") + '</span>';
-  return '<div class="ribbon"></div><div class="tk-top"><span class="tk-name">' + c.name + '</span>' + flag + '</div>'
-    + '<div class="tk-price">¥' + c.price + '<small>用券价</small></div>'
-    + '<div class="tk-foot"><span class="tk-date">' + date + '</span>' + days + '</div>';
-}
-function renderCoupons() {
-  const live = COUPONS.filter(c => c.today_ok);
-  const soon = COUPONS.filter(c => !c.today_ok);
-  $("couponn").textContent = live.length
-    ? ("今日可用 " + live.length + " 张 / 共 " + COUPONS.length + " 张")
-    : ("今日暂无可用券，共 " + COUPONS.length + " 张");
-  DECK = live.concat(soon);
-  DI = 0;
-  const box = $("couponlist");
-  box.className = "deck";
-  box.innerHTML = DECK.map((c, i) =>
-    '<div class="dcard ' + (c.today_ok ? "live" : "dim") + '" data-i="' + i + '">' + deckMarkup(c) + '</div>'
-  ).join("");
-  $("deckhint").innerHTML = DECK.length > 1
-    ? '共 ' + DECK.length + ' 张 · <b>按住左右甩</b>翻卡，点卡片看这张券能省的账'
-    : "";
-  paint();
-}
-/* 依据索引给每张卡算 transform（透视纵深 + 中间最大） */
-function paint() {
-  const box = $("couponlist");
-  const cards = box.querySelectorAll(".dcard");
-  for (let i = 0; i < cards.length; i++) {
-    const c = cards[i];
-    const d = i - DI;                 // 相对顶卡偏移
-    let t, o = 1;
-    if (d === 0) {                   // 顶卡：跟随手指位移
-      const px = DX;
-      t = "translate3d(" + px + "px," + (Math.abs(px) * 0.12) + "px,0) rotate(" + (px * 0.045) + "deg) scale(1)";
-    } else if (d === 1) {            // 下一张：顶上回弹待命（带一点过冲位）
-      t = "translate3d(0,26px,-160px) scale(.86)";
-    } else if (d === -1) {
-      t = "translate3d(0,-40px,-260px) scale(.76)";
-    } else if (d === 2) {
-      t = "translate3d(0,52px,-300px) scale(.74)";
-    } else if (d > 0) {
-      const k = Math.min(d, 6);
-      t = "translate3d(0," + (52 + k * 26) + "px," + (-300 - k * 60) + "px) scale(" + Math.max(.5, .74 - k * .05) + ")";
-      o = k > 4 ? 0 : 1;
-    } else {
-      const k = Math.min(-d, 5);
-      t = "translate3d(0," + (-40 - k * 34) + "px," + (-260 - k * 70) + "px) scale(" + Math.max(.55, .76 - k * .05) + ")";
-      o = k > 4 ? 0 : 1;
-    }
-    c.style.transform = t;
-    c.style.opacity = o;
-    c.style.zIndex = 100 - Math.abs(d);
-  }
-}
-function topCard() {
-  const c = $("couponlist").querySelector('.dcard[data-i="' + DI + '"]');
-  return c;
-}
-function flyOut(dir) {               // 顶卡旋转飞出
-  const c = topCard();
-  if (!c) return;
-  c.classList.add("fly");
-  c.style.transform = "translate3d(" + (dir * 560) + "px,-120px,-240px) rotate(" + (dir * 38) + "deg) scale(.72)";
-  c.style.opacity = "0";
-}
-function settle(dir) {                // 松手吸附：下一张回弹顶上
-  DI += dir;
-  if (DI >= DECK.length || DI < 0) {
-    DI = Math.max(0, Math.min(DECK.length - 1, DI));
-    DX = 0; paint(); return;
-  }
-  const c = $("couponlist").querySelector('.dcard[data-i="' + DI + '"]');
-  // 过冲：先冲过头再弹回中间
-  c.style.transition = "transform .58s cubic-bezier(.18,1.6,.42,1)";
-  paint();
-  setTimeout(() => { c.style.transition = ""; }, 600);
-}
-function bindDeck() {
-  const box = $("couponlist");
-  box.addEventListener("pointerdown", e => {
-    DRAG = true; STARTX = e.clientX; DX = 0; MOVED = 0; VEL = 0;
-    LASTX = e.clientX; LASTT = performance.now();
-    box.classList.add("dragging");
-    const c = topCard(); if (c) c.style.transition = "none";
-    box.setPointerCapture(e.pointerId);
-  });
-  box.addEventListener("pointermove", e => {
-    if (!DRAG) return;
-    DX = e.clientX - STARTX;
-    MOVED = Math.abs(DX);
-    const now = performance.now(), dt = now - LASTT;
-    if (dt > 0) { VEL = (e.clientX - LASTX) / dt; LASTX = e.clientX; LASTT = now; }
-    paint();
-  });
-  function release() {
-    if (!DRAG) return;
-    DRAG = false;
-    box.classList.remove("dragging");
-    const c = topCard(); if (c) c.style.transition = "";
-    if (MOVED < 6) { DX = 0; paint(); return; }   // 视为点击
-    const dir = (DX < 0 || VEL < -0.35) ? 1 : (DX > 0 || VEL > 0.35) ? -1 : 0;
-    if (dir === 0) { const c2 = topCard(); if (c2) c2.style.transition = "transform .5s cubic-bezier(.2,1.5,.4,1)"; DX = 0; paint(); setTimeout(() => { const c3 = topCard(); if (c3) c3.style.transition = ""; }, 520); return; }
-    flyOut(dir);
-    setTimeout(() => settle(dir), 170);
-    DX = 0;
-  }
-  box.addEventListener("pointerup", release);
-  box.addEventListener("pointercancel", release);
-  box.addEventListener("click", e => {
-    const c = e.target.closest(".dcard");
-    if (!c || MOVED >= 6) return;
-    const i = +c.dataset.i;
-    if (i !== DI) { DI = i; paint(); return; }
-    applyCoupon(DECK[i]);
-  });
-}
-/* ===== 券 × 档位匹配：这张券能不能用在刚配出来的那一单上 ===== */
+/* 券卡包：真实 query-my-coupons 返回，像翻钱包一样看卡 */
+/* ===== 券匹配引擎（战报页：套餐在上、券在下） ===== */
 const COUPON_RULES = [
-  { key: "薯", kw: ["中薯条", "大薯条", "小薯条", "迷你薯条", "薯条", "薯饼", "脆薯饼", "扭扭薯"],
+  { kw: ["中薯条","大薯条","小薯条","迷你薯条","薯条","薯饼","脆薯饼","扭扭薯"],
     why: "券限薯条类，这一单里有薯就能抵" },
-  { key: "小食", kw: ["小食", "鸡块", "鸡翅", "拼盘", "拼", "四宫格", "薯饼", "上校", "脆汁鸡"],
+  { kw: ["小食","鸡块","鸡翅","拼盘","四宫格","薯饼","上校","脆汁鸡"],
     why: "券限小食类，这一单有小食就能抵" },
-  { key: "王牌", kw: ["王牌"], anySmall: true,
-    why: "王牌小食拼券：这一单里有任意小食（薯条/鸡块/派）就能拼进去" },
-  { key: "派", kw: ["派"], why: "券限派类，这一单有派就能抵" },
-  { key: "麦旋风", kw: ["麦旋风", "旋风"], why: "券限麦旋风，这一单有就能抵" },
-  { key: "新地", kw: ["新地"], why: "券限新地，这一单有就能抵" },
-  { key: "圆筒", kw: ["圆筒"], why: "券限圆筒冰淇淋，这一单有就能抵" },
-  { key: "早餐堡", kw: ["麦满分", "猪柳蛋", "火腿扒", "脆鸡扒堡", "芝士蛋堡", "双层原味"],
-    why: "券限早餐组合，正餐时段一般用不上" },
-  { key: "厚松饼", kw: ["松饼", "猪柳蛋"], why: "券限厚松饼猪柳蛋早餐档，早餐时段才有" }
+  { kw: ["派"], why: "券限派类，这一单有派就能抵" },
+  { kw: ["麦旋风","旋风"], why: "券限麦旋风，这一单有就能抵" },
+  { kw: ["新地"], why: "券限新地，这一单有就能抵" },
+  { kw: ["圆筒"], why: "券限圆筒冰淇淋，这一单有就能抵" },
+  { kw: ["麦满分","猪柳蛋","火腿扒","脆鸡扒堡","芝士蛋堡","双层原味","厚松饼","松饼"],
+    why: "券限早餐组合，正餐时段用不上" }
 ];
+const ANY_SMALL = ["薯条","鸡块","鸡翅","派","小食","拼盘","圆筒","新地","麦旋风","脆汁鸡"];
 function matchCoupons(plan) {
-  /* 关键：套餐/1+1 的成分也算数——「酥脆无双套餐(迷你薯条)」里其实有薯条，
-     券能不能用要看真实构成，不能只看套餐名 */
-  const names = plan.items.map(x => x.n + " " + (x.parts || []).map(p => p.n).join(" ")).join(" ");
-  const price = plan.price;
+  /* 套餐成分也算数：酥脆无双套餐里有迷你薯条 → 中薯条券能用 */
+  const names = plan.items.map(function(x){ return x.n + " " + (x.parts||[]).map(function(p){return p.n;}).join(" "); }).join(" ");
   const out = [];
-  for (const c of COUPONS) {
-    let rule = null;
-    for (const r of COUPON_RULES) if (r.kw.some(k => c.name.indexOf(k) >= 0)) { rule = r; break; }
+  for (let ci = 0; ci < COUPONS.length; ci++) {
+    const c = COUPONS[ci];
     let hit = false, why = "";
-    if (rule) {
-      if (rule.anySmall) {
-        const small = ["薯条", "鸡块", "鸡翅", "派", "小食", "拼盘", "圆筒", "新地", "麦旋风"];
-        const f = small.filter(k => names.indexOf(k) >= 0);
-        hit = f.length > 0;
-        why = hit ? "✅ 这一单含「" + f.join("/") + "」，可以拼进小食拼" : "❌ 这一单没有可拼的小食（薯条/鸡块/派）";
-      } else {
-        hit = rule.kw.some(k => names.indexOf(k) >= 0);
+    if (c.name.indexOf("王牌") >= 0) {
+      const f = ANY_SMALL.filter(function(k){ return names.indexOf(k) >= 0; });
+      hit = f.length > 0;
+      why = hit ? "✅ 这一单含「" + f.join("/") + "」，可以拼进小食拼" : "❌ 这一单没有可拼的小食（薯条/鸡块/派）";
+    } else {
+      let rule = null;
+      for (const r of COUPON_RULES) { if (r.kw.some(function(k){ return c.name.indexOf(k) >= 0; })) { rule = r; break; } }
+      if (rule) {
+        hit = rule.kw.some(function(k){ return names.indexOf(k) >= 0; });
         why = hit ? "✅ " + rule.why : "❌ 这一单里没有「" + rule.kw[0] + "」，这张券用不上";
       }
     }
-    const afford = c.price <= price + 0.01;
-    if (hit && afford) out.push({ c: c, why: why, ok: true });
-    else if (hit && !afford) out.push({ c: c, why: "券价 ¥" + c.price + " 比这一单还贵，用了反而不划算", ok: false });
+    const afford = c.price <= plan.price + 0.01;
+    if (hit && afford) out.push({ ci: ci, c: c, why: why, ok: true });
+    else if (hit && !afford) out.push({ ci: ci, c: c, why: "券价 ¥" + c.price + " 比这一单还贵，用了反而不划算", ok: false });
   }
   return out;
 }
-/* 战报页底部：这一单能用的券卡 */
+let PICKED = null;
+function pickCoupon(i) { PICKED = COUPONS[i]; }
 function couponStrip(m, plans) {
-  const hit = [], miss = [];
-  for (const p of plans) for (const r of matchCoupons(p)) { (r.ok ? hit : miss).push(r); }
-  const uniq = a => { const s = new Set(); return a.filter(r => !s.has(r.c.name) && s.add(r.c.name)); };
-  const H = uniq(hit), M = uniq(miss);
-  if (!H.length && !M.length) {
-    return '<div class="couponzone none">🎟️ 你的券都是早餐档 / 指定单品券，' + m + ' 元这个档位的单子里没有能用上的——' +
-      '<b>诚实说：没券可用</b>，这一单按原价算。</div>';
+  const liveN = COUPONS.filter(function(c){ return c.today_ok; }).length;
+  let h = '<div class="couponzone">';
+  h += '<div class="cz-h">🎟️ 配这一单能用的券 <span class="csub">' + liveN + ' 张今日可用 / 共 ' + COUPONS.length + ' 张</span></div>';
+  let anyHit = false;
+  plans.forEach(function(p, i) {
+    const hits = matchCoupons(p).filter(function(r){ return r.ok; });
+    if (!hits.length) return;
+    anyHit = true;
+    h += '<div class="cz-for">给「' + p.label + '」（¥' + p.price.toFixed(1) + '）</div><div class="cz-cards">';
+    hits.forEach(function(r) {
+      const after = Math.max(0, p.price - r.c.price).toFixed(1);
+      h += '<div class="cz live"><div class="cz-t"><b>' + r.c.name + '</b>'
+        + '<span class="flag ' + (r.c.today_ok ? "live" : "soon") + '">' + (r.c.today_ok ? "今日可用" : r.c.start.slice(5) + " 生效") + '</span></div>'
+        + '<div class="cz-p">用券价 ¥' + r.c.price + '<span class="cz-after">用完这单 ¥' + after + '（省 ¥' + (p.price - parseFloat(after)).toFixed(1) + '）</span></div>'
+        + '<div class="cz-w">' + r.why + '</div>'
+        + '<div class="cz-apply"><button onclick="pickCoupon(' + r.ci + '); applyCouponTo(' + i + ')">用在「' + p.label + '」这一单 →</button></div></div>';
+    });
+    h += '</div>';
+  });
+  if (!anyHit) {
+    h += '<div class="cz-none">这几个方案里<b>没有能抵扣的券</b>——不硬凑，按原价算给你。<br><span class="cz-tip">想用上「中薯条买一送一」？把金额调高一些、热卡设「不设限」，就能配出带薯条的组合。</span></div>';
   }
-  let h = '<div class="couponzone"><div class="cz-h">🎟️ 这一单能用的券（' + H.length + ' 张）</div>';
-  if (H.length) {
-    h += '<div class="cz-cards">' + H.map(r => {
-      const c = r.c;
-      const save = c.price;
-      return '<div class="cz live"><div class="cz-t"><b>' + c.name + '</b><span class="flag live">' + (c.today_ok ? "今日可用" : c.start.slice(5) + " 生效") + '</span></div>'
-        + '<div class="cz-p">用券价 ¥' + save + '</div>'
-        + '<div class="cz-w">' + r.why + '</div></div>';
-    }).join("") + '</div>';
-  } else {
-    h += '<div class="cz-none">这一单没有能抵扣的券——<b>不硬凑</b>，按原价算给你。</div>';
-  }
-  if (M.length) {
-    h += '<div class="cz-h sub">这些用不上（说明原因，不藏着）</div><div class="cz-cards dim">'
-      + M.slice(0, 4).map(r => '<div class="cz"><div class="cz-t"><b>' + r.c.name + '</b></div>'
-        + '<div class="cz-w">' + r.why + '</div></div>').join("") + '</div>';
+  const seen = {}, miss = [];
+  plans.forEach(function(p) {
+    matchCoupons(p).forEach(function(r) { if (!r.ok && !seen[r.c.name]) { seen[r.c.name] = 1; miss.push(r); } });
+  });
+  if (miss.length) {
+    h += '<div class="cz-h sub">这些用不上（说清楚原因，不藏着）</div><div class="cz-miss">';
+    h += miss.slice(0, 6).map(function(r) {
+      return '<div class="cz miss"><div class="cz-t"><b>' + r.c.name + '</b></div><div class="cz-w">' + r.why + '</div></div>';
+    }).join("");
+    h += '</div>';
   }
   return h + '</div>';
 }
-function applyCoupon(c) {
-  if (!c) return;
-  show("v2");
-  const note = $("couponnote");
-  if (note) {
-    note.style.display = "block";
-    note.innerHTML = c.today_ok
-      ? "🎟️ 已选券：<b>" + c.name + "</b>（¥" + c.price + " 用券价）——结算时直接抵扣，别忘了在麦当劳 APP 里用掉它"
-      : "📅 这张券 <b>" + c.start.slice(5) + "</b> 才生效（" + c.name + "）——到那天再来用";
-  }
+function applyCouponTo(idx) {
+  const p = PLANS[idx], c = PICKED;
+  if (!p || !c) return;
+  show("v3");
+  const after = Math.max(0, p.price - c.price).toFixed(1);
+  const save = (p.price - parseFloat(after)).toFixed(1);
+  const fi = p.items.filter(function(x){ return x.img; })[0];
+  const parts = p.items.filter(function(x){ return x.parts && x.parts.length; })[0];
+  const inner = fi ? '<img src="' + fi.img + '" alt="">' : '<div class="ph">🍔</div>';
+  const comp = parts ? ("套餐默认构成：" + parts.parts.map(function(q){ return q.n + "（" + q.k + " kcal）"; }).join(" + "))
+                     : p.items.map(function(x){ return x.n; }).join(" + ");
+  $("v3").innerHTML = "<button class='back' onclick='goV(2)'>← 返回战报</button>"
+    + '<div class="dhead"><span class="t">🍔 ' + p.label + ' · 用券后</span><span class="s">¥' + after + " · " + p.kcal + ' kcal</span></div>'
+    + '<div class="items"><div class="ic">' + inner
+    + '<div class="info"><div class="nm2">' + fmt(p.items) + '</div>'
+    + '<div class="code">原价 ¥' + p.price + ' →券后 <b style="color:#4CAF50">¥' + after + '（省 ¥' + save + '）</b></div>'
+    + '<div class="mini">' + comp + '</div>'
+    + '</div><div class="right">¥' + after + "<i>" + p.kcal + " kcal</i></div></div></div>"
+    + '<div class="nut"><h3>🎟️ 用的券：' + c.name + '</h3><div class="note" style="margin-top:0">'
+    + '结算时在麦当劳 APP 里选这张券即可抵扣 <b>¥' + c.price + '</b>。<b>本工具只报价不下单</b>，请自行确认后下单。</div></div>';
 }
 /* 省钱心情：优先用今日可用券算真省额 */
 function savingTip(m, f) {
@@ -817,8 +666,6 @@ const q = new URLSearchParams(location.search);
 if (q.get("m")) $("m").value = q.get("m");
 if (q.get("k")) $("k").value = q.get("k");
 syncNums();
-renderCoupons();
-bindDeck();
 if (q.get("view")) {
   const v = q.get("view");
   if (v === "cat") { run(); show("v4"); }
