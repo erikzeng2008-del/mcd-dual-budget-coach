@@ -53,6 +53,8 @@
   .again { font-family:inherit; font-size:14px; font-weight:800; cursor:pointer;
     background:#FFC72C; color:#1a1a1a; border:2px solid #1a1a1a; border-radius:999px; padding:9px 22px; }
   .again:hover { background:#1a1a1a; color:#fff; }
+  .pending { margin-top:10px; text-align:center; font-size:12.5px; color:#8a6d3b;
+    background:#FFF3D6; border:1.5px dashed #d9b96a; border-radius:8px; padding:7px 12px; }
 
   .back { font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; background:#fff;
     border:2px solid #1a1a1a; border-radius:999px; padding:7px 16px; margin-bottom:12px; }
@@ -114,6 +116,7 @@
           <input type="range" id="k" min="200" max="999" step="10" value="600"></div>
       </div>
       <button class="go" id="go">配一顿 →</button>
+      <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
   </div>
 
@@ -287,20 +290,24 @@ function feedback() {
   window.__ft = setTimeout(() => { g.classList.remove("done"); g.textContent = "配一顿 →"; }, 900);
 }
 document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
-  $("m").value = b.dataset.m; $("k").value = b.dataset.k; feedback(); run();
+  $("m").value = b.dataset.m; $("k").value = b.dataset.k; syncNums();
 });
 $("go").onclick = () => { feedback(); run(); };
-/* 滑块拖动时只更新数字，松开手才出战报——第一页始终是输入页 */
-$("m").oninput = () => { $("mv").textContent = $("m").value; };
-$("k").oninput = () => { $("kv").textContent = $("k").value >= 900 ? "不设限" : $("k").value; };
-$("m").onchange = run;
-$("k").onchange = run;
+/* 滑块与预设一律只改数字，绝不自动跳转——只有点「配一顿」/「换一批」才出结果 */
+function syncNums() {
+  $("mv").textContent = $("m").value;
+  $("kv").textContent = $("k").value >= 900 ? "不设限" : $("k").value;
+  $("pending").textContent = "已设定：¥" + $("m").value + " / " + ($("k").value >= 900 ? "热量不设限" : $("k").value + " kcal") + " —— 点「配一顿」出方案";
+}
+$("m").oninput = syncNums;
+$("k").oninput = syncNums;
+$("m").onchange = syncNums;
+$("k").onchange = syncNums;
 /* 支持 ?m=30&k=600&view=detail 直接进入某状态（截图/分享用），默认停在第一页 */
 const q = new URLSearchParams(location.search);
 if (q.get("m")) $("m").value = q.get("m");
 if (q.get("k")) $("k").value = q.get("k");
-$("mv").textContent = $("m").value;
-$("kv").textContent = $("k").value >= 900 ? "不设限" : $("k").value;
+syncNums();
 if (q.get("view")) { run(); if (q.get("view") === "detail") detail(0); }
 </script>
 </body>
