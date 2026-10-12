@@ -85,8 +85,10 @@
     transition:transform .08s ease, box-shadow .08s ease; }
   .plan:hover { transform:translateY(-3px); box-shadow:3px 3px 0 #FFC72C; }
   .plan:active { transform:translateY(-1px) scale(.995); }
-  .plan .pic { width:100%; height:138px; border-bottom:2px solid #1a1a1a; background:#fff; }
-  .plan .pic img { width:100%; height:100%; object-fit:cover; display:block; background:#fff; }
+.plan .pic { width:100%; height:160px; border-bottom:2px solid #1a1a1a; background:#fff;
+    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.plan .pic img { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain;
+    display:block; background:#fff; }
   .plan .pic .ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     font-size:38px; background:#FFFBF0; }
   .plan .body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:7px; flex:1; }
@@ -102,8 +104,9 @@
   .cat .ci { background:#fff; border:2px solid #1a1a1a; border-radius:12px; overflow:hidden; cursor:pointer;
     transition:transform .08s ease, box-shadow .08s ease; }
   .cat .ci:hover { transform:translateY(-2px); box-shadow:3px 3px 0 #FFC72C; }
-  .cat .ci img { width:100%; height:104px; object-fit:cover; display:block; background:#fff; }
-  .cat .ci .ph { width:100%; height:104px; display:flex; align-items:center; justify-content:center; font-size:30px; background:#FFFBF0; }
+.cat .ci img { max-width:100%; max-height:124px; width:auto; height:auto; object-fit:contain;
+    display:block; margin:0 auto; background:#fff; }
+.cat .ci .ph { width:100%; height:124px; display:flex; align-items:center; justify-content:center; font-size:30px; background:#FFFBF0; }
   .cat .ci .b { padding:8px 10px 10px; }
   .cat .ci .nm3 { font-size:13.5px; font-weight:700; line-height:1.35; min-height:36px; }
   .cat .ci .pv { font-family:Consolas,monospace; font-weight:800; color:#DA291C; margin-top:4px; font-size:14px; }
@@ -209,6 +212,14 @@
     padding:10px 14px; font-size:12px; color:#7a5c14; line-height:1.8; }
   .foot { margin-top:16px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
   /* ===== 战报页券区：套餐在上、券在下 ===== */
+  .plan .cta2 { font-size:11px; color:#8a7a5c; font-weight:700; margin-top:3px; }
+  .plan .cta2:hover { color:#DA291C; }
+  .poster { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:10px; }
+  .poster img { width:100%; display:block; border-radius:8px; }
+  .dlbtn { display:inline-block; font-family:inherit; font-size:13.5px; font-weight:800;
+    background:#FFC72C; color:#1a1a1a; border:2px solid #1a1a1a; border-radius:999px;
+    padding:9px 24px; text-decoration:none; }
+  .dlbtn:hover { background:#1a1a1a; color:#fff; }
   .couponzone { margin-top:16px; border-top:2px solid #1a1a1a; padding-top:12px; }
   .cz-h { font-family:var(--f-display); font-size:15px; margin-bottom:8px; }
   .cz-h .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:8px; }
@@ -465,7 +476,8 @@ function run() {
         + '<div class="body"><div class="top"><span class="' + cls + '">' + p.label + '</span>' + extra + '</div>'
         + '<div class="nm">' + fmt(p.items) + '</div>'
         + '<div class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></div>'
-        + '<div class="cta">👉 点开看明细与营养拆解</div></div></div>';
+        + '<div class="cta">👉 点开看明细与营养拆解</div>'
+        + '<div class="cta2" onclick="event.stopPropagation(); showPoster(' + i + ')">🖼 保存海报（文字已嵌图）</div></div></div>';
     });
     h += '</div>';
     h += '<div class="metrics">';
@@ -540,7 +552,23 @@ document.querySelectorAll(".presets button").forEach(b => b.onclick = () => {
 });
 $("go").onclick = () => { feedback(); run(); };
 /* 券卡包：真实 query-my-coupons 返回，像翻钱包一样看卡 */
-/* ===== 券匹配引擎（战报页：套餐在上、券在下） ===== */
+/* 海报：文字已烧录进图，可直接保存发朋友圈 */
+const POSTERS = ["demo-assets/plan-1.jpg", "demo-assets/plan-2.jpg", "demo-assets/plan-3.jpg"];
+function showPoster(i) {
+  const src = POSTERS[i % POSTERS.length];
+  const p = PLANS[i];
+  show("v3");
+  $("v3").innerHTML = "<button class='back' onclick='goV(2)'>← 返回战报</button>"
+    + '<div class="rep-title">🖼 方案海报 · 文字已嵌进图片</div>'
+    + '<div class="rep-meta">' + p.label + ' · ' + fmt(p.items) + ' · ¥' + p.price.toFixed(1)
+    + ' · ' + p.kcal + ' kcal　—— 这是能直接发朋友圈/群里的一张图</div>'
+    + '<div class="poster"><img src="' + src + '" alt="方案海报"></div>'
+    + '<div style="text-align:center;margin-top:12px"><a class="dlbtn" download="'
+    + p.label + '-¥' + p.price.toFixed(1) + '.jpg" href="' + src + '">⬇ 下载这张海报</a></div>'
+    + '<div class="cz-none" style="margin-top:12px">海报里的文字（方案名/价格/热量/券后价）是<'
+    + 'b>烧录进图片的</b>，不是叠在上面的图层——所以截图、转发、压缩都不会糊。</div>';
+}
+/* 券匹配引擎（战报页：套餐在上、券在下） */
 const COUPON_RULES = [
   { kw: ["中薯条","大薯条","小薯条","迷你薯条","薯条","薯饼","脆薯饼","扭扭薯"],
     why: "券限薯条类，这一单里有薯就能抵" },
