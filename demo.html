@@ -14,6 +14,22 @@
   .top p { font-size:12.5px; color:#8a6d3b; margin-top:6px; line-height:1.7; }
   .hide { display:none; }
 
+  /* 常驻 TAB 导航 */
+  .tabs { display:flex; gap:8px; justify-content:center; margin:14px 0 18px; }
+  .tabs .tab {
+    font-family:inherit; font-size:13px; font-weight:700; cursor:pointer;
+    background:#fff; border:2px solid #1a1a1a; color:#1a1a1a;
+    border-radius:999px; padding:7px 18px; display:flex; align-items:center; gap:6px;
+  }
+  .tabs .tab .n {
+    width:19px; height:19px; border-radius:50%; background:#1a1a1a; color:#fff;
+    font-size:11.5px; display:flex; align-items:center; justify-content:center;
+  }
+  .tabs .tab:hover { background:#FFF3D6; }
+  .tabs .tab.on { background:#DA291C; color:#fff; border-color:#8f1a12; }
+  .tabs .tab.on .n { background:#FFC72C; color:#1a1a1a; }
+  .tabs .tab.off { opacity:.4; cursor:not-allowed; }
+
   .presets { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 16px; }
   .presets button { font-family:inherit; font-size:12.5px; cursor:pointer; background:#fff;
     border:1.5px solid #DA291C; color:#DA291C; padding:6px 14px; border-radius:999px; }
@@ -99,6 +115,12 @@
   <div class="top">
     <h1>🍔 麦门双预算军师 · <span>现场试吃</span></h1>
     <p>说得出「多少钱 + 多少卡」，它就配得出三个能直接下单的组合——点任意方案看<b>商品图与营养拆解</b>。<br>数据为 2026-10-11 15:58:22 真机实测快照。</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-v="v1"><span class="n">1</span>预算设定</button>
+    <button class="tab off" data-v="v2" id="tab2"><span class="n">2</span>战报</button>
+    <button class="tab off" data-v="v3" id="tab3"><span class="n">3</span>明细与营养</button>
   </div>
 
   <div id="v1">
@@ -195,8 +217,26 @@ const mrow = (a, b) => '<div class="mrow"><span>' + a + '</span><b class="m">' +
 let RUNS = 0;
 function show(id) {
   ["v1", "v2", "v3"].forEach(x => $(x).classList.toggle("hide", x !== id));
+  document.querySelectorAll(".tabs .tab").forEach(t => {
+    t.classList.toggle("on", t.dataset.v === id);
+  });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+/* 数字版跳转：避免 HTML 属性里嵌套引号把 JS 字符串提前闭合 */
+function goV(n) {
+  const id = n === 1 ? "v1" : n === 2 ? "v2" : "v3";
+  if (id !== "v1" && !PLANS.length) { syncNums(); show("v1"); return; }
+  show(id);
+}
+/* TAB 点击：战报/明细在没有数据时不给跳 */
+document.querySelectorAll(".tabs .tab").forEach(t => {
+  t.onclick = () => {
+    const v = t.dataset.v;
+    if (v === "v2" && !PLANS.length) { syncNums(); show("v1"); return; }
+    if (v === "v3" && !PLANS.length) { syncNums(); show("v1"); return; }
+    show(v);
+  };
+});
 function run() {
   const m = +$("m").value, k = +$("k").value;
   const key = m + "/" + k;
@@ -215,7 +255,8 @@ function run() {
   } else {
     const f = PLANS[0];
     const left = (m - f.price).toFixed(1);
-    let h = '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (noCap ? "热量不设限" : k + "kcal") + '</div>';
+    let h = "<button class='back' onclick='goV(1)'>← 改预算</button>";
+    h += '<div class="rep-title">🍔 麦门双预算战报 · ' + m + '元/' + (noCap ? "热量不设限" : k + "kcal") + '</div>';
     h += '<div class="rep-meta">门店：麦当劳福州金洲南路餐厅 · 数据快照 2026-10-11 15:58:22 · 点任意方案进明细页</div>';
     if (PLANS.length < 3) h += '<div class="thin">⚠️ 预算偏紧，只配出 ' + PLANS.length + ' 个过闸方案——诚实不凑数。</div>';
     PLANS.forEach((p, i) => {
@@ -239,6 +280,8 @@ function run() {
   }
   box.innerHTML += '<div class="status">✅ 已按 ¥' + m + " / " + (noCap ? "热量不设限" : k + " kcal")
     + " 配餐 · 本地枚举 " + COMBOS.length.toLocaleString() + " 个组合，过闸 " + pass + " 个 · 耗时 " + ms + " ms · 第 " + RUNS + " 次</div>";
+  $("tab2").classList.remove("off");
+  $("tab3").classList.remove("off");
   show("v2");
   box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash");
 }
@@ -253,7 +296,7 @@ function detail(i) {
   if (!p) return;
   const nut = {};
   ["kj", "pr", "f", "c", "na", "ca"].forEach(kk => nut[kk] = sum(p.items, x => x[kk] || 0));
-  let h = '<button class="back" onclick="show(\'v2\')">← 返回战报</button>';
+  let h = "<button class='back' onclick='goV(2)'>← 返回战报</button> <button class='back' onclick='goV(1)' style='margin-left:6px'>← 改预算</button>";
   h += '<div class="dhead"><span class="t">🍔 ' + p.label + '明细</span><span class="s">¥' + money(p.price) + " · " + p.kcal + " kcal</span></div>";
   h += '<div class="items">';
   p.items.forEach(x => {
