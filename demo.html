@@ -70,7 +70,7 @@
   .fld label { font-size:13px; font-weight:700; display:block; margin-bottom:8px; }
   .fld label i { font-style:normal; color:#9a8557; font-weight:400; font-size:12px; }
   .fld .val { font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:15px; }
-  input[type=range] { width:100%; accent-color:#DA291C; }
+  input[type=range] { width:100%; accent-color:#DA291C; height:30px; cursor:pointer; }
   .go { margin-top:14px; width:100%; font-family:inherit; font-size:17px; font-weight:800;
     background:#DA291C; color:#fff; border:none; border-radius:10px; padding:12px; cursor:pointer; }
   .go:hover { background:#b32219; }
@@ -270,13 +270,14 @@
       <button data-m="25" data-k="900">25 块 · 不限卡</button>
       <button data-m="40" data-k="500">500 卡 · 健身餐</button>
       <button data-m="20" data-k="900">20 块 · 紧预算</button>
+      <button data-m="80" data-k="900">80 块 · 不限卡（大餐）</button>
     </div>
     <div class="panel">
       <div class="fields">
         <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
-          <input type="range" id="m" min="10" max="60" step="1" value="30"></div>
+          <input type="range" id="m" min="10" max="100" step="1" value="30"></div>
         <div class="fld"><label>热量预算 <i>kcal，≥900 即不设限</i> · <span class="val" id="kv">600</span></label>
-          <input type="range" id="k" min="200" max="999" step="10" value="600"></div>
+          <input type="range" id="k" min="200" max="2000" step="10" value="600"></div>
       </div>
       <button class="go" id="go">配一顿 →</button>
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
