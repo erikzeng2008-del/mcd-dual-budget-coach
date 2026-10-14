@@ -60,6 +60,12 @@
   .tabs .tab.off { opacity:.4; cursor:not-allowed; }
 
   .presets { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 16px; }
+.modes { text-align:center; margin:-8px 0 14px; }
+  .modechip { font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer;
+    background:#fff; color:#1a1a1a; border:2px solid #1a1a1a; border-radius:999px; padding:7px 18px;
+    transition:background .15s ease; }
+  .modechip:hover { background:#FFF3D6; }
+  .modechip.on { background:#DA291C; color:#fff; border-color:#DA291C; }
   .presets button { font-family:inherit; font-size:12.5px; cursor:pointer; background:#fff;
     border:1.5px solid #DA291C; color:#DA291C; padding:6px 14px; border-radius:999px; }
   .presets button:hover { background:#DA291C; color:#fff; }
@@ -272,6 +278,9 @@
       <button data-m="20" data-k="900">20 块 · 紧预算</button>
       <button data-m="80" data-k="900">80 块 · 不限卡（大餐）</button>
     </div>
+    <div class="modes">
+      <button class="modechip" id="pmode" onclick="toggleProtein()">💪 蛋白模式（第三道闸门 ≥30g）</button>
+    </div>
     <div class="panel">
       <div class="fields">
         <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
@@ -334,9 +343,13 @@ const COMBOS = (() => {
 let PLANS = [];
 let SHOWN = new Set();
 
-function pick(moneyCap, kcalCap) {
+let PMIN = 0;   /* 蛋白下限(g)，0=不启用 —— 第三道闸门 */
+function pick(moneyCap, kcalCap, proteinMin) {
+  const pmin = proteinMin || 0;
   const noCap = kcalCap >= 900;
-  const pass = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap && (noCap || (!c.some(x => x.u) && sum(c, x => x.k) <= kcalCap)));
+  const pass = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap
+    && (!pmin || sum(c, x => x.pr) >= pmin)
+    && (noCap || (!c.some(x => x.u) && sum(c, x => x.k) <= kcalCap)));
   if (!pass.length) return [];
   const seen = new Set(SHOWN), res = [];
   const floor = noCap ? 0 : Math.max(250, Math.round(kcalCap * 0.55));
@@ -352,7 +365,7 @@ function pick(moneyCap, kcalCap) {
       const kk = c.map(x => x.n).sort().join("|");
       if (seen.has(kk)) continue;
       seen.add(kk);
-      res.push({ label, items: c, price: sum(c, x => x.p), kcal: sum(c, x => x.k), na: sum(c, x => x.na), unknown: c.some(x => x.u) });
+      res.push({ label, items: c, price: sum(c, x => x.p), kcal: sum(c, x => x.k), na: sum(c, x => x.na), pr: sum(c, x => x.pr), unknown: c.some(x => x.u) });
       got = true;
       break;
     }
@@ -362,11 +375,11 @@ function pick(moneyCap, kcalCap) {
   if (noCap) {
     if (!res.some(r => r.label === "最扎实")) {
       const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k));
-      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.splice(1, 0, { label: "最扎实", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), unknown: rest[0].some(x => x.u) }); }
+      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.splice(1, 0, { label: "最扎实", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), pr: sum(rest[0], x => x.pr), unknown: rest[0].some(x => x.u) }); }
     }
     if (!res.some(r => r.label === "最均衡")) {
       const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => (sum(b, x => x.pr) - sum(a, x => x.pr)));
-      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.push({ label: "最均衡", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), unknown: rest[0].some(x => x.u) }); }
+      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.push({ label: "最均衡", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), pr: sum(rest[0], x => x.pr), unknown: rest[0].some(x => x.u) }); }
     }
   }
   res.forEach(r => SHOWN.add(r.items.map(x => x.n).sort().join("|")));
@@ -443,21 +456,32 @@ document.querySelectorAll(".tabs .tab").forEach(t => {
     show(v);
   };
 });
+function toggleProtein() {
+  PMIN = PMIN ? 0 : 30;
+  const b = $("pmode");
+  b.className = "modechip" + (PMIN ? " on" : "");
+  b.textContent = PMIN ? "💪 蛋白模式 · 已开启（≥30g）" : "💪 蛋白模式（第三道闸门 ≥30g）";
+  $("pending").textContent = PMIN
+    ? "已开启蛋白模式：只保留蛋白 ≥30g 的组合 —— 点「配一顿」出方案"
+    : "拖动滑块或点上方场景设定预算，点「配一顿」出方案";
+}
 function run() {
   const m = +$("m").value, k = +$("k").value;
   const key = m + "/" + k;
   if (window.__lastKey !== key) { SHOWN = new Set(); window.__lastKey = key; }
   $("mv").textContent = m; $("kv").textContent = k >= 900 ? "不设限" : k;
   const t0 = performance.now();
-  PLANS = pick(m, k);
+  PLANS = pick(m, k, PMIN);
   const ms = Math.max(1, Math.round(performance.now() - t0));
   RUNS++;
   const box = $("v2");
   const noCap = k >= 900;
-  const pass = COMBOS.filter(c => sum(c, x => x.p) <= m && (noCap || (!c.some(x => x.u) && sum(c, x => x.k) <= k))).length;
+  const pass = COMBOS.filter(c => sum(c, x => x.p) <= m
+    && (!PMIN || sum(c, x => x.pr) >= PMIN)
+    && (noCap || (!c.some(x => x.u) && sum(c, x => x.k) <= k))).length;
   if (!PLANS.length) {
     box.innerHTML = '<div class="rep-title">😵 配不出来</div><div class="rep-meta">' + m + ' 元 / '
-      + (noCap ? "不限卡" : k + " 卡") + ' 低于快照菜单里最低可售组合——诚实说：加钱或放宽卡数。</div>';
+      + (noCap ? "不限卡" : k + " 卡") + ' 配不出来——诚实说：' + (PMIN ? '蛋白 ≥' + PMIN + 'g 太严，先降蛋白下限、' : '') + '加钱或放宽卡数。</div>';
   } else {
     const f = PLANS[0];
     const left = (m - f.price).toFixed(1);
@@ -485,6 +509,7 @@ function run() {
     h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
     h += mrow("🔥 热量执行", f.unknown ? "本单含热量未知单品，不做卡数判断"
       : f.kcal + " / " + (noCap ? "不设限" : k) + " kcal · 剩 " + (noCap ? "—" : k - f.kcal));
+    if (PMIN) h += mrow("💪 蛋白执行", f.pr.toFixed(1) + " g / ≥" + PMIN + " g 下限 · " + (f.pr >= PMIN ? "✅ 达标" : "❌ 未达标"));
     h += mrow("🧂 钠摄入", f.unknown ? "本单含未知单品，钠合计不完整"
       : f.na + " mg / 每日参考 2000 mg · 占 " + Math.round(f.na / 2000 * 100) + "% 每日上限");
     h += mrow("🏃 运动等价物", f.unknown ? "—（热量未知，不换算）" : "慢跑 " + Math.round(f.kcal / 10) + " 分钟 = 游泳 " + Math.round(f.kcal / 8) + " 分钟");

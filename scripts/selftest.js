@@ -62,6 +62,16 @@
   var badAfford = overprice.filter(function (r) { return r.ok && r.c.price > 7.01; });
   ok("券价高于方案价 → 不判定为可用", badAfford.length === 0, "越界 " + badAfford.length);
 
+  /* ── 6b. 蛋白模式（第三道闸门） ── */
+  var pPlans = pick(80, 999, 30);
+  ok("蛋白模式(80元/≥30g) 能配出方案", pPlans.length > 0, "实际 " + pPlans.length + " 个");
+  var underP = pPlans.filter(function (p) { return p.pr < 30 && !p.unknown; });
+  ok("蛋白模式：方案蛋白全部 ≥30g", underP.length === 0, underP.map(function (p) { return p.pr.toFixed(1); }).join(","));
+  var strict = pick(30, 600, 60);
+  var strictBad = strict.filter(function (p) { return p.pr < 60 && !p.unknown; });
+  ok("蛋白下限 60g 极严 → 不返回低于下限的方案", strictBad.length === 0, "返回 " + strict.length + " 个，违规 " + strictBad.length);
+  ok("方案携带 pr 合计字段", pPlans.length > 0 && typeof pPlans[0].pr === "number", pPlans[0] ? pPlans[0].pr.toFixed(1) + "g" : "-");
+
   /* ── 7. 未知热量单品处理 ── */
   var unk = DATA.filter(function (x) { return x.u; }).length;
   ok("未知热量单品在 25~45 之间", unk >= 25 && unk <= 45, "实际 " + unk);
