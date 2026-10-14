@@ -309,6 +309,15 @@
   @keyframes flash { 0% { background:#FFF9E8; } 100% { background:transparent; } }
   .flash { animation: flash .7s ease-out; }
 
+  /* ===== 方案卡：横向布局（图左信息右，放在最后确保覆盖） ===== */
+  .plans { grid-template-columns:1fr; gap:14px; }
+  .plan { display:grid; grid-template-columns:minmax(0, 440px) 1fr; }
+  .plan .pic { width:auto; height:auto; min-height:300px; border-bottom:none;
+    border-right:2px solid #1a1a1a; }
+  .plan .body { justify-content:center; gap:9px; padding:16px 20px; }
+  .plan .nm { font-size:15.5px; }
+  .plan .pr { font-size:19px; }
+
   /* ===== 响应式（首次补齐：手机 ≤620px） ===== */
   @media (max-width: 620px) {
     body { padding:16px 12px 40px; }
@@ -320,7 +329,9 @@
     .presets { gap:6px; }
     .presets button { font-size:12px; padding:6px 11px; }
     .plans { grid-template-columns:1fr; gap:10px; }
-    .plan .pic { height:154px; }
+    .plan { grid-template-columns:1fr; }
+    .plan .pic { height:210px; min-height:0; border-right:none;
+      border-bottom:2px solid #1a1a1a; }
     .cat { grid-template-columns:repeat(2,1fr); }
     .cz-cards, .cz-miss { grid-template-columns:1fr; }
     .fields { gap:14px; }
@@ -596,8 +607,7 @@ function comboImg(items, cb) {
   function draw() {
     const valid = imgs.filter(Boolean);
     if (!valid.length) { cb(null); return; }
-    const W = 560, H = 300;
-    const avail = W - 56, baseY = H * 0.87, overlap = 16;
+    const W = 840, H = 560;
     const cv = document.createElement("canvas");
     cv.width = W; cv.height = H;
     const ctx = cv.getContext("2d");
@@ -605,30 +615,36 @@ function comboImg(items, cb) {
     g.addColorStop(0, "#FFFDF6"); g.addColorStop(1, "#FFF1D6");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const n = valid.length;
-    const metas = valid.map(function (im, i) {
-      const h = (n === 1) ? H * 0.78 : (i === 0 ? H * 0.72 : H * 0.50);
-      return { im: im, h: h, w: im.width * (h / im.height) };
+    const M = 26;                 /* 边距 */
+    const avail = W - M * 2;
+    const baseY = H * 0.94;       /* 统一地平线：都「站稳」 */
+    const OVER = 0.34;            /* 相邻重叠比例（紧凑不散，重叠越大单件越大） */
+    /* 主件略大（1.16×），其余等高；先给一个初值再按宽度反解缩放 */
+    const rel = valid.map(function (im, i) { return i === 0 && n > 1 ? 1.16 : 1.0; });
+    let metas = valid.map(function (im, i) {
+      const h0 = H * 0.66 * rel[i];
+      return { im: im, h: h0, w: im.width * (h0 / im.height) };
     });
-    let tw = metas.reduce(function (a, m) { return a + m.w; }, 0) - overlap * (n - 1);
-    if (tw > avail) {
-      const k = avail / tw;
-      metas.forEach(function (m) { m.h *= k; m.w *= k; });
-      tw = avail;
-    }
-    /* 站位：主件最右（最显眼），其余向左依次排，底部对齐「站稳」 */
+    let tw = function () {
+      return metas.reduce(function (a, m) { return a + m.w; }, 0)
+        - metas.slice(1).reduce(function (a, m) { return a + m.w * OVER; }, 0);
+    };
+    let k = Math.min(avail / tw(), (H * 0.90) / Math.max.apply(null, metas.map(function (m) { return m.h; })));
+    metas.forEach(function (m) { m.h *= k; m.w *= k; });
+    /* 居中横排：主件放最右（主角位），其余依次向左 */
     const seq = n > 1 ? metas.slice().reverse() : metas;
-    let x = (W - tw) / 2;
+    let x = (W - tw()) / 2;
     seq.forEach(function (m) {
       const y = baseY - m.h;
       ctx.save();
       ctx.shadowColor = "rgba(140,100,40,0.25)";
-      ctx.shadowBlur = 13;
-      ctx.shadowOffsetY = 6;
+      ctx.shadowBlur = 22;
+      ctx.shadowOffsetY = 10;
       ctx.drawImage(m.im, x, y, m.w, m.h);
       ctx.restore();
-      x += m.w - overlap;
+      x += m.w * (1 - OVER);
     });
-    cb(cv.toDataURL("image/jpeg", 0.87));
+    cb(cv.toDataURL("image/jpeg", 0.88));
   }
 }
 function chatBattle(m, k, pmin, plans, isMore) {
