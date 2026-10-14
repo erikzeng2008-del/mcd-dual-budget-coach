@@ -160,6 +160,38 @@
        return (CUTOUTS[x.n] || "").indexOf("data:image/png;base64,") === 0;
      }), "抽查通过");
 
+  /* ── 15. 合成版式不变量（不出画 / 无重度遮挡 / 主件最大） ── */
+  var WC = 840;
+  var chkCases = [
+    [[300, 225, 30]],
+    [[300, 225, 30], [300, 225, 20]],
+    [[300, 225, 30], [300, 225, 20], [220, 300, 15]],
+    [[300, 225, 30], [300, 200, 20], [220, 300, 15], [300, 180, 10]],
+    [[120, 300, 30], [300, 225, 20], [300, 225, 10]]
+  ];
+  var bad = 0, badD = [];
+  chkCases.forEach(function (cs, ci) {
+    var L = layoutCombo(cs.map(function (x) { return { im: { width: x[0], height: x[1] }, price: x[2] }; }), WC, 560);
+    L.forEach(function (m) {
+      if (m.x < 0 || m.x + m.w > WC) { bad++; badD.push("c" + ci + "出画"); }
+      var cov = 0;
+      L.forEach(function (o) {
+        if (o.base > m.base) {
+          var ox = Math.max(0, Math.min(m.x + m.w, o.x + o.w) - Math.max(m.x, o.x));
+          var oy = Math.max(0, Math.min(m.y + m.h, o.y + o.h) - Math.max(m.y, o.y));
+          cov += ox * oy;
+        }
+      });
+      if (1 - cov / (m.w * m.h) < 0.28) { bad++; badD.push("c" + ci + "遮挡"); }
+    });
+  });
+  ok("版式不变量：5 组形状不出画、无重度遮挡", bad === 0, badD.join(",") || "全部合规");
+  var Lh = layoutCombo([[300, 225, 30], [300, 225, 20], [300, 225, 15]].map(function (x) {
+    return { im: { width: x[0], height: x[1] }, price: x[2] };
+  }), WC, 560);
+  ok("主件最大（最贵者面积第一）", Lh[0].w * Lh[0].h > Lh[1].w * Lh[1].h && Lh[0].w * Lh[0].h > Lh[2].w * Lh[2].h,
+     "主" + Math.round(Lh[0].w * Lh[0].h) + " vs 次" + Math.round(Lh[1].w * Lh[1].h) + "/" + Math.round(Lh[2].w * Lh[2].h));
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");

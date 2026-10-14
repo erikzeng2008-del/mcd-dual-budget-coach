@@ -592,6 +592,33 @@ function parseChat(t) {
 /* ===== 套餐合成图：把抠好的单品编排成「一整张套餐照」（PS 式合成，运行时生成） ===== */
 const CUTIMG = {};
 let PICGEN = 0;
+/* 版式计算（纯函数，可单测）：主件=最贵一件居中偏后；配角按剩余空间自适应，绝不出画 */
+function layoutCombo(ranked, W, H) {
+  W = W || 840; H = H || 560;
+  const M = 16;
+  const n = Math.min(ranked.length, 4);
+  const HERO_H = { 1: 0.88, 2: 0.76, 3: 0.62, 4: 0.58 }[n] || 0.58;
+  const SIDE_H = { 2: [0.56], 3: [0.46, 0.44], 4: [0.44, 0.42, 0.30] }[n] || [];
+  const ar = function (im) { return im.width / im.height; };
+  const hero = ranked[0];
+  let heroH = H * HERO_H, heroW = heroH * ar(hero.im);
+  if (heroW > W - M * 2) { const k2 = (W - M * 2) / heroW; heroW *= k2; heroH *= k2; }
+  const placed = [{ im: hero.im, x: (W - heroW) / 2, y: H * 0.90 - heroH, w: heroW, h: heroH, base: 0.90 }];
+  const sideSpace = Math.max((W - heroW) / 2 - M, 70);
+  const sideCap = sideSpace / 0.66;
+  const sn = Math.min(ranked.length - 1, SIDE_H.length);
+  for (let i = 0; i < sn; i++) {
+    const v = ranked[i + 1];
+    let h = H * SIDE_H[i], w = h * ar(v.im);
+    if (w > sideCap) { const k2 = sideCap / w; w *= k2; h *= k2; }
+    const back = (i >= 2);
+    const left = (i % 2 === 0);
+    const base = back ? 0.60 : (0.99 - (i === 1 ? 0 : 0.01));
+    const x = back ? Math.max(M, W * 0.18 - w / 2) : (left ? M : W - M - w);
+    placed.push({ im: v.im, x: x, y: H * base - h, w: w, h: h, base: base });
+  }
+  return placed;
+}
 function comboImg(items, cb) {
   const pairs = items.map(function (x) { return { src: CUTOUTS[x.n], price: x.p || 0 }; }).filter(function (x) { return !!x.src; });
   if (!pairs.length) { cb(null); return; }
@@ -608,33 +635,17 @@ function comboImg(items, cb) {
   function draw() {
     const valid = imgs.filter(function (x) { return x && x.im; });
     if (!valid.length) { cb(null); return; }
-    /* ── 主次分层版式：主件=最贵的一件（居中、大、偏后），其余按槽位前后摆 ── */
-    const W = 840, H = 560;
+        const W = 840, H = 560;
     const cv = document.createElement("canvas");
     cv.width = W; cv.height = H;
     const ctx = cv.getContext("2d");
     const g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0, "#FFFDF6"); g.addColorStop(1, "#FFF0D2");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-    /* 槽位：h=占高比例, base=地平线(越大越靠前), cx=水平中心比例 */
-    const SLOTS = {
-      1: [{ h: 0.86, base: 0.92, cx: 0.50 }],
-      2: [{ h: 0.74, base: 0.90, cx: 0.62 }, { h: 0.54, base: 1.00, cx: 0.21 }],
-      3: [{ h: 0.66, base: 0.85, cx: 0.50 }, { h: 0.47, base: 1.00, cx: 0.19 }, { h: 0.45, base: 0.99, cx: 0.81 }],
-      4: [{ h: 0.60, base: 0.83, cx: 0.52 }, { h: 0.45, base: 1.00, cx: 0.16 },
-          { h: 0.43, base: 0.99, cx: 0.84 }, { h: 0.36, base: 0.70, cx: 0.29 }]
-    };
-    /* 主件 = 最贵的那件（价格是重要性的最稳代理） */
     const ranked = valid.slice().sort(function (a, b) { return (b.price || 0) - (a.price || 0); });
-    const n = Math.min(ranked.length, 4);
-    const slots = SLOTS[n] || SLOTS[4];
-    const placed = [];
-    ranked.slice(0, n).forEach(function (v, i) {
-      const sl = slots[i];
-      const h = H * sl.h, w = v.im.width * (h / v.im.height);
-      placed.push({ im: v.im, x: W * sl.cx - w / 2, y: H * sl.base - h, w: w, h: h, base: sl.base });
-    });
-    /* 先画靠后的（base 小 = 位置高 = 在景深处），前排后画压住下缘 → 有前有后 */
+    const placed = layoutCombo(ranked, W, H);   /* 版式计算抽出为纯函数，可单测 */
+    comboImg.last = placed;
+    /* 先画靠后的（base 小 = 位置高 = 深处），前排后画压住主件下缘 → 有前有后 */
     placed.slice().sort(function (a, b) { return a.base - b.base; }).forEach(function (m) {
       ctx.save();
       ctx.shadowColor = "rgba(130,95,40,0.28)";
