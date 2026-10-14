@@ -151,6 +151,15 @@
      "方案数=" + tiles.length + " 不符=" + mismatch);
   SHOWN = new Set();
 
+  /* ── 14. 套餐合成图素材完备性 ── */
+  var withImg2 = DATA.filter(function (x) { return x.img; });
+  var cutMissing = withImg2.filter(function (x) { return !CUTOUTS[x.n]; });
+  ok("所有带图单品都有抠图（合成素材完备）", cutMissing.length === 0,
+     "带图单品 " + withImg2.length + " 个，缺抠图 " + cutMissing.length + " 个");
+  ok("抠图均为内嵌 PNG data URI", withImg2.length > 0 && withImg2.every(function (x) {
+       return (CUTOUTS[x.n] || "").indexOf("data:image/png;base64,") === 0;
+     }), "抽查通过");
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");
