@@ -107,6 +107,30 @@
   var hasBlock = hC.indexOf("cb-coupon") >= 0;
   ok("对话战报券区与匹配结果一致", anyC === hasBlock, "有匹配券=" + anyC + " 有券区=" + hasBlock);
 
+  /* ── 11. 预算响应性（问题修复：改预算必须换方案） ── */
+  SHOWN = new Set();
+  var pA = pick(90, 999, 0);
+  SHOWN = new Set();
+  var pB = pick(50, 999, 0);
+  var balA = pA.filter(function (p) { return p.label === "最均衡"; })[0];
+  var balB = pB.filter(function (p) { return p.label === "最均衡"; })[0];
+  ok("最均衡随金额预算变化（90元档 > 50元档）", balA && balB && balA.price > balB.price,
+     "90元=" + (balA ? balA.price.toFixed(1) : "-") + " 50元=" + (balB ? balB.price.toFixed(1) : "-"));
+  var kEl = document.querySelector("#k");
+  ok("热量滑块上限=1000（不设限死区收窄）", kEl && kEl.max === "1000", kEl ? kEl.max : "无");
+  SHOWN = new Set();
+
+  /* ── 12. 省钱心情 × 券匹配一致性 ── */
+  SHOWN = new Set();
+  var tipPlans = pick(78, 999, 0);
+  var tipP = tipPlans[0];
+  var tipTxt = savingTip(78, tipP);
+  var tipHits = matchCoupons(tipP).filter(function (r) { return r.ok; }).length;
+  var saysUsable = tipTxt.indexOf("能用上") >= 0;
+  ok("省钱心情与券匹配一致（不答应用不上的券）", saysUsable === (tipHits > 0),
+     "券可用=" + tipHits + " 话术含「能用上」=" + saysUsable);
+  SHOWN = new Set();
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");

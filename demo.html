@@ -373,7 +373,7 @@
         <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
           <input type="range" id="m" min="10" max="100" step="1" value="30"></div>
         <div class="fld"><label>热量预算 <i>kcal，≥900 即不设限</i> · <span class="val" id="kv">600</span></label>
-          <input type="range" id="k" min="200" max="2000" step="10" value="600"></div>
+          <input type="range" id="k" min="200" max="1000" step="10" value="600"></div>
       </div>
       <button class="go" id="go">配一顿 →</button>
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
@@ -446,7 +446,7 @@ function pick(moneyCap, kcalCap, proteinMin) {
   const lists = [
     ["最划算", pass.filter(c => noCap || sum(c, x => x.k) >= floor).sort((a, b) => sum(a, x => x.p) - sum(b, x => x.p) || sum(b, x => x.k) - sum(a, x => x.k))],
     ["最扎实", noCap ? [] : pass.slice().sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k) || sum(a, x => x.p) - sum(b, x => x.p))],
-    ["最均衡", noCap ? [] : pass.slice().sort((a, b) => Math.abs(target - sum(a, x => x.k)) - Math.abs(target - sum(b, x => x.k)) || sum(a, x => x.p) - sum(b, x => x.p))]
+    ["最均衡", noCap ? [] : pass.slice().sort((a, b) => Math.abs(moneyCap * 0.85 - sum(a, x => x.p)) - Math.abs(moneyCap * 0.85 - sum(b, x => x.p)) || Math.abs(target - sum(a, x => x.k)) - Math.abs(target - sum(b, x => x.k)))]
   ];
   for (const [label, list] of lists) {
     let got = false;
@@ -467,7 +467,7 @@ function pick(moneyCap, kcalCap, proteinMin) {
       if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.splice(1, 0, { label: "最扎实", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), pr: sum(rest[0], x => x.pr), unknown: rest[0].some(x => x.u) }); }
     }
     if (!res.some(r => r.label === "最均衡")) {
-      const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => (sum(b, x => x.pr) - sum(a, x => x.pr)));
+      const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => Math.abs(moneyCap * 0.85 - sum(a, x => x.p)) - Math.abs(moneyCap * 0.85 - sum(b, x => x.p)) || (sum(b, x => x.pr) - sum(a, x => x.pr)));
       if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.push({ label: "最均衡", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), pr: sum(rest[0], x => x.pr), unknown: rest[0].some(x => x.u) }); }
     }
   }
@@ -722,6 +722,8 @@ function run() {
     h += mrow("🔥 热量执行", f.unknown ? "本单含热量未知单品，不做卡数判断"
       : f.kcal + " / " + (noCap ? "不设限" : k) + " kcal · 剩 " + (noCap ? "—" : k - f.kcal));
     if (PMIN) h += mrow("💪 蛋白执行", f.pr.toFixed(1) + " g / ≥" + PMIN + " g 下限 · " + (f.pr >= PMIN ? "✅ 达标" : "❌ 未达标"));
+    const maxP = Math.max.apply(null, PLANS.map(p => p.price));
+    if (m - maxP >= 10) h += mrow("💡 预算未用满", "方案最高花到 ¥" + maxP.toFixed(1) + "，剩 ¥" + (m - maxP).toFixed(1) + " —— 三档按「最划算 / 最扎实 / 最均衡」选，不按「花光预算」选");
     h += mrow("🧂 钠摄入", f.unknown ? "本单含未知单品，钠合计不完整"
       : f.na + " mg / 每日参考 2000 mg · 占 " + Math.round(f.na / 2000 * 100) + "% 每日上限");
     h += mrow("🏃 运动等价物", f.unknown ? "—（热量未知，不换算）" : "慢跑 " + Math.round(f.kcal / 10) + " 分钟 = 游泳 " + Math.round(f.kcal / 8) + " 分钟");
@@ -925,10 +927,14 @@ function applyCouponTo(idx) {
 }
 /* 省钱心情：优先用今日可用券算真省额 */
 function savingTip(m, f) {
+  /* 先算这单能不能用券，再说话——不许和券区自相矛盾 */
+  const hits = matchCoupons(f).filter(r => r.ok);
+  if (hits.length) {
+    return "「" + hits[0].c.name + "」¥" + hits[0].c.price + " 这单能用上——结算时抵掉一部分，等于白赚";
+  }
   const live = COUPONS.filter(c => c.today_ok);
   if (live.length) {
-    const c = live[0];
-    return "你手上有「" + c.name + "」¥" + c.price + " 的券——这一单结算时用上，直接抵掉一部分";
+    return "今天你手上有 " + live.length + " 张券，但这一单里没有适用的——不硬凑，按原价算";
   }
   if (COUPONS.length) {
     const c = COUPONS[0];
