@@ -205,10 +205,10 @@ author: erikzeng2008-del
 
 ## 自测（改算法后必跑）
 
-本仓库 `scripts/run_selftest.py` 内置 42 项断言，直接跑在 demo.html 的**发货代码**上（数据完整性 / 双闸门 / 券匹配 / 对话解析 / 边界诚实性 / 单文件自包含）：
+本仓库 `scripts/run_selftest.py` 内置 43 项断言，直接跑在 demo.html 的**发货代码**上（数据完整性 / 双闸门 / 券匹配 / 对话解析 / 边界诚实性 / 单文件自包含）：
 
 ```bash
-python scripts/run_selftest.py    # 期望输出：共 42 项 | 通过 42 | 失败 0
+python scripts/run_selftest.py    # 期望输出：共 43 项 | 通过 43 | 失败 0
 ```
 
 修改组合算法、券匹配规则或数据快照后，**先跑自测再提交**。

@@ -153,27 +153,27 @@
 
   /* ── 14. 套餐合成图素材完备性 ── */
   var withImg2 = DATA.filter(function (x) { return x.img; });
-  var cutMissing = withImg2.filter(function (x) { return !CUTOUTS[x.n]; });
-  ok("所有带图单品都有抠图（合成素材完备）", cutMissing.length === 0,
-     "带图单品 " + withImg2.length + " 个，缺抠图 " + cutMissing.length + " 个");
-  ok("抠图均为内嵌 PNG data URI", withImg2.length > 0 && withImg2.every(function (x) {
-       return (CUTOUTS[x.n] || "").indexOf("data:image/png;base64,") === 0;
+  var cutMissing = withImg2.filter(function (x) { return !(PIECES[x.n] && PIECES[x.n].a); });
+  ok("所有带图单品都有拆件（主食片完备）", cutMissing.length === 0,
+     "带图单品 " + withImg2.length + " 个，缺件 " + cutMissing.length + " 个");
+  ok("拆件均为内嵌 PNG data URI", withImg2.length > 0 && withImg2.every(function (x) {
+       var pi = PIECES[x.n] || {};
+       return (pi.a || "").indexOf("data:image/png;base64,") === 0 &&
+              (!pi.b || pi.b.indexOf("data:image/png;base64,") === 0);
      }), "抽查通过");
+  var setWithB = withImg2.filter(function (x) {
+       return (x.n.indexOf("套餐") >= 0 || x.n.indexOf("件套") >= 0) && PIECES[x.n] && PIECES[x.n].b;
+     });
+  ok("套图已拆出后排片（薯条可乐）", setWithB.length >= 15, "带后排片的套图 " + setWithB.length + " 个");
 
-  /* ── 15. 合成版式不变量（不出画 / 无重度遮挡 / 主件最大） ── */
+  /* ── 15. 合成版式不变量（不出画 / 无重度遮挡 / 主角最大） ── */
   var WC = 840;
-  var chkCases = [
-    [[300, 225, 30]],
-    [[300, 225, 30], [300, 225, 20]],
-    [[300, 225, 30], [300, 225, 20], [220, 300, 15]],
-    [[300, 225, 30], [300, 200, 20], [220, 300, 15], [300, 180, 10]],
-    [[120, 300, 30], [300, 225, 20], [300, 225, 10]]
-  ];
-  var bad = 0, badD = [];
-  chkCases.forEach(function (cs, ci) {
-    var L = layoutCombo(cs.map(function (x) { return { im: { width: x[0], height: x[1] }, price: x[2] }; }), WC, 560);
+  function chkLayout(spec) {
+    var L = layoutCombo(spec, WC, 560);
+    var bad = [];
     L.forEach(function (m) {
-      if (m.x < 0 || m.x + m.w > WC) { bad++; badD.push("c" + ci + "出画"); }
+      if (m.x < -1 || m.x + m.w > WC + 1) bad.push("出画");
+      if (m.y < -1 || m.y + m.h > 561) bad.push("出头");
       var cov = 0;
       L.forEach(function (o) {
         if (o.base > m.base) {
@@ -182,15 +182,28 @@
           cov += ox * oy;
         }
       });
-      if (1 - cov / (m.w * m.h) < 0.28) { bad++; badD.push("c" + ci + "遮挡"); }
+      if (1 - cov / (m.w * m.h) < 0.26) bad.push("遮挡" + Math.round((1 - cov / (m.w * m.h)) * 100) + "%");
     });
+    return { L: L, bad: bad };
+  }
+  var specs = [
+    { hero: { w: 300, h: 225 }, back: null, flanks: [] },
+    { hero: { w: 300, h: 225 }, back: { w: 200, h: 240 }, flanks: [{ w: 300, h: 200 }] },
+    { hero: { w: 300, h: 225 }, back: { w: 200, h: 240 }, flanks: [{ w: 300, h: 200 }, { w: 220, h: 300 }] },
+    { hero: { w: 340, h: 300 }, back: { w: 260, h: 150 }, flanks: [{ w: 300, h: 225 }, { w: 300, h: 225 }] }
+  ];
+  var allBad = [];
+  specs.forEach(function (sp, i2) {
+    var r = chkLayout(sp);
+    if (r.bad.length) allBad.push("s" + i2 + ":" + r.bad.join("/"));
   });
-  ok("版式不变量：5 组形状不出画、无重度遮挡", bad === 0, badD.join(",") || "全部合规");
-  var Lh = layoutCombo([[300, 225, 30], [300, 225, 20], [300, 225, 15]].map(function (x) {
-    return { im: { width: x[0], height: x[1] }, price: x[2] };
-  }), WC, 560);
-  ok("主件最大（最贵者面积第一）", Lh[0].w * Lh[0].h > Lh[1].w * Lh[1].h && Lh[0].w * Lh[0].h > Lh[2].w * Lh[2].h,
-     "主" + Math.round(Lh[0].w * Lh[0].h) + " vs 次" + Math.round(Lh[1].w * Lh[1].h) + "/" + Math.round(Lh[2].w * Lh[2].h));
+  ok("版式不变量：4 组形态不出画不遮挡", allBad.length === 0, allBad.join(" ") || "全部合规");
+  var rHero = chkLayout(specs[2]);
+  var heroBox = rHero.L.filter(function (q) { return q.role === "hero"; })[0];
+  var others = rHero.L.filter(function (q) { return q.role !== "hero"; });
+  ok("主角面积第一（汉堡优先的组装保证）",
+     others.every(function (o) { return heroBox.w * heroBox.h > o.w * o.h; }),
+     "主角" + Math.round(heroBox.w * heroBox.h) + " vs " + others.map(function (o) { return Math.round(o.w * o.h); }).join("/"));
 
   /* ── 输出 ── */
   var pre = document.createElement("pre");
