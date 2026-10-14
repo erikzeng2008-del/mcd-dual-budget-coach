@@ -352,7 +352,7 @@ function pick(moneyCap, kcalCap) {
       const kk = c.map(x => x.n).sort().join("|");
       if (seen.has(kk)) continue;
       seen.add(kk);
-      res.push({ label, items: c, price: sum(c, x => x.p), kcal: sum(c, x => x.k), unknown: c.some(x => x.u) });
+      res.push({ label, items: c, price: sum(c, x => x.p), kcal: sum(c, x => x.k), na: sum(c, x => x.na), unknown: c.some(x => x.u) });
       got = true;
       break;
     }
@@ -362,11 +362,11 @@ function pick(moneyCap, kcalCap) {
   if (noCap) {
     if (!res.some(r => r.label === "最扎实")) {
       const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k));
-      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.splice(1, 0, { label: "最扎实", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), unknown: rest[0].some(x => x.u) }); }
+      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.splice(1, 0, { label: "最扎实", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), unknown: rest[0].some(x => x.u) }); }
     }
     if (!res.some(r => r.label === "最均衡")) {
       const rest = pass.filter(c => !seen.has(c.map(x => x.n).sort().join("|"))).sort((a, b) => (sum(b, x => x.pr) - sum(a, x => x.pr)));
-      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.push({ label: "最均衡", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), unknown: rest[0].some(x => x.u) }); }
+      if (rest[0]) { const kk = rest[0].map(x => x.n).sort().join("|"); seen.add(kk); res.push({ label: "最均衡", items: rest[0], price: sum(rest[0], x => x.p), kcal: sum(rest[0], x => x.k), na: sum(rest[0], x => x.na), unknown: rest[0].some(x => x.u) }); }
     }
   }
   res.forEach(r => SHOWN.add(r.items.map(x => x.n).sort().join("|")));
@@ -485,6 +485,8 @@ function run() {
     h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
     h += mrow("🔥 热量执行", f.unknown ? "本单含热量未知单品，不做卡数判断"
       : f.kcal + " / " + (noCap ? "不设限" : k) + " kcal · 剩 " + (noCap ? "—" : k - f.kcal));
+    h += mrow("🧂 钠摄入", f.unknown ? "本单含未知单品，钠合计不完整"
+      : f.na + " mg / 每日参考 2000 mg · 占 " + Math.round(f.na / 2000 * 100) + "% 每日上限");
     h += mrow("🏃 运动等价物", f.unknown ? "—（热量未知，不换算）" : "慢跑 " + Math.round(f.kcal / 10) + " 分钟 = 游泳 " + Math.round(f.kcal / 8) + " 分钟");
     h += mrow("🧧 省钱心情", savingTip(m, f));
     h += '</div>';
@@ -590,7 +592,7 @@ function dlPoster(i) {
 const COUPON_RULES = [
   { kw: ["中薯条","大薯条","小薯条","迷你薯条","薯条","薯饼","脆薯饼","扭扭薯"],
     why: "券限薯条类，这一单里有薯就能抵" },
-  { kw: ["小食","鸡块","鸡翅","拼盘","四宫格","薯饼","上校","脆汁鸡"],
+  { kw: ["小食","鸡块","鸡翅","拼盘","四宫格","薯饼","上校","脆汁鸡","麦乐鸡","麦辣鸡翅"],
     why: "券限小食类，这一单有小食就能抵" },
   { kw: ["派"], why: "券限派类，这一单有派就能抵" },
   { kw: ["麦旋风","旋风"], why: "券限麦旋风，这一单有就能抵" },
@@ -599,7 +601,7 @@ const COUPON_RULES = [
   { kw: ["麦满分","猪柳蛋","火腿扒","脆鸡扒堡","芝士蛋堡","双层原味","厚松饼","松饼"],
     why: "券限早餐组合，正餐时段用不上" }
 ];
-const ANY_SMALL = ["薯条","鸡块","鸡翅","派","小食","拼盘","圆筒","新地","麦旋风","脆汁鸡"];
+const ANY_SMALL = ["薯条","鸡块","鸡翅","派","小食","拼盘","圆筒","新地","麦旋风","脆汁鸡","麦乐鸡","麦辣鸡翅"];
 function matchCoupons(plan) {
   /* 套餐成分也算数：酥脆无双套餐里有迷你薯条 → 中薯条券能用 */
   const names = plan.items.map(function(x){ return x.n + " " + (x.parts||[]).map(function(p){return p.n;}).join(" "); }).join(" ");
