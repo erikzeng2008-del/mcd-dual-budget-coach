@@ -95,6 +95,10 @@
   .plan:active { transform:translateY(-1px) scale(.995); }
 .plan .pic { width:100%; height:160px; border-bottom:2px solid #1a1a1a; background:#fff;
     display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.plan .picrow { display:flex; width:100%; height:100%; align-items:center; }
+.plan .picrow img { flex:1 1 0; min-width:0; width:0; height:100%; max-width:none; max-height:none;
+    object-fit:contain; display:block; background:#fff; }
+.plan .picrow img + img { border-left:1.5px dashed #e8dcc0; }
 .plan .pic img { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain;
     display:block; background:#fff; }
   .plan .pic .ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
@@ -704,9 +708,13 @@ function run() {
     h += '<div class="plans">';
     PLANS.forEach((p, i) => {
       const cls = i === 0 ? "tag" : "tag alt";
-      const withPic = p.items.find(x => x.img);
-      const pic = withPic
-        ? '<div class="pic"><img src="' + withPic.img + '" alt="' + p.label + '"></div>'
+      /* 按方案真实构成拼图：有几件摆几张，不许一张图代表全部（会误导） */
+      const pics = p.items.filter(x => x.img);
+      const pic = pics.length
+        ? '<div class="pic">' + (pics.length > 1
+            ? '<div class="picrow">' + pics.slice(0, 4).map(x => '<img src="' + x.img + '" alt="' + x.n + '">').join('') + '</div>'
+            : '<img src="' + pics[0].img + '" alt="' + pics[0].n + '">')
+          + '</div>'
         : '<div class="pic"><div class="ph">🍔</div></div>';
       const extra = p.items.length > 1 ? '<span class="pieces">' + p.items.length + ' 件组成</span>' : '';
       h += '<div class="plan" onclick="detail(' + i + ')">' + pic

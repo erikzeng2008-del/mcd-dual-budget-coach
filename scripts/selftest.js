@@ -131,6 +131,26 @@
      "券可用=" + tipHits + " 话术含「能用上」=" + saysUsable);
   SHOWN = new Set();
 
+  /* ── 13. 方案配图 = 真实构成（拼图，不许一张图代表全部） ── */
+  SHOWN = new Set();
+  document.getElementById("m").value = 63;
+  document.getElementById("k").value = 990;
+  run();
+  var tiles = document.querySelectorAll("#v2 .plan");
+  var mismatch = 0;
+  PLANS.forEach(function (p, i) {
+    var tile = tiles[i];
+    if (!tile) return;
+    var hasRow = !!tile.querySelector(".picrow");
+    var imgs = tile.querySelectorAll(".picrow img").length;
+    var withPic = p.items.filter(function (x) { return x.img; }).length;
+    if (withPic > 1 && (!hasRow || imgs !== Math.min(withPic, 4))) mismatch++;
+    if (withPic <= 1 && hasRow) mismatch++;
+  });
+  ok("拼图张数 = 方案件数（多件才拼，单件不拼）", tiles.length > 0 && mismatch === 0,
+     "方案数=" + tiles.length + " 不符=" + mismatch);
+  SHOWN = new Set();
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");
