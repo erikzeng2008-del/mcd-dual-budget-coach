@@ -250,6 +250,9 @@
   .cb-metrics div { display:flex; justify-content:space-between; gap:10px; font-size:12.5px;
     padding:2.5px 0; color:#444; }
   .cb-metrics b { font-family:var(--f-mono); font-weight:800; color:#1a1a1a; }
+  .cb-coupon { margin-top:9px; border-top:2px solid #DA291C; padding-top:8px; font-size:12px; }
+  .cb-coupon b { color:#DA291C; }
+  .cb-coupon span { display:block; color:#444; padding:3px 0 0; line-height:1.55; }
   .cb-note { font-size:11px; color:#a08a63; margin-top:9px; line-height:1.6;
     border-top:1px dashed #e8dcc0; padding-top:7px; }
   .cb-none { font-size:13px; color:#7a5c14; line-height:1.7; }
@@ -592,6 +595,23 @@ function chatBattle(m, k, pmin, plans, isMore) {
     + '<div><span>🧂 钠摄入</span><b>' + f.na + ' mg</b></div>'
     + '<div><span>🏃 运动等价物</span><b>' + (f.unknown ? '—' : '慢跑 ' + Math.round(f.kcal / 10) + ' 分钟 = 游泳 ' + Math.round(f.kcal / 8) + ' 分钟') + '</b></div>'
     + '</div>';
+  /* 🎟️ 券区：省钱军师的杀手锏，对话里也要带出来 */
+  const hits = [];
+  plans.forEach(function (p, i) {
+    matchCoupons(p).forEach(function (r) {
+      if (r.ok) hits.push({ c: r.c, plan: p, idx: i });
+    });
+  });
+  const seenC = {};
+  const uniq = hits.filter(function (x) { return !seenC[x.c.name] && (seenC[x.c.name] = 1); });
+  if (uniq.length) {
+    h += '<div class="cb-coupon"><b>🎟️ 这一单能用的券</b>'
+      + uniq.slice(0, 3).map(function (x) {
+          const after = Math.max(0, x.plan.price - x.c.price).toFixed(1);
+          return '<span>「' + x.c.name + '」¥' + x.c.price + ' → 用在方案' + (x.idx + 1) + '（¥' + money(x.plan.price) + ' → ¥' + after + '）</span>';
+        }).join('')
+      + '</div>';
+  }
   h += '<div class="cb-note">⚙️ 本页=快照数据本地枚举（88,788 组合过闸）；真实版=5 步 MCP 实时调用链（时间→菜单→营养→套餐构成→逐个核价）。</div>';
   if (isMore) h += '<div class="cb-note" style="border-top:none;padding-top:2px">🔄 已经排除了上一批方案——「换一批」还能继续。</div>';
   return h;

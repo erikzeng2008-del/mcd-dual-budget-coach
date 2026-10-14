@@ -99,6 +99,14 @@
   var c5 = parseChat("今天天气不错");
   ok("对话解析：无关内容不误报预算", c5.m === null && c5.k === null && c5.more === false, "m=" + c5.m + " k=" + c5.k);
 
+  /* ── 10. 对话战报的券区一致性 ── */
+  var plansC = pick(32, 650, 0);
+  var anyC = false;
+  plansC.forEach(function (p) { matchCoupons(p).forEach(function (r) { if (r.ok) anyC = true; }); });
+  var hC = chatBattle(32, 650, 0, plansC, false);
+  var hasBlock = hC.indexOf("cb-coupon") >= 0;
+  ok("对话战报券区与匹配结果一致", anyC === hasBlock, "有匹配券=" + anyC + " 有券区=" + hasBlock);
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");
