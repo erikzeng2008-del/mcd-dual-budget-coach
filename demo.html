@@ -217,6 +217,51 @@
   .warn { margin-top:14px; background:#FFF3D6; border:1.5px dashed #d9b96a; border-radius:10px;
     padding:10px 14px; font-size:12px; color:#7a5c14; line-height:1.8; }
   .foot { margin-top:16px; text-align:center; font-size:12px; color:#a08a63; line-height:1.9; }
+  /* ===== 💬 对话模式 ===== */
+  .chatwin { background:#F5F3EF; border:2px solid #1a1a1a; border-radius:14px; overflow:hidden; }
+  .chattop { background:#1a1a1a; color:#fff; padding:12px 18px; display:flex; align-items:center; gap:10px; }
+  .chattop .dots { display:flex; gap:6px; }
+  .chattop .dots i { width:11px; height:11px; border-radius:50%; display:block; }
+  .chattop .dots i:nth-child(1){background:#DA291C} .chattop .dots i:nth-child(2){background:#FFC72C} .chattop .dots i:nth-child(3){background:#4CAF50}
+  .chattop b { font-family:var(--f-display); font-size:15px; letter-spacing:.5px; font-weight:400; }
+  .chattop span { font-size:11.5px; color:#b9b2a6; margin-left:auto; }
+  .chatbody { padding:16px 15px 8px; max-height:540px; overflow-y:auto; background:#FFFDF6; }
+  .crow { display:flex; margin-bottom:14px; }
+  .crow.user { justify-content:flex-end; }
+  .cav { flex:0 0 auto; width:34px; height:34px; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:17px; background:#FFC72C; border:2px solid #1a1a1a; margin-right:9px; }
+  .cbub { max-width:min(560px, 86%); background:#fff; border:2px solid #1a1a1a;
+    border-radius:4px 14px 14px 14px; padding:12px 15px; font-size:13.5px; line-height:1.65; }
+  .crow.user .cbub { background:#DA291C; color:#fff; border-color:#8f1a12;
+    border-radius:14px 4px 14px 14px; font-weight:700; }
+  .cbub .cb-title { font-family:var(--f-display); font-size:15.5px; color:#DA291C; margin-bottom:8px; }
+  .cb-plan { display:flex; align-items:baseline; gap:8px; padding:7px 0; border-bottom:1px dashed #e8dcc0; }
+  .cb-plan:last-of-type { border-bottom:none; }
+  .cb-tag { flex:0 0 auto; font-size:11px; font-weight:800; background:#FFC72C; color:#1a1a1a;
+    padding:2px 7px; border-radius:4px; }
+  .cb-tag.alt { background:#fff; border:1.5px solid #DA291C; color:#DA291C; padding:1px 6px; }
+  .cb-nm { font-size:13px; font-weight:700; }
+  .cb-pr { margin-left:auto; font-family:var(--f-mono); font-weight:800; color:#DA291C;
+    white-space:nowrap; font-size:13.5px; }
+  .cb-pr i { color:#6b7a3a; font-style:normal; font-size:11.5px; }
+  .cb-metrics { margin-top:9px; border-top:2px solid #1a1a1a; padding-top:8px; }
+  .cb-metrics div { display:flex; justify-content:space-between; gap:10px; font-size:12.5px;
+    padding:2.5px 0; color:#444; }
+  .cb-metrics b { font-family:var(--f-mono); font-weight:800; color:#1a1a1a; }
+  .cb-note { font-size:11px; color:#a08a63; margin-top:9px; line-height:1.6;
+    border-top:1px dashed #e8dcc0; padding-top:7px; }
+  .cb-none { font-size:13px; color:#7a5c14; line-height:1.7; }
+  .chatinput { display:flex; gap:9px; padding:12px 15px; background:#F5F3EF; border-top:2px solid #1a1a1a; }
+  .chatinput input { flex:1; font-family:inherit; font-size:13.5px; border:2px solid #1a1a1a;
+    border-radius:999px; padding:10px 16px; outline:none; background:#fff; }
+  .chatinput input:focus { border-color:#DA291C; }
+  .chatinput button { font-family:inherit; font-size:13.5px; font-weight:800; cursor:pointer;
+    background:#DA291C; color:#fff; border:2px solid #8f1a12; border-radius:999px; padding:0 22px; }
+  .chatinput button:hover { background:#8f1a12; }
+  .chatquick { padding:0 15px 14px; display:flex; flex-wrap:wrap; gap:7px; background:#F5F3EF; }
+  .chatquick button { font-family:inherit; font-size:12px; font-weight:700; cursor:pointer;
+    background:#fff; color:#1a1a1a; border:1.5px solid #1a1a1a; border-radius:999px; padding:5px 13px; }
+  .chatquick button:hover { background:#FFF3D6; }
   /* ===== 战报页券区：套餐在上、券在下 ===== */
   .plan .cta2 { font-size:11px; color:#8a7a5c; font-weight:700; margin-top:3px; }
   .plan .cta2:hover { color:#DA291C; }
@@ -268,6 +313,7 @@
     <button class="tab off" data-v="v2" id="tab2"><span class="n">2</span>战报</button>
     <button class="tab off" data-v="v3" id="tab3"><span class="n">3</span>明细与营养</button>
     <button class="tab" data-v="v4"><span class="n">4</span>商品目录</button>
+    <button class="tab" data-v="v5"><span class="n">5</span>💬 对话</button>
   </div>
 
   <div id="v1">
@@ -313,6 +359,8 @@
     <div class="rep-meta">全部来自麦当劳 MCP 接口的商品图与营养数据 · 点任意商品看它的完整营养明细 · 绿色边框=官方热量档套餐</div>
     <div class="cat" id="catgrid"></div>
   </div>
+
+  <div id="v5" class="hide"></div>
 
   <div class="warn">
     ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，商品图、菜单、营养、价格均为 2026-10-12 12:07:57 在 麦当劳福州金洲南路餐厅 的实测快照
@@ -390,16 +438,17 @@ const mrow = (a, b) => '<div class="mrow"><span>' + a + '</span><b class="m">' +
 
 let RUNS = 0;
 function show(id) {
-  ["v1", "v2", "v3", "v4"].forEach(x => $(x).classList.toggle("hide", x !== id));
+  ["v1", "v2", "v3", "v4", "v5"].forEach(x => $(x).classList.toggle("hide", x !== id));
   document.querySelectorAll(".tabs .tab").forEach(t => {
     t.classList.toggle("on", t.dataset.v === id);
   });
   if (id === "v4") renderCat();
+  if (id === "v5") renderChat();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 /* 数字版跳转：避免 HTML 属性里嵌套引号把 JS 字符串提前闭合 */
 function goV(n) {
-  const id = n === 1 ? "v1" : n === 2 ? "v2" : n === 3 ? "v3" : "v4";
+  const id = n === 1 ? "v1" : n === 2 ? "v2" : n === 3 ? "v3" : n === 4 ? "v4" : "v5";
   if ((id === "v2" || id === "v3") && !PLANS.length) { syncNums(); show("v1"); return; }
   show(id);
 }
@@ -464,6 +513,111 @@ function toggleProtein() {
   $("pending").textContent = PMIN
     ? "已开启蛋白模式：只保留蛋白 ≥30g 的组合 —— 点「配一顿」出方案"
     : "拖动滑块或点上方场景设定预算，点「配一顿」出方案";
+}
+/* ===== 💬 对话模式：打字 → 解析 → 真算 → 气泡回复 ===== */
+let CHATREADY = false;
+let CHAT = { m: 30, k: 600, pmin: 0 };
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function parseChat(t) {
+  const r = { m: null, k: null, pmin: 0, more: false };
+  if (/换一批|再来一批|再来|还有别的|别的方案|其他的/.test(t)) r.more = true;
+  const mm = t.match(/(\d+(?:\.\d+)?)\s*(?:块|元|¥|人民币)/)
+          || t.match(/(?:预算|不超过|最多|顶多)\s*(\d+(?:\.\d+)?)/);
+  if (mm) r.m = parseFloat(mm[1]);
+  const kk = t.match(/(\d+)\s*(?:大卡|千卡|卡路里|kcal|卡)/i);
+  if (kk) r.k = parseInt(kk[1], 10);
+  if (/不设限|不限卡|不限热量|随便吃|管饱/.test(t)) r.k = 900;
+  const pp = t.match(/蛋白\s*(?:要|≥|>=|至少)?\s*(\d+)\s*g?/i);
+  if (pp) r.pmin = parseInt(pp[1], 10);
+  else if (/蛋白|健身|增肌|练完|撸铁/.test(t)) r.pmin = 30;
+  return r;
+}
+function chatBattle(m, k, pmin, plans, isMore) {
+  const noCap = k >= 900;
+  if (!plans.length) {
+    return '<div class="cb-none">😵 这个条件下配不出来——'
+      + (pmin ? '蛋白 ≥' + pmin + 'g 这个要求太严，先把它降下来、' : '')
+      + '加一点钱或者放宽卡数，再试一次。</div>';
+  }
+  const f = plans[0];
+  let h = '<div class="cb-title">🍔 麦门双预算战报 · ¥' + m + ' / '
+    + (noCap ? '热量不设限' : k + ' kcal') + (pmin ? ' · 蛋白 ≥' + pmin + 'g' : '') + '</div>';
+  plans.forEach(p => {
+    h += '<div class="cb-plan"><span class="cb-tag' + (p.label === "最划算" ? "" : " alt") + '">' + p.label + '</span>'
+      + '<span class="cb-nm">' + fmt(p.items) + '</span>'
+      + '<span class="cb-pr">¥' + money(p.price) + ' <i>' + (p.unknown ? '热量未知' : p.kcal + ' kcal') + '</i></span></div>';
+  });
+  h += '<div class="cb-metrics">'
+    + '<div><span>💰 预算执行</span><b>¥' + money(f.price) + ' / ¥' + m + ' · 剩 ¥' + (m - f.price).toFixed(1) + '</b></div>'
+    + '<div><span>🔥 热量执行</span><b>' + (f.unknown ? '含未知单品' : f.kcal + ' / ' + (noCap ? '不设限' : k) + ' kcal') + '</b></div>'
+    + (pmin ? '<div><span>💪 蛋白</span><b>' + f.pr.toFixed(1) + ' g / ≥' + pmin + 'g ' + (f.pr >= pmin ? '✅' : '❌') + '</b></div>' : '')
+    + '<div><span>🧂 钠摄入</span><b>' + f.na + ' mg</b></div>'
+    + '<div><span>🏃 运动等价物</span><b>' + (f.unknown ? '—' : '慢跑 ' + Math.round(f.kcal / 10) + ' 分钟 = 游泳 ' + Math.round(f.kcal / 8) + ' 分钟') + '</b></div>'
+    + '</div>';
+  h += '<div class="cb-note">⚙️ 本页=快照数据本地枚举（88,788 组合过闸）；真实版=5 步 MCP 实时调用链（时间→菜单→营养→套餐构成→逐个核价）。</div>';
+  if (isMore) h += '<div class="cb-note" style="border-top:none;padding-top:2px">🔄 已经排除了上一批方案——「换一批」还能继续。</div>';
+  return h;
+}
+function renderChat() {
+  if (CHATREADY) return;
+  CHATREADY = true;
+  $("v5").innerHTML = '<div class="chatwin">'
+    + '<div class="chattop"><div class="dots"><i></i><i></i><i></i></div>'
+    + '<b>🍔 麦门双预算军师 · 对话模式</b><span>快照数据 · 本地实时计算</span></div>'
+    + '<div class="chatbody" id="chatbody">'
+    + '<div class="crow"><div class="cav">🤖</div><div class="cbub">'
+    + '<div class="cb-title">说一句话，就配一顿</div>'
+    + '告诉我「<b>多少钱 + 多少卡</b>」，我配出三个过闸方案——顺便算清蛋白、钠和这顿该跑几公里。<br>'
+    + '<span style="color:#8a7a5c;font-size:12.5px">试试下面的例子，或者自己打字（回车发送）：</span>'
+    + '</div></div></div>'
+    + '<div class="chatinput"><input id="chatbox" placeholder="说点什么… 例如：30 块 600 卡" autocomplete="off">'
+    + '<button onclick="chatSend()">发送</button></div>'
+    + '<div class="chatquick">'
+    + '<button onclick="chatTry(this)">30 块 600 卡</button>'
+    + '<button onclick="chatTry(this)">25 块 · 不限卡</button>'
+    + '<button onclick="chatTry(this)">蛋白要 30g，预算 40</button>'
+    + '<button onclick="chatTry(this)">20 块紧预算</button>'
+    + '<button onclick="chatTry(this)">换一批</button>'
+    + '</div></div>';
+  $("chatbox").addEventListener("keydown", function (e) { if (e.key === "Enter") chatSend(); });
+}
+function chatTry(btn) { $("chatbox").value = btn.textContent; chatSend(); }
+function chatSend() {
+  const box = $("chatbox");
+  const t = (box.value || "").trim();
+  if (!t) return;
+  box.value = "";
+  const body = $("chatbody");
+  body.insertAdjacentHTML("beforeend", '<div class="crow user"><div class="cbub">' + esc(t) + '</div></div>');
+  const r = parseChat(t);
+  let m, k, pmin, fresh = false;
+  if (r.more) { m = CHAT.m; k = CHAT.k; pmin = CHAT.pmin; }
+  else {
+    if (r.m === null && r.k === null) {
+      body.insertAdjacentHTML("beforeend", '<div class="crow"><div class="cav">🤖</div><div class="cbub">'
+        + '没看懂预算 🥲 说个「<b>多少钱 + 多少卡</b>」就行，比如「30 块 600 卡」；'
+        + '想加蛋白就补一句「蛋白要 30g」；想看别的组合说「换一批」。</div></div>');
+      body.scrollTop = body.scrollHeight;
+      return;
+    }
+    m = r.m === null ? CHAT.m : r.m;
+    k = r.k === null ? CHAT.k : r.k;
+    pmin = r.pmin;
+    fresh = true;
+  }
+  CHAT = { m: m, k: k, pmin: pmin };
+  if (fresh) SHOWN = new Set();
+  PMIN = pmin;
+  const t0 = performance.now();
+  const plans = pick(m, k, pmin);
+  const ms = Math.max(1, Math.round(performance.now() - t0));
+  body.insertAdjacentHTML("beforeend", '<div class="crow"><div class="cav">🤖</div><div class="cbub">'
+    + chatBattle(m, k, pmin, plans, r.more) + '</div></div>');
+  body.scrollTop = body.scrollHeight;
+  /* 让 TAB2 战报与对话同步，方便切过去看大图 */
+  if (plans.length) { PLANS = plans; }
+  $("mv").textContent = m; $("kv").textContent = k >= 900 ? "不设限" : k;
+  $("m").value = Math.min(100, m); $("k").value = Math.min(2000, k);
 }
 function run() {
   const m = +$("m").value, k = +$("k").value;

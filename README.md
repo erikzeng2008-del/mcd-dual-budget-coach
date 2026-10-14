@@ -10,7 +10,17 @@
 
 **[→ 点此在线试玩 demo](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html)**
 
-数据是 2026-10-12 的实测快照（83 个可配单品、11 张真实优惠券、88,192 个可组合），四屏随便玩：拖滑块设预算 → 看三个过闸方案（带真实商品图）→ 点开看六项营养拆解 → 翻 83 个单品目录。手机也能开。
+数据是 2026-10-12 的实测快照（83 个可配单品、11 张真实优惠券、88,788 个可组合），**五屏随便玩**：
+
+| 屏 | 玩什么 |
+|---|---|
+| 1 预算设定 | 拖滑块或点预设场景（含「蛋白模式」第三道闸门） |
+| 2 战报 | 三个过闸方案（真实商品图）+ 预算/热量/钠执行 + 这一单能用的券 |
+| 3 明细与营养 | 点开任一方案看六项营养拆解 |
+| 4 商品目录 | 83 个单品全览，点进看单品营养 |
+| 5 💬 对话 | **像真的一样打字**——「30 块 600 卡」回车，当场配给你 |
+
+手机也能开。
 
 ![WorkBuddy](https://img.shields.io/badge/Built_with-WorkBuddy-blue) ![MCP](https://img.shields.io/badge/Powered_by-麦当劳_MCP-orange) ![License](https://img.shields.io/badge/License-MIT-green) ![Data](https://img.shields.io/badge/Data-真实_MCP_实测-brightgreen)
 
@@ -19,6 +29,7 @@
 ![产品界面：一次真实对话](examples/demo-chat.png)
 
 > 这就是它的全部「界面」——**一段对话**。你说「多少钱 + 多少卡 + 想吃啥」，它回你三个能直接下单的组合。
+> **在线 demo 的第 5 屏就是这个对话界面，可以亲手打字体验。**
 > 图中顶部那排工具调用链是真实调用麦当劳 MCP 的 5 步（时间→菜单→营养→套餐默认档→逐个核价），价格由 `calculate-price` 实付核验——不是模型编的。这是本项目与「菜单静态表 + 拍脑袋推荐」类工具的根本区别。
 
 ## 为什么做这个
@@ -160,7 +171,7 @@ mcd-dual-budget-coach/
 ├── mcp-config.example.json   # 脱敏 MCP 配置示例（环境变量占位符）
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
 ├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
-├── demo.html                  # 可交互演示页（四屏：预算→战报→明细→商品目录，零外链无凭证）
+├── demo.html                  # 可交互演示页（五屏：预算→战报→明细→目录→💬对话，零外链无凭证）
 ├── demo-assets/               # 演示页用的商品图（86 张，来自麦当劳接口）
 ├── examples/
 │   ├── demo-chat.png         # 产品界面：一次真实对话（首图）

@@ -87,6 +87,18 @@
   var noExt = document.documentElement.outerHTML.indexOf(probe) === -1;
   ok("整页零外部图片引用（真·单文件）", noExt, noExt ? "零外部依赖" : "仍有残留");
 
+  /* ── 9. 对话解析器（第 5 屏） ── */
+  var c1 = parseChat("30 块 600 卡");
+  ok("对话解析：金额+热量", c1.m === 30 && c1.k === 600, "m=" + c1.m + " k=" + c1.k);
+  var c2 = parseChat("25 块 · 不限卡");
+  ok("对话解析：不限卡 → 不设限", c2.m === 25 && c2.k === 900, "m=" + c2.m + " k=" + c2.k);
+  var c3 = parseChat("蛋白要 30g，预算 40");
+  ok("对话解析：蛋白下限", c3.pmin === 30 && c3.m === 40, "pmin=" + c3.pmin + " m=" + c3.m);
+  var c4 = parseChat("换一批");
+  ok("对话解析：换一批", c4.more === true, "more=" + c4.more);
+  var c5 = parseChat("今天天气不错");
+  ok("对话解析：无关内容不误报预算", c5.m === null && c5.k === null && c5.more === false, "m=" + c5.m + " k=" + c5.k);
+
   /* ── 输出 ── */
   var pre = document.createElement("pre");
   pre.setAttribute("id", "st" + "out");
