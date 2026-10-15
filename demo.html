@@ -90,7 +90,12 @@
   .rep-meta { font-size:12px; color:#9a8557; margin:4px 0 12px; }
   /* 方案方块：三个方块并排，块内纵向（图上、文字下） */
   .plans { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:stretch; }
-  .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; overflow:hidden;
+  .plan { border:2px solid #1a1a1a; border-radius:12px; background:#fff; overflow:hidden; position:relative; }
+  .lockbtn { position:absolute; top:8px; right:10px; z-index:3; cursor:pointer; font-size:16px;
+     width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+     background:rgba(255,255,255,.94); border:1.5px solid #e0d6c0; border-radius:999px; }
+  .lockbtn.on { background:#DA291C; border-color:#DA291C; }
+  .lockbtn.on::after { content:""; }
     cursor:pointer; display:flex; flex-direction:column;
     transition:transform .08s ease, box-shadow .08s ease; }
   .plan:hover { transform:translateY(-3px); box-shadow:3px 3px 0 #FFC72C; }
@@ -1027,13 +1032,39 @@ function chatSend() {
   $("mv").textContent = m; $("kv").textContent = k >= 900 ? "不设限" : k;
   $("m").value = Math.min(100, m); $("k").value = Math.min(2000, k);
 }
+let LOCKED = {};
+function planKey(p) { return p.label + "|" + p.items.map(function (x) { return x.n; }).join(","); }
+function toggleLock(i, el) {
+  const p = PLANS[i]; if (!p) return;
+  const k = planKey(p);
+  if (LOCKED[k]) delete LOCKED[k]; else LOCKED[k] = 1;
+  const on = !!LOCKED[k];
+  el.classList.toggle("on", on);
+  el.textContent = on ? "🔒" : "🔓";
+  el.title = on ? "已锁定：换一批不换它" : "点我锁定这个方案";
+}
+
 function run() {
   const m = +$("m").value, k = +$("k").value;
   const key = m + "/" + k;
-  if (window.__lastKey !== key) { SHOWN = new Set(); window.__lastKey = key; }
+  if (window.__lastKey !== key) { SHOWN = new Set(); LOCKED = {}; window.__lastKey = key; }
   $("mv").textContent = m; $("kv").textContent = k >= 900 ? "不设限" : k;
   const t0 = performance.now();
   PLANS = pick(m, k, PMIN);
+  /* 锁定的方案留下，「换一批」只换没锁的 */
+  {
+    const keep = (window.__plansBefore || []).filter(function (p) { return LOCKED[planKey(p)]; });
+    if (keep.length) {
+      const keepKeys = new Set(keep.map(planKey));
+      const merged = keep.slice();
+      for (const np of PLANS) {
+        if (merged.length >= 3) break;
+        if (!keepKeys.has(planKey(np))) merged.push(np);
+      }
+      PLANS = merged;
+    }
+  }
+  window.__plansBefore = PLANS;
   const ms = Math.max(1, Math.round(performance.now() - t0));
   RUNS++;
   const box = $("v2");
@@ -1083,7 +1114,8 @@ function run() {
         + '<div class="pstats">' + stats.map(function (t) { return '<span>' + t + '</span>'; }).join('') + '</div>'
         + '<div class="cta">👉 点开看明细与营养拆解</div>'
         + '<div class="cta2" onclick="event.stopPropagation(); showPoster(' + i + ')">🖼 保存海报（文字已嵌图）</div>'
-        + '<div class="cta2 os-link" onclick="event.stopPropagation(); showOrder(' + i + ')">🧾 下单清单（拿着去点）</div></div></div>';
+        + '<div class="cta2 os-link" onclick="event.stopPropagation(); showOrder(' + i + ')">🧾 下单清单（拿着去点）</div></div>'
+        + '<span class="lockbtn" title="点我锁定这个方案" onclick="event.stopPropagation(); toggleLock(' + i + ', this)">🔓</span></div>';
     });
     h += '</div>';
     /* 三档分歧对比表：一眼看懂「为什么给三个而不是一个」 */
