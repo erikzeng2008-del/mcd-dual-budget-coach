@@ -14,6 +14,12 @@
 
 > 说「多少钱 + 多少卡」，它给你三个能直接下单的组合——商品图全是 AI 抠图的真实照片，套餐按「主角优先」重新拼好，券会算清用完到手价。
 
+## 🖼 素材档案（88 张商品图，AI 抠图、逐张审过）
+
+商品图不是从网上随便找的——全部来自麦当劳官方商品图，经 **RMBG-2.0 神经网络抠图 + 暗色残留清理** 去底，四模型横评选型（u2net / RMBG-1.4 / BiRefNet / RMBG-2.0，实测 BiRefNet 反而最差）。
+
+**👉 [素材档案审阅台](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/matting-review.html)** —— 每张商品「原图 vs 抠图」左右对照，可逐张查边缘干不干净。抠图脚本 `ai_cutout.py` 已开源在本仓库，换模型只改一行路径。
+
 <details>
 <summary><b>⚠️ 这两个别点（会报错）</b></summary>
 

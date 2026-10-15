@@ -314,6 +314,9 @@
   .plan .pstats span { font-size:12px; font-weight:700; color:#4a3f2a; background:#FFF8E8;
     border:1.5px solid #eadfc2; border-radius:999px; padding:4px 11px; }
   .plan .cta2 { font-size:11px; color:#8a7a5c; font-weight:700; margin-top:3px; }
+  .vringbox { display:inline-flex; align-items:center; cursor:help; flex-shrink:0; }
+  .vring { display:block; }
+  .plan .top { display:flex; align-items:center; gap:8px; }
   .plan .cta2.os-link { color:#1a6fc4; }
   /* 下单清单 */
   .order-sheet { background:#FFFDF6; border:2px solid #1a1a1a; border-radius:12px; padding:20px 22px; max-width:520px; margin:14px auto 0;
@@ -591,7 +594,27 @@ let PLANS = [];
 let SHOWN = new Set();
 
 let PMIN = 0;   /* 蛋白下限(g)，0=不启用 —— 第三道闸门 */
-/* ── 偏好记忆（localStorage）：忌口过滤 + 常点加权 + 上次预算回填 ── */
+/* ── 值不值指数（0-100）：每元蛋白 + 达标度 - 钠惩罚，公式透明可复算 ── */
+function valueScore(p, k) {
+  const noCap = k >= 900;
+  const perPr = p.price > 0 ? p.pr / p.price : 0;
+  const fit = noCap ? 0.5 : (p.kcal / k);
+  const s = 40 + perPr * 11 + (fit - 0.85) * 32 - (p.na / 2000) * 14;
+  return Math.max(3, Math.min(99, Math.round(s)));
+}
+function valueRing(score) {
+  const r = 15, C = 2 * Math.PI * r;
+  const off = C * (1 - score / 100);
+  const col = score >= 70 ? "#3d6b3d" : score >= 45 ? "#DA291C" : "#8a6d3b";
+  return '<svg class="vring" viewBox="0 0 40 40" width="40" height="40">'
+    + '<circle cx="20" cy="20" r="' + r + '" fill="none" stroke="#eee5d2" stroke-width="5"/>'
+    + '<circle cx="20" cy="20" r="' + r + '" fill="none" stroke="' + col + '" stroke-width="5"'
+    + ' stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"'
+    + ' transform="rotate(-90 20 20)"/>'
+    + '<text x="20" y="24" text-anchor="middle" font-size="14" font-weight="800" fill="' + col + '">' + score + '</text>'
+    + '</svg>';
+}
+
 const PREFS_KEY = "wb-dbc-prefs";
 const AVOID_MAP = {
   la: ["辣"],
@@ -675,8 +698,7 @@ function renderPrefsUI() {
   }
 }
 
-function pick(moneyCap, kcalCap, proteinMin) {
-  const pmin = proteinMin || 0;
+function pick(moneyCap, kcalCap, proteinMin) {  const pmin = proteinMin || 0;
   const noCap = kcalCap >= 900;
   const prefs = getPrefs();
   const pass0 = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap
@@ -1122,7 +1144,8 @@ function run() {
       if (p.pr) stats.push("💪 蛋白 " + p.pr.toFixed(1) + " g");
       stats.push("💰 余额 ¥" + (m - p.price).toFixed(1));
       h += '<div class="plan" onclick="detail(' + i + ')">' + pic.replace('<div class="pic">', '<div class="pic" id="pic' + i + '">')
-        + '<div class="body"><div class="top"><span class="' + cls + '">' + p.label + '</span>' + extra + '</div>'
+        + '<div class="body"><div class="top"><span class="' + cls + '">' + p.label + '</span>' + extra
+        + '<span class="vringbox" title="值不值指数 = 40 + 每元蛋白×11 + (热量/目标-0.85)×32 - 钠/2000×14">' + valueRing(valueScore(p, k)) + '</span></div>'
         + '<div class="nm">' + fmt(p.items) + '</div>'
         + '<div class="why">💡 ' + (WHY[p.label] || "") + '</div>'
         + '<div class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></div>'
