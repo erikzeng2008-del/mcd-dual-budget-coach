@@ -1,0 +1,8 @@
+# AI 抠图（本地跑，无需联网）
+# 安装到 F 盘示例：
+#   pip install --target F:/mcd_tools/pylibs onnxruntime pillow numpy
+# 模型：本机已缓存 C:/Users/erikz/.rembg/models/u2net/u2net.onnx（167MB，u2net）
+# 或从 https://github.com/danielgatis/rembg/releases 下载 u2net.onnx / isnet-general-use.onnx
+onnxruntime
+pillow
+numpy
