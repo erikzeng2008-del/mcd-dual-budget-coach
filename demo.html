@@ -62,6 +62,8 @@
   .tabs .tab.off { opacity:.4; cursor:not-allowed; }
 
   .presets { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:12px 0 16px; }
+  .gate { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:10px 14px 6px; margin-bottom:6px; }
+  .gate-svg { width:100%; height:auto; display:block; }
 .modes { text-align:center; margin:-8px 0 14px; }
   .modechip { font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer;
     background:#fff; color:#1a1a1a; border:2px solid #1a1a1a; border-radius:999px; padding:7px 18px;
@@ -133,6 +135,12 @@
   .pr i { color:#6b7a3a; font-style:normal; font-size:12.5px; }
   .cta { font-size:12px; color:#DA291C; font-weight:700; margin:5px 0 0 42px; }
   .metrics { margin-top:12px; border-top:2px solid #1a1a1a; padding-top:10px; }
+  .cmptable { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:13px 16px; margin-top:14px; }
+  .cmp-h { font-weight:800; font-size:13.5px; margin-bottom:9px; color:#1a1a1a; }
+  .cmptable table { width:100%; border-collapse:collapse; font-size:12.8px; }
+  .cmptable th, .cmptable td { text-align:left; padding:6px 8px; border-top:1.5px solid #ece5d5; vertical-align:top; }
+  .cmptable th { font-size:12.5px; color:#8a6d3b; border-top:none; font-weight:800; }
+  .cmptable .cmp-k { font-weight:700; color:#6b5a3a; white-space:nowrap; }
   .mrow { display:flex; justify-content:space-between; gap:14px; font-size:13.5px; padding:3px 0; }
   .mrow b.m { font-family:Consolas,monospace; font-weight:800; }
   .status { margin-top:12px; font-size:12.5px; color:#7a5c14; font-family:Consolas,monospace;
@@ -277,6 +285,24 @@
   .plan .pstats span { font-size:12px; font-weight:700; color:#4a3f2a; background:#FFF8E8;
     border:1.5px solid #eadfc2; border-radius:999px; padding:4px 11px; }
   .plan .cta2 { font-size:11px; color:#8a7a5c; font-weight:700; margin-top:3px; }
+  .plan .cta2.os-link { color:#1a6fc4; }
+  /* 下单清单 */
+  .order-sheet { background:#FFFDF6; border:2px solid #1a1a1a; border-radius:12px; padding:20px 22px; max-width:520px; margin:14px auto 0;
+     box-shadow:4px 4px 0 #DA291C; }
+  .os-title { font-weight:800; font-size:17px; color:#1a1a1a; text-align:center; margin-bottom:6px; }
+  .os-row { font-size:13px; color:#4a4034; line-height:1.9; }
+  .os-div { border-top:1.5px dashed #c9b98f; margin:10px 0; }
+  .os-item { display:flex; justify-content:space-between; font-size:15px; color:#1a1a1a; line-height:2.0; }
+  .os-item span:last-child { font-family:var(--f-mono); font-weight:700; }
+  .os-total { font-weight:800; font-size:17px; color:#DA291C; }
+  .os-note { font-size:12.5px; color:#8a6d3b; margin-top:6px; }
+  .os-foot { font-size:11.5px; color:#9a8557; margin-top:10px; text-align:center; }
+  .order-actions { display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+  .oa-btn { display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-family:inherit; font-size:13.5px; font-weight:800;
+     padding:11px 18px; border-radius:10px; border:2px solid #1a1a1a; background:#fff; color:#1a1a1a; text-decoration:none; }
+  .oa-main { background:#DA291C; color:#fff; }
+  .oa-mcd { background:#FFC72C; color:#1a1a1a; }
+  .oa-btn:hover { transform:translate(-1px,-1px); box-shadow:3px 3px 0 #1a1a1a; }
   .plan .cta2:hover { color:#DA291C; }
   .poster { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:10px; }
   .poster img { width:100%; display:block; border-radius:8px; }
@@ -386,6 +412,44 @@
   </div>
 
   <div id="v1">
+    <!-- 双闸门示意图：一句话讲透「双预算」——两扇门都过了才放行 -->
+    <div class="gate">
+      <svg viewBox="0 0 680 150" class="gate-svg" role="img" aria-label="双闸门示意">
+        <!-- 左：组合库 -->
+        <rect x="8" y="48" width="128" height="56" rx="10" fill="#1a1a1a"/>
+        <text x="72" y="72" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">88,788 个组合</text>
+        <text x="72" y="92" fill="#cbb" font-size="12" text-anchor="middle">83 种单品排列</text>
+        <!-- 门1：金额 -->
+        <g>
+          <rect x="186" y="30" width="14" height="96" rx="3" fill="#DA291C"/>
+          <rect x="186" y="30" width="14" height="14" fill="#FFC72C"/>
+          <text x="252" y="60" fill="#DA291C" font-size="15" font-weight="800" text-anchor="middle">① 金额闸门</text>
+          <text x="252" y="82" fill="#6b5a3a" font-size="12.5" text-anchor="middle">总价 ≤ 预算</text>
+          <text x="252" y="100" fill="#6b5a3a" font-size="12.5" text-anchor="middle">（穷鬼套餐不丢人）</text>
+        </g>
+        <!-- 门2：热量 -->
+        <g>
+          <rect x="352" y="30" width="14" height="96" rx="3" fill="#DA291C"/>
+          <rect x="352" y="30" width="14" height="14" fill="#FFC72C"/>
+          <text x="418" y="60" fill="#DA291C" font-size="15" font-weight="800" text-anchor="middle">② 热量闸门</text>
+          <text x="418" y="82" fill="#6b5a3a" font-size="12.5" text-anchor="middle">总热量 ≤ 目标</text>
+          <text x="418" y="100" fill="#6b5a3a" font-size="12.5" text-anchor="middle">（可选不设限）</text>
+        </g>
+        <!-- 右：三档 -->
+        <rect x="508" y="48" width="164" height="56" rx="10" fill="#DA291C"/>
+        <text x="590" y="72" fill="#fff" font-size="15" font-weight="700" text-anchor="middle">出三档方案</text>
+        <text x="590" y="92" fill="#ffe1c9" font-size="12" text-anchor="middle">最划算 / 最扎实 / 最均衡</text>
+        <!-- 箭头 -->
+        <g stroke="#DA291C" stroke-width="3" fill="none" marker-end="url(#arr)">
+          <path d="M138 76 L182 76"/>
+          <path d="M306 76 L348 76"/>
+          <path d="M474 76 L504 76"/>
+        </g>
+        <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#DA291C"/></marker></defs>
+        <text x="340" y="144" fill="#8a6d3b" font-size="12.5" text-anchor="middle">两个闸门要同时过，才算过闸 —— 不是「不超预算就行」</text>
+      </svg>
+    </div>
     <div class="presets">
       <button data-m="30" data-k="600">30 块 600 卡 · 正餐</button>
       <button data-m="25" data-k="900">25 块 · 不限卡</button>
@@ -880,9 +944,34 @@ function run() {
         + '<div class="pr">¥' + money(p.price) + ' <i>' + (p.unknown ? "含热量未知单品" : p.kcal + " kcal") + '</i></div>'
         + '<div class="pstats">' + stats.map(function (t) { return '<span>' + t + '</span>'; }).join('') + '</div>'
         + '<div class="cta">👉 点开看明细与营养拆解</div>'
-        + '<div class="cta2" onclick="event.stopPropagation(); showPoster(' + i + ')">🖼 保存海报（文字已嵌图）</div></div></div>';
+        + '<div class="cta2" onclick="event.stopPropagation(); showPoster(' + i + ')">🖼 保存海报（文字已嵌图）</div>'
+        + '<div class="cta2 os-link" onclick="event.stopPropagation(); showOrder(' + i + ')">🧾 下单清单（拿着去点）</div></div></div>';
     });
     h += '</div>';
+    /* 三档分歧对比表：一眼看懂「为什么给三个而不是一个」 */
+    if (PLANS.length >= 2) {
+      const WHYMAP = { "最划算": "花得最少 · 吃饱", "最扎实": "最管饱 · 热量最高", "最均衡": "不浪费也不抠" };
+      h += '<div class="cmptable"><div class="cmp-h">⚖️ 三档的分歧点在哪（为什么给三个，不是替你做唯一决定）</div><table>'
+        + '<tr><th></th>' + PLANS.map(function (p) { return '<th>' + p.label + '</th>'; }).join('') + '</tr>';
+      const rows = [
+        ["到手价", function (p) { return "¥" + money(p.price); }],
+        ["热量", function (p) { return p.unknown ? "含未知" : (p.kcal + " kcal"); }],
+        ["蛋白", function (p) { return p.pr ? (p.pr.toFixed(1) + " g") : "—"; }],
+        ["钠", function (p) { return p.unknown ? "未知" : (p.na + " mg"); }],
+        ["结构", function (p) {
+            const TN = ["主食", "套餐", "小食", "甜饮"];
+            const tiers = {};
+            p.items.forEach(function (x) { const t = catTier(x.cat); tiers[TN[t]] = (tiers[TN[t]] || 0) + 1; });
+            return Object.keys(tiers).map(function (t) { return t + "×" + tiers[t]; }).join("＋");
+          }],
+        ["一句话", function (p) { return WHYMAP[p.label] || ""; }]
+      ];
+      rows.forEach(function (r) {
+        h += '<tr><td class="cmp-k">' + r[0] + '</td>'
+          + PLANS.map(function (p) { return '<td>' + r[1](p) + '</td>'; }).join('') + '</tr>';
+      });
+      h += '</table></div>';
+    }
     h += '<div class="metrics">';
     h += mrow("💰 预算执行", "¥" + money(f.price) + " / ¥" + m + " · 剩 ¥" + left);
     h += mrow("🔥 热量执行", f.unknown ? "本单含热量未知单品，不做卡数判断"
@@ -1004,6 +1093,114 @@ function dlPoster(i) {
     document.body.appendChild(a); a.click(); a.remove();
   });
 }
+/* ── 下单清单：拿着去点的收据（可复制文本 + 下载图 + 点单入口），守诚实线（不替你加购物车）─ */
+function orderText(p, m) {
+  const lines = [];
+  lines.push("🧾 麦门双预算 · 下单清单");
+  lines.push("━━━━━━━━━━━━━━");
+  lines.push("方案：" + p.label);
+  lines.push("门店：麦当劳福州金洲南路餐厅");
+  lines.push("时间：" + new Date().toLocaleString("zh-CN", { hour12: false }));
+  lines.push("");
+  p.items.forEach(function (x, i) {
+    lines.push((i + 1) + ". " + x.n + "  ¥" + x.p.toFixed(1));
+  });
+  lines.push("──────────────");
+  lines.push("合计：" + p.items.length + " 件  ¥" + p.price.toFixed(1));
+  if (!p.unknown) lines.push("🔥 热量 " + p.kcal + " kcal ｜ 🧂 钠 " + p.na + " mg ｜ 💪 蛋白 " + p.pr.toFixed(1) + " g");
+  else lines.push("⚠️ 本单含热量未知单品");
+  lines.push("━━━━━━━━━━━━━━");
+  lines.push("由「麦门双预算军师」生成 · 数据快照 2026-10-12");
+  return lines.join("\n");
+}
+function showOrder(i) {
+  const p = PLANS[i];
+  show("v3");
+  const txt = orderText(p, m0());
+  const box = [];
+  box.push("<button class='back' onclick='goV(2)'>← 返回战报</button>");
+  box.push('<div class="rep-title">🧾 下单清单 · 拿着去点</div>');
+  box.push('<div class="rep-meta">' + p.label + ' · ' + fmt(p.items) + ' · ¥' + p.price.toFixed(1) + ' kcal' + (p.unknown ? "（含未知）" : "") + '</div>');
+  box.push('<div class="order-sheet"><div class="os-title">🧾 麦门双预算 · 下单清单</div>');
+  box.push('<div class="os-row">方案：' + p.label + '</div>');
+  box.push('<div class="os-row">门店：麦当劳福州金洲南路餐厅</div>');
+  box.push('<div class="os-row">时间：' + new Date().toLocaleString("zh-CN", { hour12: false }) + '</div>');
+  box.push('<div class="os-div"></div>');
+  p.items.forEach(function (x, k) {
+    box.push('<div class="os-item"><span>' + (k + 1) + '. ' + x.n + '</span><span>¥' + x.p.toFixed(1) + '</span></div>');
+  });
+  box.push('<div class="os-div"></div>');
+  box.push('<div class="os-item os-total"><span>合计 ' + p.items.length + ' 件</span><span>¥' + p.price.toFixed(1) + '</span></div>');
+  if (!p.unknown) box.push('<div class="os-note">🔥 ' + p.kcal + ' kcal ｜ 🧂 ' + p.na + ' mg ｜ 💪 ' + p.pr.toFixed(1) + ' g</div>');
+  box.push('<div class="os-foot">由「麦门双预算军师」生成 · 数据快照 2026-10-12</div>');
+  box.push('</div>');
+  box.push('<div class="order-actions">'
+    + '<button class="oa-btn oa-main" onclick="copyOrder(' + i + ')">📋 复制清单文本</button>'
+    + '<button class="oa-btn" onclick="dlOrderImg(' + i + ')">⬇ 下载清单图</button>'
+    + '</div>');
+  box.push('<div class="order-actions">'
+    + '<a class="oa-btn oa-mcd" href="https://www.mcdonalds.com.cn/m/deliver" target="_blank" rel="noopener">🍔 去麦当劳点单（麦乐送）</a>'
+    + '</div>');
+  box.push('<div class="cz-none" style="margin-top:12px">'
+    + '诚实说明：我们能算清单，但<b>没法替你往购物车加东西</b>（麦当劳小程序没开放那个接口）。'
+    + '所以给你的是「复制清单 / 下载图」+「点单入口」——拿着清单去小程序/柜台点，一字不差。</div>');
+  $("v3").innerHTML = box.join("");
+}
+function m0() { return +$("m").value; }
+function copyOrder(i) {
+  const p = PLANS[i];
+  const t = orderText(p, m0());
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+    .then(function () { feedback("✅ 清单已复制——去小程序/柜台照着点"); })
+    .catch(function () {
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      feedback("✅ 清单已复制");
+    });
+}
+function dlOrderImg(i) {
+  const p = PLANS[i];
+  const W = 640, lines = 14 + p.items.length * 2;
+  const H = 300 + p.items.length * 44 + 120;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  ctx.fillStyle = "#FFFDF6"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#1a1a1a"; ctx.lineWidth = 2; ctx.strokeRect(10, 10, W - 20, H - 20);
+  ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "left";
+  let y = 56;
+  ctx.font = "bold 22px 'Microsoft YaHei'"; ctx.fillText("🧾 麦门双预算 · 下单清单", 36, y); y += 26;
+  ctx.strokeStyle = "#DA291C"; ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(W - 30, y); ctx.stroke(); y += 20;
+  ctx.font = "14px 'Microsoft YaHei'";
+  ctx.fillText("方案：" + p.label, 36, y); y += 22;
+  ctx.fillText("门店：麦当劳福州金洲南路餐厅", 36, y); y += 22;
+  ctx.fillStyle = "#8a6d3b";
+  ctx.fillText("时间：" + new Date().toLocaleString("zh-CN", { hour12: false }), 36, y); y += 28;
+  ctx.strokeStyle = "#cbb"; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(W - 30, y); ctx.stroke(); ctx.setLineDash([]); y += 14;
+  ctx.fillStyle = "#1a1a1a"; ctx.font = "16px 'Microsoft YaHei'";
+  p.items.forEach(function (x, k) {
+    y += 30;
+    ctx.fillText((k + 1) + ". " + x.n, 36, y);
+    ctx.textAlign = "right"; ctx.fillText("¥" + x.p.toFixed(1), W - 36, y); ctx.textAlign = "left";
+  });
+  y += 18;
+  ctx.strokeStyle = "#cbb"; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(30, y); ctx.lineTo(W - 30, y); ctx.stroke(); ctx.setLineDash([]); y += 30;
+  ctx.font = "bold 18px 'Microsoft YaHei'";
+  ctx.fillText("合计 " + p.items.length + " 件", 36, y);
+  ctx.textAlign = "right"; ctx.fillStyle = "#DA291C"; ctx.fillText("¥" + p.price.toFixed(1), W - 36, y); ctx.textAlign = "left";
+  y += 28;
+  if (!p.unknown) { ctx.fillStyle = "#6b5a3a"; ctx.font = "13px 'Microsoft YaHei'"; ctx.fillText("🔥 " + p.kcal + " kcal ｜ 🧂 " + p.na + " mg ｜ 💪 " + p.pr.toFixed(1) + " g", 36, y); y += 26; }
+  ctx.fillStyle = "#9a8557"; ctx.font = "12px 'Microsoft YaHei'";
+  ctx.fillText("由「麦门双预算军师」生成 · 数据快照 2026-10-12", 36, y);
+  cv.toBlob(function (b) {
+    const u = URL.createObjectURL(b);
+    const a = document.createElement("a");
+    a.href = u; a.download = (p.label || "下单清单") + ".png";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }, "image/png");
+}
+
 /* 券匹配引擎（战报页：套餐在上、券在下） */
 const COUPON_RULES = [
   { kw: ["中薯条","大薯条","小薯条","迷你薯条","薯条","薯饼","脆薯饼","扭扭薯"],
