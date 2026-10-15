@@ -526,7 +526,8 @@
         <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
         <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
         <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥗 素食</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
       </div>
       <div class="pref-row">
         <span class="pref-k">常点</span>
@@ -620,7 +621,9 @@ const AVOID_MAP = {
   la: ["辣"],
   niu: ["牛", "安格斯"],
   zhu: ["猪", "培根", "火腿", "香肠", "扒", "猪柳"],
-  rou: ["肉", "鸡", "牛", "猪", "培根", "火腿", "香肠", "扒", "鳕鱼", "吉士", "安格斯", "脆汁鸡", "鳕鱼", "蛋"]
+  /* 蛋奶素：排肉排鱼，蛋和奶留着（原来把蛋也排了，误伤蛋奶素） */
+  rou: ["肉", "鸡", "猪", "培根", "火腿", "香肠", "扒", "鳕鱼", "吉士", "安格斯", "脆汁鸡", "麦香鸡"],
+  su: ["肉", "鸡", "猪", "牛", "培根", "火腿", "香肠", "扒", "鳕鱼", "吉士", "安格斯", "脆汁鸡", "麦香鸡", "蛋", "奶", "芝士", "沙拉酱", "蜂蜜"]
 };
 function getPrefs() {
   try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || { avoid: [], fav: [] }; }
@@ -634,7 +637,7 @@ function itemAvoided(x, avoid) {
     const kws = AVOID_MAP[a] || [];
     if (kws.some(function (k) { return nm.indexOf(k) >= 0; })) return true;
     if (a === "niu" && (x.cat || "").indexOf("牛鱼") >= 0) return true;
-    if (a === "rou" && /汉堡|牛鱼|炸鸡|鸡/.test(x.cat || "")) return true;
+    if ((a === "rou" || a === "su") && /汉堡|牛鱼|炸鸡|鸡/.test(x.cat || "")) return true;
   }
   return false;
 }
