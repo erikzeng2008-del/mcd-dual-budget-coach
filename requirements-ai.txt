@@ -1,8 +1,23 @@
-# AI 抠图（本地跑，无需联网）
-# 安装到 F 盘示例：
+# AI 抠图（本地跑，无需联网调用）
+#
+# 安装到 F 盘示例（不在 C 盘落任何东西）：
 #   pip install --target F:/mcd_tools/pylibs onnxruntime pillow numpy
-# 模型：本机已缓存 C:/Users/erikz/.rembg/models/u2net/u2net.onnx（167MB，u2net）
-# 或从 https://github.com/danielgatis/rembg/releases 下载 u2net.onnx / isnet-general-use.onnx
+#
+# 模型：RMBG-1.4（briaai，商品图专精）
+#   实测优于 u2net：紫底/青底/黑阴影块都能去干净，汉堡边缘不被切
+#   下载（GitHub 不通时用 hf-mirror 镜像）：
+#     https://hf-mirror.com/imgdesignart/rmbg-1-4-onnx/resolve/main/onnx/model.onnx
+#     -> 存为 F:/mcd_tools/models/rmbg14.onnx
+#
+# 备选 ISNet：
+#   https://hf-mirror.com/imgly/isnet-general-onnx/resolve/main/onnx/model.onnx
+#   （实测其 ONNX 导出与官方预处理不一致，输出近乎空白，暂未采用）
+#
+# 预处理要点（RMBG 官方做法，照抄即可）：
+#   直接拉伸到 1024×1024（不要 letterbox，留白会出残片）
+#   归一化 (x - 0.5) / 1.0
+#   输出 squeeze → min-max 归一化 → 缩回原图尺寸（长宽比自动还原）
+#
 onnxruntime
 pillow
 numpy

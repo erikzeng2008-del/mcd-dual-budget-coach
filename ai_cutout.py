@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-"""AI 抠图批处理（u2net / ONNX Runtime，本地 CPU）
-要点：
-- 等比缩放 + 居中 padding 到 320×320 → **不破坏原始比例**
-- min-max 归一化 → 软 alpha（保留毛边/反光）
-- 只去底，不裁切商品本身
+"""AI 抠图批处理（RMBG-1.4 / ONNX Runtime，本地 CPU）
+
+要点（都来自实测踩坑）：
+- 预处理必须按 RMBG 官方做法：**直接拉伸到 1024×1024**（不要 letterbox 留白，letterbox 会出残片）
+- 归一化是 (x - 0.5) / 1.0（不是 u2net 的 mean/std 那套）
+- 输出 min-max 归一化后**缩回原图尺寸** → 长宽比自动还原，商品永不变形
+- 全程不裁切：只把 alpha 通道换掉，商品一个像素不动
+
 用法：python ai_cutout.py [输入目录] [输出目录]
 """
 import os
@@ -16,72 +19,60 @@ from PIL import Image, ImageFilter
 sys.path.insert(0, r"F:\mcd_tools\pylibs")
 import onnxruntime as ort  # noqa: E402
 
-MODEL = r"C:\Users\erikz\.rembg\models\u2net\u2net.onnx"
-SIZE = 320
-MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
-STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+MODEL = r"F:\mcd_tools\models\rmbg14.onnx"   # RMBG-1.4，商品图专精
+SIZE = 1024
+MEAN = 0.5
+STD = 1.0
 
 
 def get_session():
     so = ort.SessionOptions()
     so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
-    so.intra_op_num_threads = 4
+    so.intra_op_num_threads = 6
     return ort.InferenceSession(MODEL, sess_options=so, providers=["CPUExecutionProvider"])
 
 
 def cutout(session, img):
-    """img: PIL RGBA -> RGBA（透明底）"""
-    W, H = img.size
-    scale = min(SIZE / W, SIZE / H)
-    nw, nh = max(1, int(round(W * scale))), max(1, int(round(H * scale)))
-    small = img.convert("RGB").resize((nw, nh), Image.LANCZOS)
-    # 居中 padding
-    canvas = Image.new("RGB", (SIZE, SIZE), (255, 255, 255))
-    ox, oy = (SIZE - nw) // 2, (SIZE - nh) // 2
-    canvas.paste(small, (ox, oy))
-    x = np.asarray(canvas, dtype=np.float32) / 255.0
-    x = (x - MEAN) / STD
-    x = x.transpose(2, 0, 1)[None, ...]
-    out = session.run(None, {session.get_inputs()[0].name: x})[0][0, 0]
-    # min-max 归一化
-    o_min, o_max = float(out.min()), float(out.max())
-    pred = (out - o_min) / (o_max - o_min) if o_max > o_min else out
-    # 去掉 padding 区域（pad 处预测为 0，无所谓），缩回原图
-    mask = Image.fromarray((pred * 255).astype(np.uint8), "L")
-    mask = mask.resize((nw, nh), Image.LANCZOS)
-    mask = mask.filter(ImageFilter.GaussianBlur(0.6))
-    full = Image.new("L", (W, H), 0)
-    full.paste(mask, (ox, oy))
-    # 轻微对比拉伸：把 0.35~0.65 区间压掉，让边缘更干净
-    a = np.asarray(full, dtype=np.float32) / 255.0
-    a = np.clip((a - 0.30) / 0.55, 0, 1)
-    full = Image.fromarray((a * 255).astype(np.uint8), "L")
-    rgba = img.convert("RGBA")
-    rgba.putalpha(full)
-    return rgba
+    im = np.asarray(img.convert("RGB").resize((SIZE, SIZE), Image.LANCZOS), dtype=np.float32) / 255.0
+    x = ((im - MEAN) / STD).transpose(2, 0, 1)[None, ...].astype(np.float32)
+    out = session.run(None, {session.get_inputs()[0].name: x})[0]
+    p = np.squeeze(out).astype(np.float32)
+    if p.ndim == 3:
+        p = p[0]
+    pmin, pmax = float(p.min()), float(p.max())
+    pred = (p - pmin) / (pmax - pmin) if pmax > pmin else p
+    mask = Image.fromarray((np.clip(pred, 0, 1) * 255).astype(np.uint8), "L")
+    mask = mask.resize(img.size, Image.LANCZOS)
+    mask = mask.filter(ImageFilter.GaussianBlur(0.4))
+    res = img.convert("RGBA")
+    res.putalpha(mask)
+    return res
 
 
 def main():
-    src_dir = sys.argv[1] if len(sys.argv) > 1 else r"F:\WorkBuddy默认工作空间存储\2026-10-09-15-17-04\mcd-dual-budget-coach\demo-assets"
+    src_dir = sys.argv[1] if len(sys.argv) > 1 else \
+        r"F:\WorkBuddy默认工作空间存储\2026-10-09-15-17-04\mcd-dual-budget-coach\demo-assets"
     out_dir = sys.argv[2] if len(sys.argv) > 2 else r"F:\mcd_tools\cutouts"
     os.makedirs(out_dir, exist_ok=True)
     files = sorted([f for f in os.listdir(src_dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))])
     sess = get_session()
     t0 = time.time()
+    ok = 0
     for i, f in enumerate(files, 1):
         dst = os.path.join(out_dir, os.path.splitext(f)[0] + ".png")
         if os.path.exists(dst):
             continue
         try:
             im = Image.open(os.path.join(src_dir, f))
-            out = cutout(sess, im)
-            out.save(dst, "PNG", optimize=True)
-            if i % 10 == 0 or i == len(files):
+            cutout(sess, im).save(dst, "PNG", optimize=True)
+            ok += 1
+            if i % 20 == 0 or i == len(files):
                 print("  %d/%d  %.1fs" % (i, len(files), time.time() - t0), flush=True)
         except Exception as e:
-            print("  ✗ %s: %s" % (f, e))
-    print("完成 %d 张，用时 %.1fs（均 %.2fs/张）-> %s"
-          % (len(files), time.time() - t0, (time.time() - t0) / max(len(files), 1), out_dir))
+            print("  x %s: %s" % (f, e))
+    dt = time.time() - t0
+    print("完成 %d/%d 张，用时 %.1fs（均 %.2fs/张）-> %s"
+          % (ok, len(files), dt, dt / max(ok, 1), out_dir))
 
 
 if __name__ == "__main__":
