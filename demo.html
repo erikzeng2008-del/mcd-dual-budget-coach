@@ -1153,7 +1153,7 @@ $("m").oninput = syncNums;
 $("k").oninput = syncNums;
 $("m").onchange = syncNums;
 $("k").onchange = syncNums;
-/* 支持 ?m=30&k=600&view=detail 直接进入某状态（截图/分享用），默认停在第一页 */
+/* 支持 ?m=30&k=600&view=report|detail|chat|cat|item 直接进入某状态（截图/分享用），默认停在第一页 */
 const q = new URLSearchParams(location.search);
 if (q.get("m")) $("m").value = q.get("m");
 if (q.get("k")) $("k").value = q.get("k");
@@ -1162,6 +1162,11 @@ if (q.get("view")) {
   const v = q.get("view");
   if (v === "cat") { run(); show("v4"); }
   else if (v === "item") { renderCat(); showItem(0); }
+  else if (v === "chat") {
+    run(); renderChat(); show("v5");
+    const qtext = q.get("q");
+    if (qtext) { const bx = $("chatbox"); if (bx) { bx.value = qtext; chatSend(); } }
+  }
   else { run(); if (v === "detail") detail(0); }
 }
 </script>
