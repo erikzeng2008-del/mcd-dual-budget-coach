@@ -116,7 +116,9 @@
   /* 商品目录 */
   .cat { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
   .cat .ci { background:#fff; border:2px solid #1a1a1a; border-radius:12px; overflow:hidden; cursor:pointer;
-    transition:transform .08s ease, box-shadow .08s ease; }
+    transition:transform .08s ease, box-shadow .08s ease; position:relative; }
+  .cat .ci .catfav { position:absolute; top:6px; right:8px; z-index:2; background:rgba(255,255,255,.9);
+     border-radius:999px; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:14px; }
   .cat .ci:hover { transform:translateY(-2px); box-shadow:3px 3px 0 #FFC72C; }
 .cat .ci img { max-width:100%; max-height:124px; width:auto; height:auto; object-fit:contain;
     display:block; margin:0 auto; background:#fff; }
@@ -152,6 +154,28 @@
   .pending { margin-top:10px; text-align:center; font-size:12.5px; color:#8a6d3b;
     background:#FFF3D6; border:1.5px dashed #d9b96a; border-radius:8px; padding:7px 12px; }
   .panel2 { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:13px 16px; margin-top:12px; }
+  /* 我的偏好 */
+  .panel.prefs { background:#FFFBF0; }
+  .panel.prefs .ctitle { font-weight:800; font-size:14.5px; }
+  .panel.prefs .csub { font-weight:400; font-size:11.5px; color:#9a8557; margin-left:6px; }
+  .pref-row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:9px 0; }
+  .pref-k { font-size:12.5px; font-weight:800; color:#8a6d3b; min-width:34px; }
+  .pref-opt { display:inline-flex; align-items:center; gap:5px; font-size:13px; cursor:pointer;
+     background:#fff; border:1.5px solid #e6dcc6; border-radius:999px; padding:5px 13px; }
+  .pref-opt input { accent-color:#DA291C; }
+  .pref-opt:has(input:checked) { border-color:#DA291C; background:#FFF3F1; }
+  .pref-favs { display:flex; flex-wrap:wrap; gap:6px; }
+  .pref-none { font-size:12px; color:#a89a7c; font-style:italic; }
+  .favchip { display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:700;
+     background:#FFF3D0; border:1.5px solid #E8B931; border-radius:999px; padding:4px 11px; cursor:pointer; }
+  .favchip i { font-style:normal; cursor:pointer; color:#b0801a; }
+  .pref-actions { display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap; }
+  .pref-btn { font-family:inherit; font-size:13px; font-weight:800; cursor:pointer;
+     background:#DA291C; color:#fff; border:2px solid #1a1a1a; border-radius:9px; padding:8px 16px; }
+  .pref-btn.ghost { background:#fff; color:#1a1a1a; }
+  .pref-note { font-size:11.5px; color:#9a8557; }
+  .catfav { cursor:pointer; font-size:14px; opacity:.35; margin-left:6px; }
+  .catfav.on { opacity:1; }
   .ctitle { font-size:15px; font-weight:800; margin-bottom:8px; }
   .ctitle .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:6px; }
   /* ===== 券卡包（翻钱包式） ===== */
@@ -471,6 +495,27 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
+    <!-- 我的偏好（记住，下次自动用） -->
+    <div class="panel prefs" id="prefsPanel">
+      <div class="ctitle">🧡 我的偏好 <span class="csub">记住，下次自动用</span></div>
+      <div class="pref-row">
+        <span class="pref-k">忌口</span>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥗 素食</label>
+      </div>
+      <div class="pref-row">
+        <span class="pref-k">常点</span>
+        <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
+      </div>
+      <div class="pref-actions">
+        <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
+        <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
+        <span class="pref-note" id="prefNote">记住后，配餐自动过滤忌口、优先常点</span>
+      </div>
+    </div>
+
     <!-- 门店 -->
     <div class="panel2">
       <div class="ctitle">🏪 取餐门店</div>
@@ -526,20 +571,109 @@ let PLANS = [];
 let SHOWN = new Set();
 
 let PMIN = 0;   /* 蛋白下限(g)，0=不启用 —— 第三道闸门 */
+/* ── 偏好记忆（localStorage）：忌口过滤 + 常点加权 + 上次预算回填 ── */
+const PREFS_KEY = "wb-dbc-prefs";
+const AVOID_MAP = {
+  la: ["辣"],
+  niu: ["牛", "安格斯"],
+  zhu: ["猪", "培根", "火腿", "香肠", "扒", "猪柳"],
+  rou: ["肉", "鸡", "牛", "猪", "培根", "火腿", "香肠", "扒", "鳕鱼", "吉士", "安格斯", "脆汁鸡", "鳕鱼", "蛋"]
+};
+function getPrefs() {
+  try { return JSON.parse(localStorage.getItem(PREFS_KEY)) || { avoid: [], fav: [] }; }
+  catch (e) { return { avoid: [], fav: [] }; }
+}
+function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (e) {} }
+function itemAvoided(x, avoid) {
+  if (!avoid || !avoid.length) return false;
+  const nm = x.n + "|" + (x.cat || "");
+  for (const a of avoid) {
+    const kws = AVOID_MAP[a] || [];
+    if (kws.some(function (k) { return nm.indexOf(k) >= 0; })) return true;
+    if (a === "niu" && (x.cat || "").indexOf("牛鱼") >= 0) return true;
+    if (a === "rou" && /汉堡|牛鱼|炸鸡|鸡/.test(x.cat || "")) return true;
+  }
+  return false;
+}
+function comboAvoided(c, avoid) { return c.some(function (x) { return itemAvoided(x, avoid); }); }
+function comboFav(c, fav) {
+  if (!fav || !fav.length) return false;
+  const nm = c.map(function (x) { return x.n; }).join("|");
+  return fav.some(function (f) { return nm.indexOf(f) >= 0; });
+}
+/* ── 偏好面板交互 ── */
+function readAvoidUI() {
+  const out = [];
+  document.querySelectorAll(".pv:checked").forEach(function (c) { out.push(c.value); });
+  return out;
+}
+function savePrefsUI() {
+  const p = getPrefs();
+  p.avoid = readAvoidUI();
+  p.m = +$("m").value; p.k = +$("k").value;
+  savePrefs(p);
+  $("prefNote").textContent = "✅ 已记住——忌口过滤、常点优先、预算自动回填";
+  setTimeout(function () { $("prefNote").textContent = "记住后，配餐自动过滤忌口、优先常点"; }, 2200);
+}
+function clearPrefs() {
+  savePrefs({ avoid: [], fav: [] });
+  document.querySelectorAll(".pv").forEach(function (c) { c.checked = false; });
+  renderPrefsUI();
+  $("prefNote").textContent = "🗑 已清空偏好";
+}
+function toggleFav(name, el) {
+  const p = getPrefs();
+  const idx = p.fav.indexOf(name);
+  if (idx >= 0) p.fav.splice(idx, 1); else p.fav.push(name);
+  savePrefs(p);
+  if (el) el.classList.toggle("on", idx < 0);
+  renderPrefsUI();
+  /* 商品目录有缓存，收藏后要重渲染星标 */
+  if (typeof CAT !== "undefined" && CAT) {
+    const cur = document.getElementById("catgrid");
+    if (cur) { CAT = null; renderCat(); }
+  }
+}
+function renderPrefsUI() {
+  const p = getPrefs();
+  /* 忌口勾选 */
+  document.querySelectorAll(".pv").forEach(function (c) { c.checked = p.avoid.indexOf(c.value) >= 0; });
+  /* 常点 chips */
+  const fx = $("prefFavs");
+  if (fx) {
+    fx.innerHTML = p.fav.length
+      ? p.fav.map(function (f) {
+          return '<span class="favchip" title="点掉移除">⭐ ' + f + '<i onclick="toggleFav(\'' + f.replace(/'/g, "\\'") + '\')">×</i></span>';
+        }).join("")
+      : '<i class="pref-none">在商品目录点 ⭐ 收藏</i>';
+  }
+  /* 预算回填（仅在首次打开、用户还没动过时） */
+  if (p.m && !$("go").dataset.touched) {
+    if (+$("m").value === 30 && +$("k").value === 600) {
+      $("m").value = p.m; $("k").value = p.k; syncNums();
+    }
+  }
+}
+
 function pick(moneyCap, kcalCap, proteinMin) {
   const pmin = proteinMin || 0;
   const noCap = kcalCap >= 900;
-  const pass = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap
+  const prefs = getPrefs();
+  const pass0 = COMBOS.filter(c => sum(c, x => x.p) <= moneyCap
     && (!pmin || sum(c, x => x.pr) >= pmin)
     && (noCap || (!c.some(x => x.u) && sum(c, x => x.k) <= kcalCap)));
+  /* 忌口过滤：含忌口商品的组合直接出局（记着的偏好不是摆设） */
+  const pass = pass0.filter(c => !comboAvoided(c, prefs.avoid));
   if (!pass.length) return [];
+  /* 常点加权：含收藏商品的组合排到前面 */
+  const favBoost = function (c) { return comboFav(c, prefs.fav) ? 0 : 1; };
   const seen = new Set(SHOWN), res = [];
   const floor = noCap ? 0 : Math.max(250, Math.round(kcalCap * 0.55));
   const target = Math.round(kcalCap * 0.85);
   const lists = [
-    ["最划算", pass.filter(c => noCap || sum(c, x => x.k) >= floor).sort((a, b) => sum(a, x => x.p) - sum(b, x => x.p) || sum(b, x => x.k) - sum(a, x => x.k))],
-    ["最扎实", noCap ? [] : pass.slice().sort((a, b) => sum(b, x => x.k) - sum(a, x => x.k) || sum(a, x => x.p) - sum(b, x => x.p))],
-    ["最均衡", noCap ? [] : pass.slice().sort((a, b) => Math.abs(moneyCap * 0.85 - sum(a, x => x.p)) - Math.abs(moneyCap * 0.85 - sum(b, x => x.p)) || Math.abs(target - sum(a, x => x.k)) - Math.abs(target - sum(b, x => x.k)))]
+    ["最划算", pass.filter(c => noCap || sum(c, x => x.k) >= floor).sort((a, b) => favBoost(a) - favBoost(b) || sum(a, x => x.p) - sum(b, x => x.p) || sum(b, x => x.k) - sum(a, x => x.k))],
+    ["最扎实", noCap ? [] : pass.slice().sort((a, b) => favBoost(a) - favBoost(b) || sum(b, x => x.k) - sum(a, x => x.k) || sum(a, x => x.p) - sum(b, x => x.p))],
+    ["最均衡", noCap ? [] : pass.slice().sort((a, b) => favBoost(a) - favBoost(b) || Math.abs(moneyCap * 0.85 - sum(a, x => x.p)) - Math.abs(moneyCap * 0.85 - sum(b, x => x.p)) || Math.abs(target - sum(a, x => x.k)) - Math.abs(target - sum(b, x => x.k)))]
   ];
   for (const [label, list] of lists) {
     let got = false;
@@ -592,11 +726,15 @@ let CAT = null;
 function renderCat() {
   if (CAT) return;
   const sorted = DATA.slice().sort((a, b) => a.p - b.p);
+  const prefs = getPrefs();
   CAT = sorted.map((x, i) => {
     const pic = x.img ? '<img src="' + x.img + '" alt="' + x.n + '">' : '<div class="ph">🍔</div>';
     const unk = x.u ? '<div class="unk">MCP 营养表暂无此品数据</div>' : '';
-    return '<div class="ci" onclick="showItem(' + i + ')">' + pic
-      + '<div class="b"><div class="nm3">' + x.n + '</div>'
+    const favOn = prefs.fav.indexOf(x.n) >= 0 ? " on" : "";
+    return '<div class="ci">'
+      + '<span class="catfav' + favOn + '" title="收藏/取消" onclick="event.stopPropagation(); toggleFav(\''
+        + x.n.replace(/'/g, "\\'") + '\', this)">⭐</span>' + pic
+      + '<div class="b" onclick="showItem(' + i + ')"><div class="nm3">' + x.n + '</div>'
       + '<div class="pv">¥' + money(x.p) + ' <i>' + (x.u ? "热量未知" : x.k + " kcal") + '</i></div>'
       + '<div class="tg">' + x.cat + '</div>' + unk + '</div></div>';
   });
@@ -1355,6 +1493,7 @@ const q = new URLSearchParams(location.search);
 if (q.get("m")) $("m").value = q.get("m");
 if (q.get("k")) $("k").value = q.get("k");
 syncNums();
+renderPrefsUI();
 if (q.get("view")) {
   const v = q.get("view");
   if (v === "cat") { run(); show("v4"); }
