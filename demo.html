@@ -290,7 +290,16 @@
   .cz-h.sub { font-size:12.5px; color:#8a7a5c; margin-top:14px; }
   .cz-for { font-size:12.5px; color:#8a6d3b; margin:9px 0 6px; font-weight:700; }
   .cz-cards { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
-  .cz { border:2px solid #1a1a1a; border-radius:11px; padding:10px 13px; background:#fff; }
+  .cz { border:2px solid #1a1a1a; border-radius:11px; padding:10px 13px; background:#fff;
+       display:grid; grid-template-columns:58px 1fr; gap:11px; align-items:start; }
+  .cz-thumb { width:58px; height:58px; border-radius:10px; overflow:hidden;
+       border:1.5px solid #e6dcc6; display:flex; align-items:center; justify-content:center;
+       background:repeating-conic-gradient(#FFFDF6 0% 25%, #F4EEE0 0% 50%) 50%/10px 10px; }
+  .cz-thumb img { max-width:100%; max-height:100%; object-fit:contain; display:block; }
+  .cz-thumb.tk { flex-direction:column; gap:1px; background:#FFF6DD; border:1.5px dashed #D9A93B; }
+  .cz-thumb.tk i { font-style:normal; font-size:10px; font-weight:800; color:#B0801A; letter-spacing:1px; }
+  .cz-thumb.tk span { font-family:var(--f-mono); font-size:14px; font-weight:800; color:#B0801A; }
+  .cz-main { min-width:0; }
   .cz.live { border-color:#DA291C; background:#FFF9F8; }
   .cz.miss { opacity:.7; background:#FBF7EE; border-color:#d9c9a8; }
   .cz .cz-t { display:flex; align-items:flex-start; gap:8px; justify-content:space-between; }
@@ -1036,6 +1045,30 @@ function matchCoupons(plan) {
 }
 let PICKED = null;
 function pickCoupon(i) { PICKED = COUPONS[i]; }
+/* 券 → 商品缩略图：券名关键词映射到真实商品图（复用已有抠图，不额外增体积）
+   匹配不到就画券面图形，绝不随便配一张不对应的图 */
+const COUPON_ITEM = [
+  ["中薯条", "薯条"],
+  ["小食拼", "BFF四宫格小食盘"],
+  ["松饼", "枫糖风味厚松饼猪柳蛋堡（周一）"],
+  ["猪柳蛋", "枫糖风味厚松饼猪柳蛋堡（周一）"],
+  ["芝士蛋堡", "高达吉士双牛堡"],
+  ["高达", "高达吉士双牛堡"],
+  ["吉士", "双层吉士汉堡"],
+  ["鳕鱼", "双层深海鳕鱼堡"],
+  ["鸡翅", "麦辣鸡翅"],
+  ["麦旋风", "经典麦旋风"],
+  ["圆筒", "圆筒冰淇淋"],
+  ["新地", "新地"]
+];
+function couponThumb(cname, price) {
+  for (const kv of COUPON_ITEM) {
+    if (cname.indexOf(kv[0]) >= 0 && PIECES[kv[1]] && PIECES[kv[1]].a) {
+      return '<div class="cz-thumb"><img src="' + PIECES[kv[1]].a + '" alt="' + kv[1] + '"></div>';
+    }
+  }
+  return '<div class="cz-thumb tk"><i>券</i><span>¥' + price + '</span></div>';
+}
 function couponStrip(m, plans) {
   const liveN = COUPONS.filter(function(c){ return c.today_ok; }).length;
   let h = '<div class="couponzone">';
@@ -1048,11 +1081,11 @@ function couponStrip(m, plans) {
     h += '<div class="cz-for">给「' + p.label + '」（¥' + p.price.toFixed(1) + '）</div><div class="cz-cards">';
     hits.forEach(function(r) {
       const after = Math.max(0, p.price - r.c.price).toFixed(1);
-      h += '<div class="cz live"><div class="cz-t"><b>' + r.c.name + '</b>'
+      h += '<div class="cz live">' + couponThumb(r.c.name, r.c.price) + '<div class="cz-main"><div class="cz-t"><b>' + r.c.name + '</b>'
         + '<span class="flag ' + (r.c.today_ok ? "live" : "soon") + '">' + (r.c.today_ok ? "今日可用" : r.c.start.slice(5) + " 生效") + '</span></div>'
         + '<div class="cz-p">用券价 ¥' + r.c.price + '<span class="cz-after">用完这单 ¥' + after + '（省 ¥' + (p.price - parseFloat(after)).toFixed(1) + '）</span></div>'
         + '<div class="cz-w">' + r.why + '</div>'
-        + '<div class="cz-apply"><button onclick="pickCoupon(' + r.ci + '); applyCouponTo(' + i + ')">用在「' + p.label + '」这一单 →</button></div></div>';
+        + '<div class="cz-apply"><button onclick="pickCoupon(' + r.ci + '); applyCouponTo(' + i + ')">用在「' + p.label + '」这一单 →</button></div></div></div>';
     });
     h += '</div>';
   });
@@ -1066,7 +1099,7 @@ function couponStrip(m, plans) {
   if (miss.length) {
     h += '<div class="cz-h sub">这些用不上（说清楚原因，不藏着）</div><div class="cz-miss">';
     h += miss.slice(0, 6).map(function(r) {
-      return '<div class="cz miss"><div class="cz-t"><b>' + r.c.name + '</b></div><div class="cz-w">' + r.why + '</div></div>';
+      return '<div class="cz miss">' + couponThumb(r.c.name, r.c.price) + '<div class="cz-main"><div class="cz-t"><b>' + r.c.name + '</b></div><div class="cz-w">' + r.why + '</div></div></div>';
     }).join("");
     h += '</div>';
   }
