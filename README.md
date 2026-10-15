@@ -1,12 +1,20 @@
 # 🍔 麦门双预算军师 (McDualBudget Coach)
 
-## ▶ 在线试玩（点这里，不用下载、不用装）
+## ▶ 在线试玩（点这里就能用，不用下载、不用装）
 
-**→ https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html**
+### 👉 [点我进在线版](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html) →
 
-手机也能直接开。落地页：**[erikzeng2008-del.github.io/mcd-dual-budget-coach](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)**
+`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html`
 
-> ⚠️ **别直接点开仓库里的 `demo.html`**——它约 **11 MB**（真实商品图全部内嵌，GitHub 网页预览扛不住会报错）。想本地跑：先下载文件，再双击用浏览器打开。
+手机浏览器直接打开也行。不想用 Demo？先看[落地页](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)。
+
+<details>
+<summary><b>⚠️ 这两个别点（会报错）</b></summary>
+
+- ❌ **仓库文件列表里的 `demo.html`** —— 它有 11 MB（真实商品图全部内嵌在单文件里），GitHub 的网页预览扛不住，会提示文件过大。
+- ✅ 想本地跑：先把 `demo.html` **下载**下来，再双击用浏览器打开——本地打开完全没问题。
+
+</details>
 
 ---
 
