@@ -318,7 +318,7 @@
   .plan { display:grid; grid-template-columns:minmax(0, 440px) 1fr; }
   .plan .pic { width:auto; height:auto; min-height:300px; border-bottom:none;
     border-right:2px solid #1a1a1a; }
-  .plan .body { justify-content:center; gap:9px; padding:16px 20px; }
+  .plan .body { justify-content:center; gap:8px; padding:14px 18px; }
   .plan .nm { font-size:15.5px; }
   .plan .pr { font-size:19px; }
 
@@ -617,44 +617,43 @@ function rankItems(items) {
     return (b.p || 0) - (a.p || 0);
   });
 }
-/* 版式计算（纯函数，可单测）：spec = {hero:{w,h}, back:{w,h}|null, flanks:[{w,h},...]} */
+/* 版式计算（纯函数，可单测）：横向铺满画幅 —— 主角大、配角小、同一站立线，主角压在上层
+   spec = {hero:{w,h}, flanks:[{w,h},...]} */
 function layoutCombo(spec, W, H) {
   W = W || 840; H = H || 560;
-  const M = 16;
-  const hero = spec.hero;
-  const nF = spec.flanks.length;
-  const HERO_H = nF === 0 ? 0.88 : (nF === 1 ? 0.72 : 0.62);
-  let heroH = H * HERO_H, heroW = heroH * (hero.w / hero.h);
-  if (heroW > W - M * 2) { const k = (W - M * 2) / heroW; heroW *= k; heroH *= k; }
-  const heroX = (W - heroW) / 2;
-  const placed = [{ role: "hero", x: heroX, y: H * 0.90 - heroH, w: heroW, h: heroH, base: 0.90 }];
-  /* 主角后排片（薯条/可乐）：站右后方 */
-  if (spec.back) {
-    let bh = H * 0.34, bw = bh * (spec.back.w / spec.back.h);
-    if (bw > W * 0.42) { const k = (W * 0.42) / bw; bw *= k; bh *= k; }
-    /* 贴右缘站后方，保证露出（不被主角吞掉） */
-    let bx = W - M - bw;
-    const hRight = heroX + heroW;
-    const ovBack = Math.max(0, Math.min(hRight, bx + bw) - Math.max(heroX, bx));
-    if (ovBack > bw * 0.38) {           /* 与主角重叠过多 → 缩到右侧余量内 */
-      const free = Math.max(W - M - hRight, 90);
-      const kk = Math.min(1, (free * 1.5) / bw);
-      bw *= kk; bh *= kk;
-      bx = W - M - bw;
-    }
-    placed.push({ role: "back", x: bx, y: H * 0.62 - bh, w: bw, h: bh, base: 0.62 });
+  const M = 10;
+  const items = [spec.hero].concat(spec.flanks);
+  const n = items.length;
+  if (!n) return [];
+  const BASE = H * 0.88;          /* 站立线（底部对齐） */
+  const TOP = H * 0.06;
+  const avail = W - M * 2;
+  /* 相对高度：主角 1.0，侧件依次略小（视觉层级） */
+  const rel = [1.0, 0.56, 0.52, 0.48].slice(0, n);
+  const aspect = items.map(function (o) { return o.w / o.h; });
+  /* 解 h：使整排宽度正好铺满 avail（不超站立线） */
+  let sumAR = 0;
+  for (let i = 0; i < n; i++) sumAR += rel[i] * aspect[i];
+  let h = avail / sumAR;
+  const capH = BASE * rel[0];
+  if (h > capH) h = capH;
+  const widths = aspect.map(function (a, i) { return h * rel[i] * a; });
+  let total = widths.reduce(function (x, y) { return x + y; }, 0);
+  /* 轻微交叠：让它们像「一桌」而不是「三张贴纸」 */
+  const overlap = n > 1 ? Math.min(26, total * 0.05) : 0;
+  total -= overlap * (n - 1);
+  const x0 = (W - total) / 2;
+  const placed = [];
+  let x = x0;
+  for (let i = 0; i < n; i++) {
+    const w = widths[i];
+    const ih = h * rel[i];
+    placed.push({
+      role: i === 0 ? "hero" : ("flank" + (i - 1)),
+      x: x, y: BASE - ih, w: w, h: ih, base: 0.88
+    });
+    x += w - overlap;
   }
-  /* 其余主食片：前排左右 */
-  const sideSpace = Math.max((W - heroW) / 2 - M, 70);
-  const cap = sideSpace / 0.66;
-  spec.flanks.forEach(function (f, i) {
-    let h = H * (i === 0 ? 0.46 : 0.44), w = h * (f.w / f.h);
-    if (w > cap) { const k = cap / w; w *= k; h *= k; }
-    const left = (i % 2 === 0);
-    const x = left ? M : W - M - w;
-    const base = 1.00 - (i === 1 ? 0.01 : 0);
-    placed.push({ role: "flank" + i, x: x, y: H * base - h, w: w, h: h, base: base });
-  });
   return placed;
 }
 function comboImg(items, cb) {
@@ -662,8 +661,7 @@ function comboImg(items, cb) {
   const heroP = PIECES[ranked[0].n] || {};
   const jobs = [];
   if (heroP.a) jobs.push({ src: heroP.a, role: "hero" });
-  if (heroP.b) jobs.push({ src: heroP.b, role: "back" });
-  ranked.slice(1, 4).forEach(function (x) {
+  ranked.slice(1, 3).forEach(function (x) {
     const pi = PIECES[x.n] || {};
     if (pi.a) jobs.push({ src: pi.a, role: "flank" });
   });
@@ -689,29 +687,25 @@ function comboImg(items, cb) {
     g.addColorStop(0, "#FFFDF6"); g.addColorStop(1, "#FFF0D2");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     const hero = ok.filter(function (x) { return x.role === "hero"; })[0] || ok[0];
-    const back = ok.filter(function (x) { return x.role === "back"; })[0] || null;
     const flanks = ok.filter(function (x) { return x.role === "flank"; });
     const spec = {
       hero: { w: hero.im.width, h: hero.im.height },
-      back: back ? { w: back.im.width, h: back.im.height } : null,
       flanks: flanks.map(function (f) { return { w: f.im.width, h: f.im.height }; })
     };
     const placed = layoutCombo(spec, W, H);
     comboImg.last = placed;
-    /* 后排先画 → 主角 → 前排最后（压住主角下缘 = 有前有后） */
+    /* 侧图先画，主图最后压在上层 → 有前有后 */
     const byRole = {};
     byRole.hero = hero.im;
-    if (back) byRole.back = back.im;
     flanks.forEach(function (f, i) { byRole["flank" + i] = f.im; });
-    const order = ["back", "hero"].concat(flanks.map(function (_, i) { return "flank" + i; }));
-    order.forEach(function (r) {
+    flanks.map(function (_, i) { return "flank" + i; }).concat(["hero"]).forEach(function (r) {
       const m = placed.filter(function (q) { return q.role === r; })[0];
       const im = byRole[r];
       if (!m || !im) return;
       ctx.save();
-      ctx.shadowColor = "rgba(130,95,40,0.28)";
-      ctx.shadowBlur = 26;
-      ctx.shadowOffsetY = 12;
+      ctx.shadowColor = "rgba(130,95,40,0.26)";
+      ctx.shadowBlur = 22;
+      ctx.shadowOffsetY = 10;
       ctx.drawImage(im, m.x, m.y, m.w, m.h);
       ctx.restore();
     });
