@@ -8,6 +8,12 @@
 
 手机浏览器直接打开也行。不想用 Demo？先看[落地页](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)。
 
+## 🎬 先看一眼（四步跑通：设定 → 三档 → 明细 → 对话）
+
+![麦门双预算军师 · 四步流程动图](examples/demo-flow.gif)
+
+> 说「多少钱 + 多少卡」，它给你三个能直接下单的组合——商品图全是 AI 抠图的真实照片，套餐按「主角优先」重新拼好，券会算清用完到手价。
+
 <details>
 <summary><b>⚠️ 这两个别点（会报错）</b></summary>
 
