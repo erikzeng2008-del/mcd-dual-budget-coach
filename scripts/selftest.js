@@ -161,10 +161,10 @@
        return (pi.a || "").indexOf("data:image/png;base64,") === 0 &&
               (!pi.b || pi.b.indexOf("data:image/png;base64,") === 0);
      }), "抽查通过");
-  var setWithB = withImg2.filter(function (x) {
-       return (x.n.indexOf("套餐") >= 0 || x.n.indexOf("件套") >= 0) && PIECES[x.n] && PIECES[x.n].b;
-     });
-  ok("套图已拆出后排片（薯条可乐）", setWithB.length >= 15, "带后排片的套图 " + setWithB.length + " 个");
+  var noA = withImg2.filter(function (x) { return !(PIECES[x.n] && PIECES[x.n].a); });
+  var hasB = withImg2.filter(function (x) { return PIECES[x.n] && PIECES[x.n].b; });
+  ok("全部商品=AI 抠图整图（不再裁切拆件）", noA.length === 0 && hasB.length === 0,
+     "缺图 " + noA.length + " 个 / 残留拆件 " + hasB.length + " 个");
 
   /* ── 15. 合成版式不变量（不出画 / 无重度遮挡 / 主角最大） ── */
   var WC = 840;
