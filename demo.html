@@ -354,6 +354,21 @@
   .cz-thumb.tk { flex-direction:column; gap:1px; background:#FFF6DD; border:1.5px dashed #D9A93B; }
   .cz-thumb.tk i { font-style:normal; font-size:10px; font-weight:800; color:#B0801A; letter-spacing:1px; }
   .cz-thumb.tk span { font-family:var(--f-mono); font-size:14px; font-weight:800; color:#B0801A; }
+  /* 券日历 */
+  .ccal { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:13px 16px; margin-top:16px; overflow-x:auto; }
+  .cc-h { font-weight:800; font-size:13.5px; margin-bottom:9px; }
+  .ccal table { border-collapse:collapse; font-size:12px; min-width:100%; }
+  .ccal th, .ccal td { border:1px solid #ece5d5; padding:5px 7px; text-align:center; white-space:nowrap; }
+  .ccal th { background:#FFF6DD; font-size:11.5px; color:#6b5a3a; }
+  .ccal th i { display:block; font-style:normal; font-weight:400; font-size:10.5px; color:#9a8557; }
+  .ccal .cc-name { text-align:left; font-size:12px; font-weight:700; max-width:200px; white-space:normal; }
+  .ccal .cc-name i { font-style:normal; font-weight:400; color:#9a8557; margin-left:4px; }
+  .ccal td.cc-live { background:#FFE3DF; color:#DA291C; font-weight:800; }
+  .ccal td.cc-on { background:#EAF4EA; color:#3d6b3d; }
+  .ccal td.cc-off { color:#d9cfb8; }
+  .ccal tr.cc-today .cc-name { background:#FFF3F1; }
+  .cc-legend { display:flex; gap:16px; font-size:11.5px; color:#8a6d3b; margin-top:9px; flex-wrap:wrap; }
+  .cc-legend b { margin-right:3px; }
   .cz-main { min-width:0; }
   .cz.live { border-color:#DA291C; background:#FFF9F8; }
   .cz.miss { opacity:.7; background:#FBF7EE; border-color:#d9c9a8; }
@@ -1155,6 +1170,7 @@ function run() {
     h += mrow("🧧 省钱心情", savingTip(m, f));
     h += '</div>';
     h += couponStrip(m, PLANS);
+    h += couponCalendar();
     const remain = Math.max(0, pass - SHOWN.size);
     h += '<div style="text-align:center;margin-top:12px"><button class="again" onclick="more()">🔄 换一批'
       + (remain > 0 ? '（还有 ' + remain + ' 个过闸组合没露过脸）' : '（已全部露完，改预算试试）') + '</button></div>';
@@ -1436,6 +1452,49 @@ function couponThumb(cname, price) {
   }
   return '<div class="cz-thumb tk"><i>券</i><span>¥' + price + '</span></div>';
 }
+/* ── 券日历：把所有券按生效日期排成一张总览，今天能用什么、明天有什么，一眼看清 ── */
+function couponCalendar() {
+  const WDS = ["一", "二", "三", "四", "五", "六", "日"];
+  /* 收集所有出现的日期 */
+  const dates = [];
+  COUPONS.forEach(function (c) { if (dates.indexOf(c.start) < 0) dates.push(c.start); });
+  dates.sort();
+  if (!dates.length) return "";
+  const dayName = function (ds) {
+    const d = new Date(ds + "T00:00:00");
+    return "周" + WDS[(d.getDay() + 6) % 7];
+  };
+  const shortD = function (ds) { return ds.slice(5).replace("-", "/"); };
+  /* 券分组：同名合并 */
+  const groups = {};
+  COUPONS.forEach(function (c, i) {
+    const gk = c.name + "|" + c.price;
+    if (!groups[gk]) groups[gk] = { name: c.name, price: c.price, days: {}, today: false };
+    groups[gk].days[c.start] = c.today_ok;
+    if (c.today_ok) groups[gk].today = true;
+  });
+  let h = '<div class="ccal"><div class="cc-h">📅 券日历 · 今天能用什么、接下来有什么</div>';
+  h += '<table><tr><th class="cc-name">券</th>';
+  dates.forEach(function (ds) { h += '<th>' + dayName(ds) + '<i>' + shortD(ds) + '</i></th>'; });
+  h += '</tr>';
+  Object.keys(groups).forEach(function (gk) {
+    const g = groups[gk];
+    h += '<tr' + (g.today ? ' class="cc-today"' : '') + '><td class="cc-name">' + g.name + '<i>¥' + g.price + '</i></td>';
+    dates.forEach(function (ds) {
+      if (ds in g.days) {
+        h += '<td class="' + (g.days[ds] ? "cc-live" : "cc-on") + '">' + (g.days[ds] ? "●" : "○") + '</td>';
+      } else {
+        h += '<td class="cc-off">·</td>';
+      }
+    });
+    h += '</tr>';
+  });
+  h += '</table>';
+  h += '<div class="cc-legend"><span><b class="cc-live">●</b> 今日可用</span><span><b class="cc-on">○</b> 当天生效</span><span>· 不可用</span></div>';
+  h += '</div>';
+  return h;
+}
+
 function couponStrip(m, plans) {
   const liveN = COUPONS.filter(function(c){ return c.today_ok; }).length;
   let h = '<div class="couponzone">';
