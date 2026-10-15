@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>麦门双预算军师 · McDonald's 双预算军师</title>
+<meta name="description" content="输入一个金额 + 一个热量目标，输出三个真实可下单的麦当劳套餐方案。数据来自真实菜单、价格、营养与优惠券快照。">
+<style>
+  :root{
+    --ink:#141414; --red:#DA291C; --yel:#FFC72C; --cream:#FFF9EC;
+    --line:#e3d9c3; --grey:#7a6a52;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;
+    background:var(--cream); color:var(--ink); line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px 72px}
+
+  /* ── 顶栏 ── */
+  header{border-bottom:3px solid var(--ink); padding:26px 0 20px; margin-bottom:34px}
+  .kicker{font-size:12px;letter-spacing:.22em;color:var(--grey);font-weight:700}
+  h1{font-size:34px;line-height:1.25;margin:8px 0 6px;letter-spacing:-.01em}
+  h1 em{font-style:normal;color:var(--red)}
+  .lede{font-size:15px;color:#4a4034;max-width:660px}
+
+  /* ── 主行动区 ── */
+  .cta{
+    border:3px solid var(--ink);border-radius:14px;background:#fff;
+    padding:26px 24px;margin:0 0 34px;
+    box-shadow:6px 6px 0 var(--yel);
+  }
+  .cta h2{font-size:18px;margin-bottom:6px}
+  .cta p{font-size:13.5px;color:var(--grey);margin-bottom:16px}
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--red);color:#fff;text-decoration:none;
+    font-size:16px;font-weight:800;padding:14px 26px;border-radius:10px;
+    border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .note{margin-top:16px;font-size:12.5px;color:var(--grey);line-height:1.8}
+  .note code{background:#F1EAD8;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:12px}
+
+  /* ── 三步 ── */
+  h3.sec{font-size:14px;letter-spacing:.14em;color:var(--grey);font-weight:800;
+        margin:38px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .step{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:16px 16px 18px}
+  .step .n{font-family:Consolas,monospace;font-weight:800;font-size:12px;color:#fff;
+           background:var(--ink);border-radius:6px;padding:2px 8px;display:inline-block}
+  .step h4{font-size:15.5px;margin:10px 0 5px}
+  .step p{font-size:13px;color:#5a5044}
+
+  /* ── 特性 ── */
+  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+  .feat{border-left:4px solid var(--yel);background:#fff;border-radius:0 10px 10px 0;
+        padding:13px 15px;border-top:1.5px solid var(--line);border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line)}
+  .feat b{display:block;font-size:14px;margin-bottom:3px}
+  .feat span{font-size:12.5px;color:#5f5446}
+
+  /* ── 数据来源 ── */
+  .src{border:2px dashed #cdb98c;border-radius:12px;background:#FFFDF4;padding:16px 18px;font-size:13px;color:#4a4034}
+  .src b{color:var(--ink)}
+  .src ul{margin:8px 0 0 18px}
+  .src li{margin:3px 0}
+
+  /* ── 本地运行 ── */
+  .local{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:16px 18px;margin-top:14px}
+  .local h4{font-size:14.5px;margin-bottom:8px}
+  .local ol{margin-left:18px;font-size:13px;color:#4a4034}
+  .local li{margin:5px 0}
+  .warn{background:#FFF3F3;border:1.5px solid #f0b9b5;border-radius:9px;padding:10px 12px;
+        font-size:12.5px;color:#8a2a22;margin-top:12px}
+
+  footer{margin-top:46px;padding-top:18px;border-top:2px solid var(--line);
+         font-size:12px;color:var(--grey);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+  a{color:var(--red)}
+  @media (max-width:560px){
+    h1{font-size:26px}
+    .btn{width:100%;justify-content:center}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">MCDONALD'S × AI · HACKATHON</div>
+    <h1>麦门双预算军师<br><em>一个金额 + 一个热量目标 = 三个真实可下单的套餐</em></h1>
+    <p class="lede">不用自己想「今天吃啥」。说清两件事——花多少、要多少热量——它用真实的菜单、价格、营养和优惠券，算出三档可直接下单的套餐：最省钱的、最扛饿的、最不浪费的。</p>
+  </header>
+
+  <div class="cta">
+    <h2>▶ 在线试用（推荐）</h2>
+    <p>直接在线打开，无需下载、无需安装。手机上也能用。</p>
+    <a class="btn" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html" target="_blank" rel="noopener">
+      打开在线 Demo →
+    </a>
+    <p class="note">
+      <b>为什么推荐在线版：</b>本项目所有商品图都内嵌在单文件里，<code>demo.html</code> 约 <b>11 MB</b>（为了让每张图都是真实商品照片、且离线可看）。<br>
+      直接在仓库页面点开 <code>demo.html</code> 会被 GitHub 的网页预览限制挡住并报错——<b>请用上面的在线链接</b>；确实要本地跑，请先下载文件再双击打开。
+    </p>
+  </div>
+
+  <h3 class="sec">怎么玩</h3>
+  <div class="steps">
+    <div class="step">
+      <span class="n">STEP 1</span>
+      <h4>说清两件事</h4>
+      <p>拖动滑杆设定「今天花多少」和「想摄入多少热量」，点一下出方案。</p>
+    </div>
+    <div class="step">
+      <span class="n">STEP 2</span>
+      <h4>拿三档方案</h4>
+      <p>最划算 / 最扎实 / 最均衡。每档都标清单品、到手价、热量占比、钠和蛋白，还有拼好的套餐图。</p>
+    </div>
+    <div class="step">
+      <span class="n">STEP 3</span>
+      <h4>配券再省一点</h4>
+      <p>自动匹配今天真正能用的券，算清用券后到手价；用不上的券也会说明原因，不藏着。</p>
+    </div>
+  </div>
+
+  <h3 class="sec">它做了什么</h3>
+  <div class="feats">
+    <div class="feat"><b>真数据，不是编的</b><span>菜单 / 价格 / 营养 / 券全部来自麦当劳官方接口快照，写明抓取时间</span></div>
+    <div class="feat"><b>三档而非一档</b><span>最省钱 / 最扛饿 / 最不浪费，分歧点说清楚，不替你做唯一决定</span></div>
+    <div class="feat"><b>券会算清账</b><span>今天哪张券能用、用完省多少、为什么某张券用不上</span></div>
+    <div class="feat"><b>单文件可离线</b><span>HTML + CSS + JS + 图全内嵌，拷走也能跑，不依赖任何服务</span></div>
+  </div>
+
+  <h3 class="sec">数据来源</h3>
+  <div class="src">
+    <b>全部来自麦当劳官方菜单接口的一次快照</b>，抓取时间 <b>2026-10-11 10:30</b>（北京）。
+    <ul>
+      <li>商品与价格：<b>83</b> 个单品，含套餐 / 单品 / 小食甜品 / 炸鸡</li>
+      <li>营养：每单的热量、钠、蛋白质、脂肪</li>
+      <li>优惠券：<b>11</b> 张，含生效时段与「周一到周五 10:30-23:59」这类限制</li>
+      <li>商品图：官方商品图，经 AI 抠图去背后内嵌，套餐图为多件商品重新拼合</li>
+    </ul>
+  </div>
+
+  <h3 class="sec">想在本地跑</h3>
+  <div class="local">
+    <h4>三步搞定</h4>
+    <ol>
+      <li>下载仓库里的 <code>demo.html</code>（约 11 MB，属正常——真实商品图都嵌在里面）</li>
+      <li>双击用浏览器打开，无需联网、无需服务器</li>
+      <li>手机上用：把文件传到手机浏览器打开，或直接用上面的在线链接</li>
+    </ol>
+    <div class="warn">
+      ⚠️ 别在 GitHub 网页上直接点开 <code>demo.html</code>——文件太大，GitHub 的预览会报错。用在线链接或本地打开。
+    </div>
+  </div>
+
+  <footer>
+    <span>麦门双预算军师 · 麦当劳 AI 创新挑战赛作品</span>
+    <span><a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" target="_blank" rel="noopener">源码仓库</a> · <a href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html" target="_blank" rel="noopener">在线 Demo</a></span>
+  </footer>
+
+</div>
+</body>
+</html>

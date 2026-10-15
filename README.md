@@ -1,14 +1,22 @@
 # 🍔 麦门双预算军师 (McDualBudget Coach)
 
+## ▶ 在线试玩（点这里，不用下载、不用装）
+
+**→ https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html**
+
+手机也能直接开。落地页：**[erikzeng2008-del.github.io/mcd-dual-budget-coach](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)**
+
+> ⚠️ **别直接点开仓库里的 `demo.html`**——它约 **11 MB**（真实商品图全部内嵌，GitHub 网页预览扛不住会报错）。想本地跑：先下载文件，再双击用浏览器打开。
+
+---
+
 > **钱是一个预算，热量是另一个预算。两个都不超，一顿配到位。**
 
 告诉它「30 块 600 卡，中午想吃点扎实的」，它基于麦当劳官方 MCP 实时菜单、营养数据和你的优惠券，配出三个能直接下单的组合——并诚实地告诉你：这顿等于慢跑 50 分钟。
 
 > ⭐ **本仓库正在参加 [2026 麦当劳程序员创意开发大赛](https://github.com/M-China/mcd-developer-innovation-challenge)，排名唯一依据就是 GitHub Star 数。** 如果这个「双预算配餐」的思路对你有用，麻烦点一下页面右上角的 **Star**——这是支持它的唯一方式，也是决定它排名的那一票。
 
-## 🎮 先玩一下（不用装、不用 Token，3 秒开桌）
-
-**[→ 点此在线试玩 demo](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html)**
+## 🎮 五屏都能玩（在线版）
 
 数据是 2026-10-12 的实测快照（83 个可配单品、11 张真实优惠券、88,788 个可组合），**五屏随便玩**：
 
