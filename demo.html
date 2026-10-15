@@ -73,6 +73,10 @@
   .presets button { font-family:inherit; font-size:12.5px; cursor:pointer; background:#fff;
     border:1.5px solid #DA291C; color:#DA291C; padding:6px 14px; border-radius:999px; }
   .presets button:hover { background:#DA291C; color:#fff; }
+  /* 蛋白模式开关：虚线边 + 激活后实心，跟场景预设区分开 */
+  .presets .modechip { border:1.5px dashed #DA291C; background:#fff; color:#DA291C; }
+  .presets .modechip:hover { background:#FFF3F1; color:#DA291C; }
+  .presets .modechip.on { background:#DA291C; color:#fff; border-style:solid; }
 
   .panel { background:#fff; border:2px solid #1a1a1a; border-radius:12px; padding:16px 20px; }
   .fields { display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; }
@@ -100,19 +104,21 @@
     transition:transform .08s ease, box-shadow .08s ease; }
   .plan:hover { transform:translateY(-3px); box-shadow:3px 3px 0 #FFC72C; }
   .plan:active { transform:translateY(-1px) scale(.995); }
-.plan .pic { width:100%; height:160px; border-bottom:2px solid #1a1a1a; background:#fff;
-    display:flex; align-items:center; justify-content:center; overflow:hidden; }
+/* 图区锁死 3:2（正好等于拼图画布 840×560）→ 三张卡的图区必然完全一致，
+   且 cover 填满不留白、不裁切（比例相同） */
+.plan .pic { width:100%; aspect-ratio:3/2; border-bottom:2px solid #1a1a1a; background:#fff;
+    overflow:hidden; }
 .plan .picrow { display:flex; width:100%; height:100%; align-items:center; }
 .plan .picrow img { flex:1 1 0; min-width:0; width:0; height:100%; max-width:none; max-height:none;
     object-fit:contain; display:block; background:#fff; }
 .plan .picrow img + img { border-left:1.5px dashed #e8dcc0; }
-.plan .pic img { max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain;
-    display:block; background:#fff; }
+.plan .pic img { width:100%; height:100%; object-fit:cover; display:block; background:#fff; }
   .plan .pic .ph { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     font-size:38px; background:#FFFBF0; }
   .plan .body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:7px; flex:1; }
   .plan .top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .plan .nm { font-size:14px; font-weight:700; line-height:1.45; }
+  .plan .nm { font-size:14px; font-weight:700; line-height:1.45;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .plan .pieces { font-size:11px; color:#9a8557; margin-left:auto; }
   .plan .pr { font-family:Consolas,monospace; font-weight:800; color:#DA291C; font-size:17px; }
   .plan .pr i { color:#6b7a3a; font-style:normal; font-size:12px; }
@@ -125,7 +131,8 @@
   .cat .ci .catfav { position:absolute; top:6px; right:8px; z-index:2; background:rgba(255,255,255,.9);
      border-radius:999px; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-size:14px; }
   .cat .ci:hover { transform:translateY(-2px); box-shadow:3px 3px 0 #FFC72C; }
-.cat .ci img { max-width:100%; max-height:124px; width:auto; height:auto; object-fit:contain;
+/* 目录图区：统一 124px 高 + contain 居中 → 大小不一的商品图也站得齐 */
+.cat .ci img { width:100%; height:124px; object-fit:contain;
     display:block; margin:0 auto; background:#fff; }
 .cat .ci .ph { width:100%; height:124px; display:flex; align-items:center; justify-content:center; font-size:30px; background:#FFFBF0; }
   .cat .ci .b { padding:8px 10px 10px; }
@@ -134,6 +141,8 @@
   .cat .ci .pv i { color:#6b7a3a; font-style:normal; font-size:11.5px; }
   .cat .ci .tg { font-size:10.5px; color:#9a8557; margin-top:2px; }
   .cat .ci .unk { font-size:10.5px; color:#b03a2e; margin-top:2px; }
+  .cat-tip { font-size:12px; color:#8a6d3b; background:#FFFDF4; border:1.5px dashed #cdb98f;
+     border-radius:9px; padding:8px 12px; margin-bottom:12px; line-height:1.6; }
   .plan .l1 { display:flex; align-items:baseline; gap:9px; }
   .tag { flex:0 0 auto; font-size:12px; font-weight:700; background:#FFC72C; padding:2px 9px; border-radius:4px; }
   .tag.alt { background:#fff; border:1.5px solid #DA291C; color:#DA291C; }
@@ -163,7 +172,8 @@
   .panel.prefs { background:#FFFBF0; }
   .panel.prefs .ctitle { font-weight:800; font-size:14.5px; }
   .panel.prefs .csub { font-weight:400; font-size:11.5px; color:#9a8557; margin-left:6px; }
-  .pref-row { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:9px 0; }
+  .prefs-toggle { cursor:pointer; display:flex; align-items:center; gap:6px; user-select:none; }
+  .prefs-fold { margin-left:auto; font-size:11.5px; font-weight:700; color:#DA291C; }
   .pref-k { font-size:12.5px; font-weight:800; color:#8a6d3b; min-width:34px; }
   .pref-opt { display:inline-flex; align-items:center; gap:5px; font-size:13px; cursor:pointer;
      background:#fff; border:1.5px solid #e6dcc6; border-radius:999px; padding:5px 13px; }
@@ -179,7 +189,9 @@
      background:#DA291C; color:#fff; border:2px solid #1a1a1a; border-radius:9px; padding:8px 16px; }
   .pref-btn.ghost { background:#fff; color:#1a1a1a; }
   .pref-note { font-size:11.5px; color:#9a8557; }
-  .catfav { cursor:pointer; font-size:14px; opacity:.35; margin-left:6px; }
+  .catfav { cursor:pointer; font-size:15px; opacity:.6; margin-left:6px; transition:opacity .12s ease, transform .12s ease; }
+  .catfav:hover { opacity:1; transform:scale(1.2); }
+  .catfav.on { opacity:1; }
   .catfav.on { opacity:1; }
   .ctitle { font-size:15px; font-weight:800; margin-bottom:8px; }
   .ctitle .csub { font-size:12px; font-weight:400; color:#9a8557; margin-left:6px; }
@@ -398,7 +410,9 @@
   /* ===== 方案卡：横向布局（图左信息右，放在最后确保覆盖） ===== */
   .plans { grid-template-columns:1fr; gap:14px; }
   .plan { display:grid; grid-template-columns:minmax(0, 440px) 1fr; }
-  .plan .pic { width:auto; height:auto; min-height:300px; border-bottom:none;
+  /* 图区锁 3:2（= 拼图画布 840×560）+ align-self:start 防网格拉伸
+     → 图片框和图片比例一致，cover 既不裁切也不留白 */
+  .plan .pic { width:100%; aspect-ratio:3/2; align-self:start; border-bottom:none;
     border-right:2px solid #1a1a1a; }
   .plan .body { justify-content:center; gap:8px; padding:14px 18px; }
   .plan .nm { font-size:15.5px; }
@@ -503,9 +517,7 @@
       <button data-m="40" data-k="500">500 卡 · 健身餐</button>
       <button data-m="20" data-k="900">20 块 · 紧预算</button>
       <button data-m="80" data-k="900">80 块 · 不限卡（大餐）</button>
-    </div>
-    <div class="modes">
-      <button class="modechip" id="pmode" onclick="toggleProtein()">💪 蛋白模式（第三道闸门 ≥30g）</button>
+      <button class="modechip" id="pmode" onclick="toggleProtein()">💪 蛋白模式 ≥30g</button>
     </div>
     <div class="panel">
       <div class="fields">
@@ -518,9 +530,13 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
-    <!-- 我的偏好（记住，下次自动用） -->
+    <!-- 我的偏好（默认收起，首屏先看滑杆；记住，下次自动用） -->
     <div class="panel prefs" id="prefsPanel">
-      <div class="ctitle">🧡 我的偏好 <span class="csub">记住，下次自动用</span></div>
+      <div class="ctitle prefs-toggle" onclick="togglePrefs()">
+        🧡 我的偏好 <span class="csub">记住，下次自动用</span>
+        <span class="prefs-fold" id="prefsFold">展开 ▾</span>
+      </div>
+      <div class="prefs-body" id="prefsBody" style="display:none">
       <div class="pref-row">
         <span class="pref-k">忌口</span>
         <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
@@ -537,6 +553,7 @@
         <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
         <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
         <span class="pref-note" id="prefNote">记住后，配餐自动过滤忌口、优先常点</span>
+      </div>
       </div>
     </div>
 
@@ -680,8 +697,14 @@ function toggleFav(name, el) {
     if (cur) { CAT = null; renderCat(); }
   }
 }
-function renderPrefsUI() {
-  const p = getPrefs();
+function togglePrefs() {
+  const b = $("prefsBody"), f = $("prefsFold");
+  if (!b) return;
+  const open = b.style.display !== "none";
+  b.style.display = open ? "none" : "block";
+  if (f) f.textContent = open ? "展开 ▾" : "收起 ▴";
+}
+function renderPrefsUI() {  const p = getPrefs();
   /* 忌口勾选 */
   document.querySelectorAll(".pv").forEach(function (c) { c.checked = p.avoid.indexOf(c.value) >= 0; });
   /* 常点 chips */
@@ -772,18 +795,23 @@ function renderCat() {
   if (CAT) return;
   const sorted = DATA.slice().sort((a, b) => a.p - b.p);
   const prefs = getPrefs();
+  /* 未知营养单品汇总成一句，不每张卡重复挂灰字 */
+  const unkN = DATA.filter(function (x) { return x.u; }).length;
+  const unkTip = unkN
+    ? '<div class="cat-tip">⚠️ 全部来自麦当劳 MCP 接口的商品图与营养数据 · 其中 <b>' + unkN
+      + '</b> 个单品 MCP 营养表暂无数据（标「热量未知」，配餐时会被算进预算但热量不计）</div>'
+    : '<div class="cat-tip">全部来自麦当劳 MCP 接口的商品图与营养数据 · 点任意商品看它的完整营养明细 · 绿色边框=官方热量档案套餐</div>';
   CAT = sorted.map((x, i) => {
     const pic = x.img ? '<img src="' + x.img + '" alt="' + x.n + '">' : '<div class="ph">🍔</div>';
-    const unk = x.u ? '<div class="unk">MCP 营养表暂无此品数据</div>' : '';
     const favOn = prefs.fav.indexOf(x.n) >= 0 ? " on" : "";
     return '<div class="ci">'
-      + '<span class="catfav' + favOn + '" title="收藏/取消" onclick="event.stopPropagation(); toggleFav(\''
+      + '<span class="catfav' + favOn + '" title="收藏 / 取消收藏" onclick="event.stopPropagation(); toggleFav(\''
         + x.n.replace(/'/g, "\\'") + '\', this)">⭐</span>' + pic
       + '<div class="b" onclick="showItem(' + i + ')"><div class="nm3">' + x.n + '</div>'
-      + '<div class="pv">¥' + money(x.p) + ' <i>' + (x.u ? "热量未知" : x.k + " kcal") + '</i></div>'
-      + '<div class="tg">' + x.cat + '</div>' + unk + '</div></div>';
+      + '<div class="pv">¥' + money(x.p) + ' <i>' + (x.u ? "⚠️ 热量未知" : x.k + " kcal") + '</i></div>'
+      + '<div class="tg">' + x.cat + '</div></div></div>';
   });
-  $("catgrid").innerHTML = CAT.join("");
+  $("catgrid").innerHTML = unkTip + CAT.join("");
   $("catn").textContent = DATA.length;
 }
 function showItem(i) {
