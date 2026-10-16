@@ -767,6 +767,7 @@ function showHolo(i) {
     + '</div></div>';
   h += '<div class="holo-actions">'
     + '<button class="oa-btn oa-main" onclick="saveHolo(' + i + ')">⬇ 保存这张卡</button>'
+    + '<button class="oa-btn" onclick="copyHoloLink(' + i + ')">🔗 复制卡的链接</button>'
     + '<button class="oa-btn" onclick="copyHolo(' + i + ')">📋 复制文案</button>'
     + '</div>';
   h += '<div class="cz-none" style="margin-top:14px">卡片上的每个数字都来自麦当劳 MCP 实测数据，'
@@ -776,8 +777,32 @@ function showHolo(i) {
   show("v3");
   bindHolo($("holoStage"));
 }
-function holoText(i) {
+/* 生成这张卡的专属分享链接（指向轻量 card.html，317KB 秒开） */
+function holoLink(i) {
   const p = PLANS[i]; if (!p) return "";
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  const base = location.href.replace(/[^/]*$/, "card.html");
+  const q = new URLSearchParams({
+    t: ps.title, e: ps.emoji, r: ps.rarity, rc: ps.rcol, l: ps.line,
+    p: p.price.toFixed(1), m: String(m),
+    k: p.unknown ? "?" : String(p.kcal), kt: String(k),
+    pr: p.pr ? p.pr.toFixed(1) : "0", na: String(p.na)
+  });
+  return base + "?" + q.toString();
+}
+function copyHoloLink(i) {
+  const u = holoLink(i);
+  (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject())
+    .then(function () { feedback("✅ 卡片链接已复制——发给别人，点开就能看到你这张卡"); })
+    .catch(function () {
+      const ta = document.createElement("textarea");
+      ta.value = u; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      feedback("✅ 卡片链接已复制");
+    });
+}
+function holoText(i) {  const p = PLANS[i]; if (!p) return "";
   const m = +$("m").value, k = +$("k").value;
   const ps = holoPersona(p, m, k);
   return "🃏 我的麦门人格鉴定结果\n"
