@@ -176,31 +176,29 @@
   .panel.prefs .csub { font-weight:400; font-size:11.5px; color:#9a8557; margin-left:6px; }
   .prefs-toggle { cursor:pointer; display:flex; align-items:center; gap:6px; user-select:none; }
   .prefs-fold { margin-left:auto; font-size:11.5px; font-weight:700; color:#DA291C; }
-  /* TAB */
-  .pref-tabs { display:flex; gap:6px; margin:2px 0 12px; border-bottom:1.5px solid #eadfc6; padding-bottom:8px; }
-  .ptab { font-family:inherit; font-size:13px; font-weight:800; cursor:pointer; background:none; border:none;
-    color:#8a7a5c; padding:6px 13px; border-radius:8px; display:inline-flex; align-items:center; gap:5px; }
-  .ptab:hover { background:#FFF3D6; }
-  .ptab.on { background:#DA291C; color:#fff; }
-  .ptab .pcount { font-style:normal; font-size:10.5px; font-weight:900; background:rgba(0,0,0,.16);
-    border-radius:999px; padding:1px 7px; }
-  .ptab.on .pcount { background:rgba(255,255,255,.26); }
-  .ptab-pane.hide { display:none; }
+  /* 两个模块并排：我的偏好 ｜ 我的闪卡 */
+  .duo { display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start; }
+  @media (max-width:760px) { .duo { grid-template-columns:1fr; } }
+  .cards-wrap { max-height:230px; overflow-y:auto; margin:-2px -4px 0; padding:2px 4px 0; }
+  .cards-wrap::-webkit-scrollbar { width:6px; }
+  .cards-wrap::-webkit-scrollbar-thumb { background:#e0d3b8; border-radius:99px; }
+  .pcount { font-style:normal; font-size:11px; font-weight:900; background:#DA291C; color:#fff;
+    border-radius:999px; padding:2px 8px; margin-left:5px; vertical-align:1px; }
   /* 我的闪卡列表 */
   .cards-empty { text-align:center; padding:22px 10px 18px; }
   .cards-empty .ce-ico { font-size:40px; }
   .cards-empty .ce-t { font-size:13.5px; font-weight:800; color:#8a6d3b; margin-top:8px; }
   .cards-empty .ce-s { font-size:11.5px; color:#a89a7c; margin-top:5px; line-height:1.6; }
-  .card-row { display:flex; align-items:center; gap:11px; background:#fff; border:1.5px solid #e6dcc6;
-    border-radius:11px; padding:10px 12px; margin-bottom:8px; }
+  .card-row { display:flex; align-items:center; gap:9px; background:#fff; border:1.5px solid #e6dcc6;
+    border-radius:10px; padding:8px 10px; margin-bottom:7px; }
   .card-row:hover { border-color:#DA291C; }
-  .card-row .cr-emo { font-size:26px; flex-shrink:0; }
+  .card-row .cr-emo { font-size:22px; flex-shrink:0; }
   .card-row .cr-main { flex:1; min-width:0; }
-  .card-row .cr-t { font-size:13.5px; font-weight:900; color:#1a1a1a; }
+  .card-row .cr-t { font-size:13px; font-weight:900; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .card-row .cr-t .rr { font-size:10.5px; font-weight:900; padding:1px 7px; border-radius:999px;
     color:#1a1a1a; margin-left:6px; vertical-align:1px; }
-  .card-row .cr-n { font-family:Consolas,monospace; font-size:11.5px; color:#8a6d3b; margin-top:3px; }
-  .card-row .cr-d { font-size:10.5px; color:#b3a179; margin-top:2px; }
+  .card-row .cr-n { font-family:Consolas,monospace; font-size:11px; color:#8a6d3b; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .card-row .cr-d { font-size:10px; color:#b3a179; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .card-row .cr-act { display:flex; gap:6px; flex-shrink:0; }
   .card-row .cr-btn { font-family:inherit; font-size:11.5px; font-weight:800; cursor:pointer;
     border:1.5px solid #1a1a1a; background:#fff; border-radius:7px; padding:5px 10px; }
@@ -620,40 +618,33 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
-    <!-- 我的偏好 / 我的闪卡（两个 TAB） -->
-    <div class="panel prefs" id="prefsPanel">
-      <div class="ctitle prefs-toggle" onclick="togglePrefs()">
-        🧡 我的空间 <span class="csub">偏好记住，闪卡收齐</span>
-        <span class="prefs-fold" id="prefsFold">展开 ▾</span>
+    <!-- 两个模块并排：我的偏好 ｜ 我的闪卡 -->
+    <div class="duo">
+    <div class="panel prefs">
+      <div class="ctitle">🧡 我的偏好 <span class="csub">记住，下次自动用</span></div>
+      <div class="pref-row">
+        <span class="pref-k">忌口</span>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
       </div>
-      <div class="prefs-body" id="prefsBody" style="display:none">
-        <div class="pref-tabs">
-          <button class="ptab on" id="ptab0" onclick="switchPrefTab(0)">🧡 我的偏好</button>
-          <button class="ptab" id="ptab1" onclick="switchPrefTab(1)">🃏 我的闪卡<i class="pcount" id="cardCount"></i></button>
-        </div>
-        <div class="ptab-pane" id="pane0">
-        <div class="pref-row">
-          <span class="pref-k">忌口</span>
-          <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
-          <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
-          <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
-          <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
-          <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
-        </div>
-        <div class="pref-row">
-          <span class="pref-k">常点</span>
-          <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
-        </div>
-        <div class="pref-actions">
-          <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
-          <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
-          <span class="pref-note" id="prefNote">记住后，配餐自动过滤忌口、优先常点</span>
-        </div>
-        </div>
-        <div class="ptab-pane hide" id="pane1">
-          <div id="cardsList"></div>
-        </div>
+      <div class="pref-row">
+        <span class="pref-k">常点</span>
+        <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
       </div>
+      <div class="pref-actions">
+        <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
+        <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
+        <span class="pref-note" id="prefNote">记住后自动过滤忌口、优先常点</span>
+      </div>
+    </div>
+    <div class="panel prefs">
+      <div class="ctitle">🃏 我的闪卡 <i class="pcount" id="cardCount"></i>
+        <span class="csub">配完餐点「⭐ 收进我的闪卡」</span></div>
+      <div class="cards-wrap" id="cardsWrap"><div id="cardsList"></div></div>
+    </div>
     </div>
 
     <!-- 门店 -->
@@ -768,7 +759,7 @@ function renderCardsUI() {
   if (!cs.length) {
     box.innerHTML = '<div class="cards-empty"><div class="ce-ico">🃏</div>'
       + '<div class="ce-t">还没有收藏过闪卡</div>'
-      + '<div class="ce-s">去战报页点「麦门全息人设卡」→ 生成后点<br>「⭐ 收进我的闪卡」，就会出现在这里</div></div>';
+      + '<div class="ce-s">配完餐 → 生成全息人设卡 → 点「⭐ 收进我的闪卡」，就会出现在这里</div></div>';
     return;
   }
   let h = "";
@@ -805,12 +796,6 @@ function showSavedCard(idx) {
   if (!c) return;
   renderHoloCard({ t: c.t, e: c.e, r: c.r, rc: c.rc, l: c.l, p: c.p, m: c.m, k: c.k, kt: c.kt, pr: c.pr, na: c.na });
 }
-function switchPrefTab(n) {
-  ["ptab0", "ptab1"].forEach(function (id, i) { $(id).classList.toggle("on", i === n); });
-  ["pane0", "pane1"].forEach(function (id, i) { $(id).classList.toggle("hide", i !== n); });
-  if (n === 1) renderCardsUI();
-}
-/* ── 麦门全息人设卡：四层视差 + 镭射 + 稀有度（全部由真实数据推导，不随机） ── */
 function holoPersona(p, m, k) {
   const noCap = k >= 900;
   const usePct = p.price / m;
@@ -1199,13 +1184,6 @@ function toggleFav(name, el) {
     const cur = document.getElementById("catgrid");
     if (cur) { CAT = null; renderCat(); }
   }
-}
-function togglePrefs() {
-  const b = $("prefsBody"), f = $("prefsFold");
-  if (!b) return;
-  const open = b.style.display !== "none";
-  b.style.display = open ? "none" : "block";
-  if (f) f.textContent = open ? "展开 ▾" : "收起 ▴";
 }
 function renderPrefsUI() {  const p = getPrefs();
   /* 忌口勾选 */
@@ -2171,9 +2149,6 @@ if (q.get("view")) {
   else if (v === "holo") { run(); showHolo(0); }
   else { run(); if (v === "detail") detail(0); }
 }
-/* 面板深链：?prefs=1 展开「我的空间」，?tab=cards 直接看闪卡收藏夹 */
-if (q.get("prefs") === "1" && typeof togglePrefs === "function") togglePrefs();
-if (q.get("tab") === "cards" && typeof switchPrefTab === "function") switchPrefTab(1);
 </script>
 </body>
 </html>
