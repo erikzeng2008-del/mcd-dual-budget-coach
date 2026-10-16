@@ -385,7 +385,59 @@
   .ccal td.cc-off { color:#d9cfb8; }
   .ccal tr.cc-today .cc-name { background:#FFF3F1; }
   .cc-legend { display:flex; gap:16px; font-size:11.5px; color:#8a6d3b; margin-top:9px; flex-wrap:wrap; }
-  .cc-legend b { margin-right:3px; }
+  /* ===== 麦门全息人设卡（四层视差 + 镭射 + 金边） ===== */
+  .holo-stage { perspective:1100px; margin:18px auto 6px; width:340px; max-width:92%; }
+  .holo-card { position:relative; width:100%; aspect-ratio:5/7; transform-style:preserve-3d;
+    transition:transform .18s ease-out; cursor:grab; }
+  .holo-card:active { cursor:grabbing; }
+  .hl { position:absolute; inset:0; border-radius:20px; overflow:hidden; }
+  .hl-bg { transform:translateZ(-60px) scale(1.06);
+    background:
+      repeating-conic-gradient(from 200deg at 78% 30%, rgba(255,199,44,.10) 0deg 4deg, transparent 4deg 10deg),
+      radial-gradient(circle at 78% 22%, rgba(255,199,44,.30), transparent 55%),
+      linear-gradient(160deg,#6B0F0F 0%,#A31818 45%,#DA291C 100%); }
+  .hl-sub { transform:translateZ(28px); display:flex; align-items:flex-start; justify-content:center;
+    padding-top:13%; }
+  .hl-sub img { max-width:76%; max-height:42%; object-fit:contain;
+    filter:drop-shadow(0 10px 18px rgba(0,0,0,.45)); }
+  .hl-line { transform:translateZ(16px); mix-blend-mode:screen; opacity:.85;
+    display:flex; align-items:flex-start; justify-content:center; padding-top:13%; }
+  .hl-line img { max-width:76%; max-height:42%; object-fit:contain;
+    filter:brightness(1.9) saturate(0) drop-shadow(0 0 6px #FFC72C) drop-shadow(0 0 16px #FF9A3C) blur(.6px); }
+  .hl-txt { transform:translateZ(48px); display:flex; flex-direction:column; justify-content:space-between;
+    padding:22px 20px; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.5); }
+  .hl-mid { flex:1; }   /* 中段空出来，让主体透出来 */
+  .hl-rarity { align-self:flex-start; font-size:12px; font-weight:900; letter-spacing:2px;
+    padding:4px 12px; border-radius:999px; color:#1a1a1a; box-shadow:0 0 14px currentColor; }
+  .hl-emoji { font-size:40px; line-height:1; }
+  .hl-title { font-size:34px; font-weight:900; letter-spacing:2px; margin-top:4px; }
+  .hl-line-txt { font-size:14px; color:#FFE3C9; margin-top:6px; line-height:1.5; }
+  .hl-nums { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
+  .hl-num { background:rgba(0,0,0,.34); border:1px solid rgba(255,255,255,.22); border-radius:10px;
+    padding:6px 11px; backdrop-filter:blur(2px); }
+  .hl-num b { display:block; font-family:Consolas,monospace; font-size:16px; color:#FFC72C; }
+  .hl-num i { font-style:normal; font-size:10.5px; color:rgba(255,255,255,.72); }
+  .hl-foot { font-size:10.5px; color:rgba(255,255,255,.62); margin-top:10px; letter-spacing:.3px; }
+  /* 镭射：相位跟着视角走 */
+  .hl-laser { transform:translateZ(56px); mix-blend-mode:color-dodge; opacity:0;
+    transition:opacity .3s ease; pointer-events:none;
+    background:linear-gradient(115deg,transparent 15%,rgba(255,0,170,.42) 35%,rgba(255,199,44,.42) 50%,rgba(0,229,255,.42) 65%,transparent 85%);
+    background-size:260% 260%; }
+  .holo-card.hot .hl-laser { opacity:1; }
+  /* 金色卡边：用 box-shadow 做渐变感的金边，避免 background 多图层+border-box 的兼容坑 */
+  .hl-edge { transform:translateZ(62px); border:3px solid #FFC72C; border-radius:20px;
+    box-shadow:0 0 0 1px rgba(255,243,176,.9) inset, 0 0 22px rgba(255,199,44,.55),
+      0 18px 40px rgba(0,0,0,.45); pointer-events:none; }
+  .holo-actions { display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+  .holo-banner { background:linear-gradient(115deg,#2A0A0A,#7A1414); border:2px solid #FFC72C;
+    border-radius:14px; padding:16px 20px; margin-top:16px; display:flex; align-items:center;
+    gap:16px; cursor:pointer; box-shadow:0 6px 20px rgba(122,20,20,.28); }
+  .holo-banner:hover { transform:translateY(-2px); }
+  .holo-banner .hb-ico { font-size:38px; flex-shrink:0; }
+  .holo-banner .hb-t { font-size:16px; font-weight:900; color:#FFC72C; letter-spacing:1px; }
+  .holo-banner .hb-s { font-size:12.5px; color:#FFD9C9; margin-top:3px; line-height:1.5; }
+  .holo-banner .hb-go { margin-left:auto; font-size:13px; font-weight:900; color:#1a1a1a;
+    background:#FFC72C; border-radius:999px; padding:8px 16px; white-space:nowrap; }
   .cz-main { min-width:0; }
   .cz.live { border-color:#DA291C; background:#FFF9F8; }
   .cz.miss { opacity:.7; background:#FBF7EE; border-color:#d9c9a8; }
@@ -633,6 +685,241 @@ function valueRing(score) {
     + ' transform="rotate(-90 20 20)"/>'
     + '<text x="20" y="24" text-anchor="middle" font-size="14" font-weight="800" fill="' + col + '">' + score + '</text>'
     + '</svg>';
+}
+
+/* ── 麦门全息人设卡：四层视差 + 镭射 + 稀有度（全部由真实数据推导，不随机） ── */
+function holoPersona(p, m, k) {
+  const noCap = k >= 900;
+  const usePct = p.price / m;
+  const kcalPct = noCap ? null : p.kcal / k;
+  const naP = p.na / 2000;
+  /* 稀有度：按「这顿吃得多漂亮」评——花得少还吃饱 = 传说 */
+  let rarity, rcol;
+  if (usePct <= 0.5 && (kcalPct === null || kcalPct >= 0.8)) { rarity = "传说"; rcol = "#FFC72C"; }
+  else if (usePct >= 0.85 && (kcalPct === null || kcalPct >= 0.8)) { rarity = "史诗"; rcol = "#C77DFF"; }
+  else if (kcalPct === null || kcalPct >= 0.6) { rarity = "稀有"; rcol = "#4FC3F7"; }
+  else { rarity = "普通"; rcol = "#9E9E9E"; }
+  /* 人设：按最突出的那个特征 */
+  let title, emoji, line;
+  if (p.pr >= 35) { title = "蛋白狂魔"; emoji = "💪"; line = "这顿 " + p.pr.toFixed(0) + "g 蛋白，健身房见"; }
+  else if (kcalPct !== null && kcalPct >= 0.95) { title = "热量刺客"; emoji = "🔥"; line = "减肥是明天的事"; }
+  else if (kcalPct !== null && kcalPct <= 0.7) { title = "自律型选手"; emoji = "🥗"; line = "只吃一半的罪恶"; }
+  else if (usePct <= 0.5) { title = "抠门美食家"; emoji = "💎"; line = "¥" + p.price.toFixed(1) + " 拿下 " + p.kcal + " 卡，省下的也是钱"; }
+  else if (naP >= 0.5) { title = "钠含量警告"; emoji = "🧂"; line = "今天不喝水了"; }
+  else if (p.items.length >= 3) { title = "全家桶人格"; emoji = "🍔"; line = "我全都要"; }
+  else { title = "精准打击手"; emoji = "🎯"; line = "一分钱都没白花"; }
+  return { title: title, emoji: emoji, line: line, rarity: rarity, rcol: rcol,
+           usePct: usePct, kcalPct: kcalPct, naP: naP };
+}
+
+/* 视差绑定：鼠标/触摸转动卡片，镭射相位跟着视角走 */
+function bindHolo(stage) {
+  const card = stage.querySelector(".holo-card");
+  const laser = stage.querySelector(".hl-laser");
+  if (!card) return;
+  function move(e) {
+    const r = stage.getBoundingClientRect();
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    const px = (cx - r.left) / r.width - 0.5;
+    const py = (cy - r.top) / r.height - 0.5;
+    card.style.transform = "rotateY(" + (px * 20).toFixed(2) + "deg) rotateX(" + (-py * 15).toFixed(2) + "deg)";
+    card.classList.add("hot");
+    if (laser) laser.style.backgroundPosition = ((px + 0.5) * 100).toFixed(1) + "% " + ((py + 0.5) * 100).toFixed(1) + "%";
+  }
+  function leave() { card.style.transform = ""; card.classList.remove("hot"); }
+  stage.addEventListener("mousemove", move);
+  stage.addEventListener("touchmove", move, { passive: true });
+  stage.addEventListener("mouseleave", leave);
+  stage.addEventListener("touchend", leave);
+}
+/* 全息人设卡页 */
+function showHolo(i) {
+  const p = PLANS[i]; if (!p) return;
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  const noCap = k >= 900;
+  const pics = p.items.filter(function (x) { return x.img; });
+  const subSrc = pics.length ? pics[0].img : "";
+  const nums = [];
+  nums.push('<div class="hl-num"><b>¥' + p.price.toFixed(1) + '</b><i>实付 / 预算 ¥' + m + '</i></div>');
+  nums.push('<div class="hl-num"><b>' + (p.unknown ? "?" : p.kcal) + '</b><i>kcal' + (noCap ? "" : " / 目标 " + k) + '</i></div>');
+  if (p.pr) nums.push('<div class="hl-num"><b>' + p.pr.toFixed(0) + 'g</b><i>蛋白质</i></div>');
+  nums.push('<div class="hl-num"><b>' + p.na + '</b><i>钠 mg / 日 2000</i></div>');
+  let h = "<button class='back' onclick='goV(2)'>← 返回战报</button>";
+  h += '<div class="rep-title">🃏 麦门全息人设卡</div>';
+  h += '<div class="rep-meta">按这一顿的真实数据鉴定——稀有度和人设都由数字推导，不是随机。拖动卡片看全息效果。</div>';
+  h += '<div class="holo-stage" id="holoStage"><div class="holo-card">'
+    + '<div class="hl hl-bg"></div>'
+    + (subSrc ? '<div class="hl hl-sub"><img src="' + subSrc + '" alt=""></div>'
+              + '<div class="hl hl-line"><img src="' + subSrc + '" alt=""></div>' : "")
+    + '<div class="hl hl-txt">'
+    +   '<span class="hl-rarity" style="background:' + ps.rcol + '">✦ ' + ps.rarity + '</span>'
+    +   '<div class="hl-mid"></div>'
+    +   '<div><div class="hl-emoji">' + ps.emoji + '</div>'
+    +   '<div class="hl-title">' + ps.title + '</div>'
+    +   '<div class="hl-line-txt">' + ps.line + '</div>'
+    +   '<div class="hl-nums">' + nums.join("") + '</div>'
+    +   '<div class="hl-foot">麦门双预算军师 · 数据来自麦当劳 MCP 实测快照 2026-10-12</div></div>'
+    + '</div>'
+    + '<div class="hl hl-laser"></div>'
+    + '<div class="hl hl-edge"></div>'
+    + '</div></div>';
+  h += '<div class="holo-actions">'
+    + '<button class="oa-btn oa-main" onclick="saveHolo(' + i + ')">⬇ 保存这张卡</button>'
+    + '<button class="oa-btn" onclick="copyHolo(' + i + ')">📋 复制文案</button>'
+    + '</div>';
+  h += '<div class="cz-none" style="margin-top:14px">卡片上的每个数字都来自麦当劳 MCP 实测数据，'
+    + '稀有度按「预算使用率 + 热量达成率」评定，人设按最突出的营养特征判定——'
+    + '<b>判定规则写在源码里，可以自己复算</b>。</div>';
+  $("v3").innerHTML = h;
+  show("v3");
+  bindHolo($("holoStage"));
+}
+function holoText(i) {
+  const p = PLANS[i]; if (!p) return "";
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  return "🃏 我的麦门人格鉴定结果\n"
+    + "━━━━━━━━━━━━\n"
+    + ps.emoji + " " + ps.title + "（" + ps.rarity + "）\n"
+    + ps.line + "\n"
+    + "━━━━━━━━━━━━\n"
+    + "💰 实付 ¥" + p.price.toFixed(1) + " / 预算 ¥" + m + "\n"
+    + "🔥 热量 " + (p.unknown ? "未知" : p.kcal + " kcal") + (k >= 900 ? "" : " / 目标 " + k) + "\n"
+    + "💪 蛋白 " + (p.pr ? p.pr.toFixed(1) + " g" : "—") + " ｜ 🧂 钠 " + p.na + " mg\n"
+    + "━━━━━━━━━━━━\n"
+    + "麦门双预算军师 · https://github.com/erikzeng2008-del/mcd-dual-budget-coach";
+}
+function copyHolo(i) {
+  const t = holoText(i);
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+    .then(function () { feedback("✅ 文案已复制——发群/朋友圈都能用"); })
+    .catch(function () {
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      feedback("✅ 文案已复制");
+    });
+}
+/* 保存为图片：canvas 静态渲染（视差和镭射是实时的，图里用固定光泽代替） */
+function saveHolo(i) {
+  const p = PLANS[i]; if (!p) return;
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  const noCap = k >= 900;
+  const W = 680, H = 952;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  /* 背景 */
+  const g = ctx.createLinearGradient(0, 0, W * .6, H);
+  g.addColorStop(0, "#6B0F0F"); g.addColorStop(.45, "#A31818"); g.addColorStop(1, "#DA291C");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  /* 金色射线 */
+  ctx.save(); ctx.globalAlpha = .10; ctx.fillStyle = "#FFC72C";
+  for (let a = 0; a < 360; a += 5) {
+    ctx.beginPath(); ctx.moveTo(W * .78, H * .22);
+    ctx.arc(W * .78, H * .22, H * 1.1, a * Math.PI / 180, (a + 2.2) * Math.PI / 180);
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  const rg = ctx.createRadialGradient(W * .78, H * .22, 0, W * .78, H * .22, W * .55);
+  rg.addColorStop(0, "rgba(255,199,44,.34)"); rg.addColorStop(1, "rgba(255,199,44,0)");
+  ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+  /* 主体图 */
+  const pics = p.items.filter(function (x) { return x.img; });
+  const drawSub = function () {
+    if (!pics.length) return finish();
+    const im = new Image();
+    im.onload = function () {
+      const maxW = W * .74, maxH = H * .40;
+      let iw = im.width, ih = im.height;
+      const r = Math.min(maxW / iw, maxH / ih);
+      iw *= r; ih *= r;
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,.5)"; ctx.shadowBlur = 26; ctx.shadowOffsetY = 12;
+      ctx.drawImage(im, (W - iw) / 2, H * .13, iw, ih);
+      ctx.restore();
+      /* 金色辉光（线稿层的静态版） */
+      ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = .5;
+      ctx.filter = "blur(9px)";
+      ctx.drawImage(im, (W - iw) / 2, H * .20, iw, ih);
+      ctx.restore();
+      finish();
+    };
+    im.onerror = finish;
+    im.src = pics[0].img;
+  };
+  function finish() {
+    /* 镭射光泽（静态） */
+    const lg = ctx.createLinearGradient(0, 0, W, H);
+    lg.addColorStop(0, "rgba(255,255,255,0)");
+    lg.addColorStop(.38, "rgba(255,0,170,.16)");
+    lg.addColorStop(.5, "rgba(255,199,44,.20)");
+    lg.addColorStop(.62, "rgba(0,229,255,.16)");
+    lg.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);
+    /* 稀有度徽章 */
+    ctx.font = "900 26px 'Microsoft YaHei'";
+    const rw = ctx.measureText("✦ " + ps.rarity).width + 34;
+    ctx.fillStyle = ps.rcol;
+    roundRect(ctx, 40, 44, rw, 44, 22); ctx.fill();
+    ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "left";
+    ctx.fillText("✦ " + ps.rarity, 57, 74);
+    /* emoji + 称号 */
+    ctx.font = "72px 'Microsoft YaHei'"; ctx.fillText(ps.emoji, 40, 585);
+    ctx.font = "900 62px 'Microsoft YaHei'"; ctx.fillStyle = "#fff";
+    ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
+    ctx.fillText(ps.title, 40, 655);
+    ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    /* 台词 */
+    ctx.font = "26px 'Microsoft YaHei'"; ctx.fillStyle = "#FFE3C9";
+    ctx.fillText(ps.line, 40, 700);
+    /* 数字块 */
+    const cells = [
+      ["¥" + p.price.toFixed(1), "实付 / 预算 ¥" + m],
+      [p.unknown ? "?" : String(p.kcal), "kcal" + (noCap ? "" : " / 目标 " + k)],
+      [p.pr ? p.pr.toFixed(0) + "g" : "—", "蛋白质"],
+      [String(p.na), "钠 mg / 日 2000"]
+    ];
+    let cy0 = 730;
+    cells.forEach(function (c, idx) {
+      const col = idx % 2, row = (idx / 2) | 0;
+      const x = 40 + col * (W / 2 - 20), y = cy0 + row * 92;
+      ctx.fillStyle = "rgba(0,0,0,.36)";
+      roundRect(ctx, x, y, W / 2 - 60, 82, 14); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5;
+      roundRect(ctx, x, y, W / 2 - 60, 82, 14); ctx.stroke();
+      ctx.fillStyle = "#FFC72C"; ctx.font = "900 34px Consolas,monospace";
+      ctx.textAlign = "left"; ctx.fillText(c[0], x + 18, y + 40);
+      ctx.fillStyle = "rgba(255,255,255,.72)"; ctx.font = "19px 'Microsoft YaHei'";
+      ctx.fillText(c[1], x + 18, y + 66);
+    });
+    /* 底部 */
+    ctx.fillStyle = "rgba(255,255,255,.62)"; ctx.font = "20px 'Microsoft YaHei'";
+    ctx.fillText("麦门双预算军师 · 数据来自麦当劳 MCP 实测快照 2026-10-12", 40, H - 34);
+    /* 金边 */
+    ctx.strokeStyle = "#FFC72C"; ctx.lineWidth = 8;
+    roundRect(ctx, 4, 4, W - 8, H - 8, 24); ctx.stroke();
+    cv.toBlob(function (b) {
+      const u = URL.createObjectURL(b);
+      const a = document.createElement("a");
+      a.href = u; a.download = "麦门人设卡-" + ps.title + "-" + ps.rarity + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+      feedback("✅ 卡片已保存——发朋友圈/群都能用");
+    }, "image/png");
+  }
+  drawSub();
+}
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
 }
 
 const PREFS_KEY = "wb-dbc-prefs";
@@ -1189,6 +1476,15 @@ function run() {
         + '<span class="lockbtn" title="点我锁定这个方案" onclick="event.stopPropagation(); toggleLock(' + i + ', this)">🔓</span></div>';
     });
     h += '</div>';
+    /* 全息人设卡入口：核心卖点横幅 */
+    if (PLANS.length) {
+      const hp0 = holoPersona(PLANS[0], m, k);
+      h += '<div class="holo-banner" onclick="showHolo(0)">'
+        + '<div class="hb-ico">🃏</div>'
+        + '<div><div class="hb-t">麦门全息人设卡</div>'
+        + '<div class="hb-s">这一顿你是<b>' + hp0.title + '</b>（' + hp0.rarity + '）——会闪的卡，能存能晒</div></div>'
+        + '<div class="hb-go">看我的卡 →</div></div>';
+    }
     /* 三档分歧对比表：一眼看懂「为什么给三个而不是一个」 */
     if (PLANS.length >= 2) {
       const WHYMAP = { "最划算": "花得最少 · 吃饱", "最扎实": "最管饱 · 热量最高", "最均衡": "不浪费也不抠" };
@@ -1288,6 +1584,12 @@ function detail(i) {
   h += cell("钠", nut.na.toFixed(0) + " mg", "", Math.round(nut.na / REF.sodium * 100), REF.sodium + " mg");
   h += cell("钙", nut.ca.toFixed(0) + " mg", "", Math.round(nut.ca / REF.calcium * 100), REF.calcium + " mg");
   h += '</div><div class="note">⚠️ 维生素：麦当劳 MCP 营养接口<b>不提供维生素数据</b>，此处不编造。' + REF_NOTE + "。</div></div>";
+  /* 全息人设卡入口：看完营养、决定吃这个之后，最有仪式感的一步 */
+  h += '<div class="holo-banner" onclick="showHolo(' + i + ')">'
+    + '<div class="hb-ico">🃏</div>'
+    + '<div><div class="hb-t">生成我的麦门全息人设卡</div>'
+    + '<div class="hb-s">按这顿的真实数据鉴定人格与稀有度，会闪、能存、能晒</div></div>'
+    + '<div class="hb-go">看我的卡 →</div></div>';
   $("v3").innerHTML = h;
   show("v3");
 }
@@ -1650,6 +1952,7 @@ if (q.get("view")) {
     const qtext = q.get("q");
     if (qtext) { const bx = $("chatbox"); if (bx) { bx.value = qtext; chatSend(); } }
   }
+  else if (v === "holo") { run(); showHolo(0); }
   else { run(); if (v === "detail") detail(0); }
 }
 </script>
