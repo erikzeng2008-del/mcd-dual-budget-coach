@@ -150,11 +150,14 @@ function move(e){
   laser.style.backgroundPosition = ((px+0.5)*100).toFixed(1) + '% ' + ((py+0.5)*100).toFixed(1) + '%';
 }
 function leave(){ card.style.transform=''; card.classList.remove('hot'); card.classList.add('idle'); }
-stage.addEventListener('mousemove', move);
-stage.addEventListener('touchstart', hideTip, {passive:true});
-stage.addEventListener('touchmove', move, {passive:true});
-stage.addEventListener('mouseleave', leave);
-stage.addEventListener('touchend', leave);
+/* 绑到 document：卡片经 translateZ 后会超出 stage 的布局盒，
+   绑 stage 会出现「指针明明在卡上却不响应」的情况 */
+document.addEventListener('mousemove', move, {passive:true});
+document.addEventListener('touchstart', hideTip, {passive:true});
+document.addEventListener('touchmove', move, {passive:true});
+document.addEventListener('touchend', leave, {passive:true});
+document.addEventListener('mouseleave', leave);
+window.addEventListener('blur', leave);
 /* 复制链接 */
 document.getElementById('linkBtn').onclick = function(){
   var u = location.href;
