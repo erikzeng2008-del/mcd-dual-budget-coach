@@ -412,12 +412,16 @@
   .hl-emoji { font-size:40px; line-height:1; }
   .hl-title { font-size:34px; font-weight:900; letter-spacing:2px; margin-top:4px; }
   .hl-line-txt { font-size:14px; color:#FFE3C9; margin-top:6px; line-height:1.5; }
-  .hl-nums { margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; }
-  .hl-num { background:rgba(0,0,0,.34); border:1px solid rgba(255,255,255,.22); border-radius:10px;
-    padding:6px 11px; backdrop-filter:blur(2px); }
-  .hl-num b { display:block; font-family:Consolas,monospace; font-size:16px; color:#FFC72C; }
-  .hl-num i { font-style:normal; font-size:10.5px; color:rgba(255,255,255,.72); }
-  .hl-foot { font-size:10.5px; color:rgba(255,255,255,.62); margin-top:10px; letter-spacing:.3px; }
+  /* 数据条：发丝线分隔 + 大号金色数字，不用盒子、不堆小字 */
+  .hl-data { margin-top:16px; display:flex; border-top:1px solid rgba(255,255,255,.20); padding-top:15px; }
+  .hl-d { flex:1; text-align:center; position:relative; min-width:0; }
+  .hl-d + .hl-d::before { content:''; position:absolute; left:0; top:10%; bottom:22%; width:1px;
+    background:rgba(255,255,255,.16); }
+  .hl-d b { display:block; font-family:Consolas,'JetBrains Mono',monospace; font-size:27px; font-weight:900;
+    color:#FFC72C; letter-spacing:-.5px; line-height:1; }
+  .hl-d i { display:block; font-style:normal; font-size:11px; color:rgba(255,255,255,.60);
+    letter-spacing:2.5px; margin-top:8px; }
+  .hl-foot { font-size:10px; color:rgba(255,255,255,.45); margin-top:12px; letter-spacing:.6px; }
   /* 镭射：相位跟着视角走 */
   .hl-laser { transform:translateZ(56px); mix-blend-mode:color-dodge; opacity:0;
     transition:opacity .3s ease; pointer-events:none;
@@ -742,10 +746,10 @@ function showHolo(i) {
   const pics = p.items.filter(function (x) { return x.img; });
   const subSrc = pics.length ? pics[0].img : "";
   const nums = [];
-  nums.push('<div class="hl-num"><b>¥' + p.price.toFixed(1) + '</b><i>实付 / 预算 ¥' + m + '</i></div>');
-  nums.push('<div class="hl-num"><b>' + (p.unknown ? "?" : p.kcal) + '</b><i>kcal' + (noCap ? "" : " / 目标 " + k) + '</i></div>');
-  if (p.pr) nums.push('<div class="hl-num"><b>' + p.pr.toFixed(0) + 'g</b><i>蛋白质</i></div>');
-  nums.push('<div class="hl-num"><b>' + p.na + '</b><i>钠 mg / 日 2000</i></div>');
+  nums.push('<div class="hl-d"><b>¥' + p.price.toFixed(1) + '</b><i>实付</i></div>');
+  nums.push('<div class="hl-d"><b>' + (p.unknown ? "?" : p.kcal) + '</b><i>kcal</i></div>');
+  nums.push('<div class="hl-d"><b>' + (p.pr ? p.pr.toFixed(0) + "g" : "—") + '</b><i>蛋白</i></div>');
+  nums.push('<div class="hl-d"><b>' + p.na + '</b><i>钠 mg</i></div>');
   let h = "<button class='back' onclick='goV(2)'>← 返回战报</button>";
   h += '<div class="rep-title">🃏 麦门全息人设卡</div>';
   h += '<div class="rep-meta">按这一顿的真实数据鉴定——稀有度和人设都由数字推导，不是随机。拖动卡片看全息效果。</div>';
@@ -759,8 +763,8 @@ function showHolo(i) {
     +   '<div><div class="hl-emoji">' + ps.emoji + '</div>'
     +   '<div class="hl-title">' + ps.title + '</div>'
     +   '<div class="hl-line-txt">' + ps.line + '</div>'
-    +   '<div class="hl-nums">' + nums.join("") + '</div>'
-    +   '<div class="hl-foot">麦门双预算军师 · 数据来自麦当劳 MCP 实测快照 2026-10-12</div></div>'
+    +   '<div class="hl-data">' + nums.join("") + '</div>'
+    +   '<div class="hl-foot">麦门双预算军师 · 麦当劳 MCP 实测 2026-10-12</div></div>'
     + '</div>'
     + '<div class="hl hl-laser"></div>'
     + '<div class="hl hl-edge"></div>'
@@ -900,26 +904,31 @@ function saveHolo(i) {
     /* 台词 */
     ctx.font = "26px 'Microsoft YaHei'"; ctx.fillStyle = "#FFE3C9";
     ctx.fillText(ps.line, 40, 700);
-    /* 数字块 */
+    /* 数据条：发丝线 + 四列大数字（跟页面一致） */
     const cells = [
-      ["¥" + p.price.toFixed(1), "实付 / 预算 ¥" + m],
-      [p.unknown ? "?" : String(p.kcal), "kcal" + (noCap ? "" : " / 目标 " + k)],
-      [p.pr ? p.pr.toFixed(0) + "g" : "—", "蛋白质"],
-      [String(p.na), "钠 mg / 日 2000"]
+      ["¥" + p.price.toFixed(1), "实付"],
+      [p.unknown ? "?" : String(p.kcal), "kcal"],
+      [p.pr ? p.pr.toFixed(0) + "g" : "—", "蛋白"],
+      [String(p.na), "钠 mg"]
     ];
-    let cy0 = 730;
+    const dx0 = 40, dw = (W - 80) / 4, dy = 726;
+    ctx.strokeStyle = "rgba(255,255,255,.20)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(dx0, dy); ctx.lineTo(W - 40, dy); ctx.stroke();
     cells.forEach(function (c, idx) {
-      const col = idx % 2, row = (idx / 2) | 0;
-      const x = 40 + col * (W / 2 - 20), y = cy0 + row * 92;
-      ctx.fillStyle = "rgba(0,0,0,.36)";
-      roundRect(ctx, x, y, W / 2 - 60, 82, 14); ctx.fill();
-      ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 1.5;
-      roundRect(ctx, x, y, W / 2 - 60, 82, 14); ctx.stroke();
-      ctx.fillStyle = "#FFC72C"; ctx.font = "900 34px Consolas,monospace";
-      ctx.textAlign = "left"; ctx.fillText(c[0], x + 18, y + 40);
-      ctx.fillStyle = "rgba(255,255,255,.72)"; ctx.font = "19px 'Microsoft YaHei'";
-      ctx.fillText(c[1], x + 18, y + 66);
+      const cx = dx0 + dw * idx + dw / 2;
+      if (idx > 0) {
+        ctx.strokeStyle = "rgba(255,255,255,.16)";
+        ctx.beginPath(); ctx.moveTo(dx0 + dw * idx, dy + 12); ctx.lineTo(dx0 + dw * idx, dy + 74); ctx.stroke();
+      }
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#FFC72C"; ctx.font = "900 38px Consolas,monospace";
+      ctx.fillText(c[0], cx, dy + 52);
+      ctx.fillStyle = "rgba(255,255,255,.60)"; ctx.font = "17px 'Microsoft YaHei'";
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "2px";
+      ctx.fillText(c[1], cx, dy + 84);
+      if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
     });
+    ctx.textAlign = "left";
     /* 底部 */
     ctx.fillStyle = "rgba(255,255,255,.62)"; ctx.font = "20px 'Microsoft YaHei'";
     ctx.fillText("麦门双预算军师 · 数据来自麦当劳 MCP 实测快照 2026-10-12", 40, H - 34);
