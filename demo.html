@@ -176,6 +176,38 @@
   .panel.prefs .csub { font-weight:400; font-size:11.5px; color:#9a8557; margin-left:6px; }
   .prefs-toggle { cursor:pointer; display:flex; align-items:center; gap:6px; user-select:none; }
   .prefs-fold { margin-left:auto; font-size:11.5px; font-weight:700; color:#DA291C; }
+  /* TAB */
+  .pref-tabs { display:flex; gap:6px; margin:2px 0 12px; border-bottom:1.5px solid #eadfc6; padding-bottom:8px; }
+  .ptab { font-family:inherit; font-size:13px; font-weight:800; cursor:pointer; background:none; border:none;
+    color:#8a7a5c; padding:6px 13px; border-radius:8px; display:inline-flex; align-items:center; gap:5px; }
+  .ptab:hover { background:#FFF3D6; }
+  .ptab.on { background:#DA291C; color:#fff; }
+  .ptab .pcount { font-style:normal; font-size:10.5px; font-weight:900; background:rgba(0,0,0,.16);
+    border-radius:999px; padding:1px 7px; }
+  .ptab.on .pcount { background:rgba(255,255,255,.26); }
+  .ptab-pane.hide { display:none; }
+  /* 我的闪卡列表 */
+  .cards-empty { text-align:center; padding:22px 10px 18px; }
+  .cards-empty .ce-ico { font-size:40px; }
+  .cards-empty .ce-t { font-size:13.5px; font-weight:800; color:#8a6d3b; margin-top:8px; }
+  .cards-empty .ce-s { font-size:11.5px; color:#a89a7c; margin-top:5px; line-height:1.6; }
+  .card-row { display:flex; align-items:center; gap:11px; background:#fff; border:1.5px solid #e6dcc6;
+    border-radius:11px; padding:10px 12px; margin-bottom:8px; }
+  .card-row:hover { border-color:#DA291C; }
+  .card-row .cr-emo { font-size:26px; flex-shrink:0; }
+  .card-row .cr-main { flex:1; min-width:0; }
+  .card-row .cr-t { font-size:13.5px; font-weight:900; color:#1a1a1a; }
+  .card-row .cr-t .rr { font-size:10.5px; font-weight:900; padding:1px 7px; border-radius:999px;
+    color:#1a1a1a; margin-left:6px; vertical-align:1px; }
+  .card-row .cr-n { font-family:Consolas,monospace; font-size:11.5px; color:#8a6d3b; margin-top:3px; }
+  .card-row .cr-d { font-size:10.5px; color:#b3a179; margin-top:2px; }
+  .card-row .cr-act { display:flex; gap:6px; flex-shrink:0; }
+  .card-row .cr-btn { font-family:inherit; font-size:11.5px; font-weight:800; cursor:pointer;
+    border:1.5px solid #1a1a1a; background:#fff; border-radius:7px; padding:5px 10px; }
+  .card-row .cr-btn.go { background:#DA291C; color:#fff; }
+  .card-row .cr-btn.del { color:#b03a2e; border-color:#e0b8b0; }
+  .cards-clear { font-family:inherit; font-size:11.5px; font-weight:800; cursor:pointer; background:none;
+    border:none; color:#a89a7c; text-decoration:underline; padding:4px 0; }
   .pref-k { font-size:12.5px; font-weight:800; color:#8a6d3b; min-width:34px; }
   .pref-opt { display:inline-flex; align-items:center; gap:5px; font-size:13px; cursor:pointer;
      background:#fff; border:1.5px solid #e6dcc6; border-radius:999px; padding:5px 13px; }
@@ -588,30 +620,39 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
-    <!-- 我的偏好（默认收起，首屏先看滑杆；记住，下次自动用） -->
+    <!-- 我的偏好 / 我的闪卡（两个 TAB） -->
     <div class="panel prefs" id="prefsPanel">
       <div class="ctitle prefs-toggle" onclick="togglePrefs()">
-        🧡 我的偏好 <span class="csub">记住，下次自动用</span>
+        🧡 我的空间 <span class="csub">偏好记住，闪卡收齐</span>
         <span class="prefs-fold" id="prefsFold">展开 ▾</span>
       </div>
       <div class="prefs-body" id="prefsBody" style="display:none">
-      <div class="pref-row">
-        <span class="pref-k">忌口</span>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
-      </div>
-      <div class="pref-row">
-        <span class="pref-k">常点</span>
-        <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
-      </div>
-      <div class="pref-actions">
-        <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
-        <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
-        <span class="pref-note" id="prefNote">记住后，配餐自动过滤忌口、优先常点</span>
-      </div>
+        <div class="pref-tabs">
+          <button class="ptab on" id="ptab0" onclick="switchPrefTab(0)">🧡 我的偏好</button>
+          <button class="ptab" id="ptab1" onclick="switchPrefTab(1)">🃏 我的闪卡<i class="pcount" id="cardCount"></i></button>
+        </div>
+        <div class="ptab-pane" id="pane0">
+        <div class="pref-row">
+          <span class="pref-k">忌口</span>
+          <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
+          <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
+          <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
+          <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
+          <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
+        </div>
+        <div class="pref-row">
+          <span class="pref-k">常点</span>
+          <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
+        </div>
+        <div class="pref-actions">
+          <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
+          <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
+          <span class="pref-note" id="prefNote">记住后，配餐自动过滤忌口、优先常点</span>
+        </div>
+        </div>
+        <div class="ptab-pane hide" id="pane1">
+          <div id="cardsList"></div>
+        </div>
       </div>
     </div>
 
@@ -691,6 +732,84 @@ function valueRing(score) {
     + '</svg>';
 }
 
+/* ── 我的闪卡：收藏夹（localStorage） ── */
+const CARDS_KEY = "wb-dbc-cards";
+function getCards() { try { return JSON.parse(localStorage.getItem(CARDS_KEY)) || []; } catch (e) { return []; } }
+function setCards(c) { try { localStorage.setItem(CARDS_KEY, JSON.stringify(c)); } catch (e) {} }
+/* 把当前方案的人设卡收进收藏夹 */
+function saveCardToCollection(i) {
+  const p = PLANS[i]; if (!p) return;
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  const card = {
+    t: ps.title, e: ps.emoji, r: ps.rarity, rc: ps.rcol, l: ps.line,
+    p: p.price.toFixed(1), m: String(m),
+    k: p.unknown ? "?" : String(p.kcal), kt: String(k),
+    pr: p.pr ? p.pr.toFixed(1) : "0", na: String(p.na),
+    label: p.label, ts: Date.now()
+  };
+  const cs = getCards();
+  /* 同一人设+同一数字只留最新一张，避免刷屏 */
+  const dup = cs.findIndex(function (c) {
+    return c.t === card.t && c.p === card.p && c.k === card.k && c.na === card.na;
+  });
+  if (dup >= 0) cs.splice(dup, 1);
+  cs.unshift(card);
+  setCards(cs.slice(0, 30));
+  renderCardsUI();
+  feedback("⭐ 已收进「我的闪卡」");
+}
+function renderCardsUI() {
+  const cs = getCards();
+  const cnt = $("cardCount");
+  if (cnt) cnt.textContent = cs.length ? String(cs.length) : "";
+  const box = $("cardsList");
+  if (!box) return;
+  if (!cs.length) {
+    box.innerHTML = '<div class="cards-empty"><div class="ce-ico">🃏</div>'
+      + '<div class="ce-t">还没有收藏过闪卡</div>'
+      + '<div class="ce-s">去战报页点「麦门全息人设卡」→ 生成后点<br>「⭐ 收进我的闪卡」，就会出现在这里</div></div>';
+    return;
+  }
+  let h = "";
+  cs.forEach(function (c, idx) {
+    const d = new Date(c.ts);
+    const ds = (d.getMonth() + 1) + "/" + d.getDate() + " " +
+      ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+    h += '<div class="card-row">'
+      + '<div class="cr-emo">' + c.e + '</div>'
+      + '<div class="cr-main"><div class="cr-t">' + c.t
+      +   '<span class="rr" style="background:' + c.rc + '">' + c.r + '</span></div>'
+      +   '<div class="cr-n">¥' + c.p + ' · ' + c.k + ' kcal · 蛋白 ' + c.pr + 'g · 钠 ' + c.na + 'mg</div>'
+      +   '<div class="cr-d">' + ds + (c.label ? ' · ' + c.label : '') + '</div></div>'
+      + '<div class="cr-act">'
+      +   '<button class="cr-btn go" onclick="showSavedCard(' + idx + ')">看卡</button>'
+      +   '<button class="cr-btn del" onclick="delCard(' + idx + ')">删</button>'
+      + '</div></div>';
+  });
+  h += '<button class="cards-clear" onclick="if(confirm(\'清空全部收藏的闪卡？\')){setCards([]);renderCardsUI();}">清空全部</button>';
+  box.innerHTML = h;
+}
+function delCard(idx) {
+  const cs = getCards();
+  if (idx < 0 || idx >= cs.length) return;
+  cs.splice(idx, 1);
+  setCards(cs);
+  renderCardsUI();
+  feedback("已删除");
+}
+/* 打开收藏的闪卡（用存的参数渲染，不依赖当前方案） */
+function showSavedCard(idx) {
+  const cs = getCards();
+  const c = cs[idx];
+  if (!c) return;
+  renderHoloCard({ t: c.t, e: c.e, r: c.r, rc: c.rc, l: c.l, p: c.p, m: c.m, k: c.k, kt: c.kt, pr: c.pr, na: c.na });
+}
+function switchPrefTab(n) {
+  ["ptab0", "ptab1"].forEach(function (id, i) { $(id).classList.toggle("on", i === n); });
+  ["pane0", "pane1"].forEach(function (id, i) { $(id).classList.toggle("hide", i !== n); });
+  if (n === 1) renderCardsUI();
+}
 /* ── 麦门全息人设卡：四层视差 + 镭射 + 稀有度（全部由真实数据推导，不随机） ── */
 function holoPersona(p, m, k) {
   const noCap = k >= 900;
@@ -738,50 +857,62 @@ function bindHolo(stage) {
   stage.addEventListener("touchend", leave);
 }
 /* 全息人设卡页 */
-function showHolo(i) {
-  const p = PLANS[i]; if (!p) return;
-  const m = +$("m").value, k = +$("k").value;
-  const ps = holoPersona(p, m, k);
-  const noCap = k >= 900;
-  const pics = p.items.filter(function (x) { return x.img; });
-  const subSrc = pics.length ? pics[0].img : "";
+/* 由参数渲染全息卡（方案卡和收藏卡都走这里） */
+function renderHoloCard(P) {
+  const noCap = (+P.kt) >= 900;
+  const subSrc = P.sub || "";
   const nums = [];
-  nums.push('<div class="hl-d"><b>¥' + p.price.toFixed(1) + '</b><i>实付</i></div>');
-  nums.push('<div class="hl-d"><b>' + (p.unknown ? "?" : p.kcal) + '</b><i>kcal</i></div>');
-  nums.push('<div class="hl-d"><b>' + (p.pr ? p.pr.toFixed(0) + "g" : "—") + '</b><i>蛋白</i></div>');
-  nums.push('<div class="hl-d"><b>' + p.na + '</b><i>钠 mg</i></div>');
-  let h = "<button class='back' onclick='goV(2)'>← 返回战报</button>";
-  h += '<div class="rep-title">🃏 麦门全息人设卡</div>';
-  h += '<div class="rep-meta">按这一顿的真实数据鉴定——稀有度和人设都由数字推导，不是随机。拖动卡片看全息效果。</div>';
+  nums.push('<div class="hl-d"><b>\u00a5' + P.p + '</b><i>实付</i></div>');
+  nums.push('<div class="hl-d"><b>' + P.k + '</b><i>kcal</i></div>');
+  nums.push('<div class="hl-d"><b>' + (P.pr && P.pr !== "0" ? P.pr.replace(/\.0$/, "") + "g" : "\u2014") + '</b><i>蛋白</i></div>');
+  nums.push('<div class="hl-d"><b>' + P.na + '</b><i>钠 mg</i></div>');
+  let h = "<button class='back' onclick='goV(2)'>\u2190 返回战报</button>";
+  h += '<div class="rep-title">\ud83c3cc 麦门全息人设卡</div>';
+  h += '<div class="rep-meta">按这一顿的真实数据鉴定\u2014\u2014稀有度和人设都由数字推导，不是随机。拖动卡片看全息效果。</div>';
   h += '<div class="holo-stage" id="holoStage"><div class="holo-card">'
     + '<div class="hl hl-bg"></div>'
     + (subSrc ? '<div class="hl hl-sub"><img src="' + subSrc + '" alt=""></div>'
               + '<div class="hl hl-line"><img src="' + subSrc + '" alt=""></div>' : "")
     + '<div class="hl hl-txt">'
-    +   '<span class="hl-rarity" style="background:' + ps.rcol + '">✦ ' + ps.rarity + '</span>'
+    +   '<span class="hl-rarity" style="background:' + P.rc + '">\u2726 ' + P.r + '</span>'
     +   '<div class="hl-mid"></div>'
-    +   '<div><div class="hl-emoji">' + ps.emoji + '</div>'
-    +   '<div class="hl-title">' + ps.title + '</div>'
-    +   '<div class="hl-line-txt">' + ps.line + '</div>'
+    +   '<div><div class="hl-emoji">' + P.e + '</div>'
+    +   '<div class="hl-title">' + P.t + '</div>'
+    +   '<div class="hl-line-txt">' + P.l + '</div>'
     +   '<div class="hl-data">' + nums.join("") + '</div>'
-    +   '<div class="hl-foot">麦门双预算军师 · 麦当劳 MCP 实测 2026-10-12</div></div>'
+    +   '<div class="hl-foot">麦门双预算军师 \u00b7 麦当劳 MCP 实测 2026-10-12</div></div>'
     + '</div>'
     + '<div class="hl hl-laser"></div>'
     + '<div class="hl hl-edge"></div>'
     + '</div></div>';
+  const fromPlan = (typeof P.from === "number");
   h += '<div class="holo-actions">'
-    + '<button class="oa-btn oa-main" onclick="saveHolo(' + i + ')">⬇ 保存这张卡</button>'
-    + '<button class="oa-btn" onclick="copyHoloLink(' + i + ')">🔗 复制卡的链接</button>'
-    + '<button class="oa-btn" onclick="copyHolo(' + i + ')">📋 复制文案</button>'
+    + (fromPlan ? '<button class="oa-btn" onclick="saveCardToCollection(' + P.from + ')">\u2b50 收进我的闪卡</button>' : "")
+    + '<button class="oa-btn oa-main" onclick="saveHoloP(' + JSON.stringify(JSON.stringify(P)) + ')">\u2b07 保存这张卡</button>'
+    + '<button class="oa-btn" onclick="copyHoloLinkP(' + JSON.stringify(JSON.stringify(P)) + ')">\ud83dudd17 复制卡的链接</button>'
+    + '<button class="oa-btn" onclick="copyHoloP(' + JSON.stringify(JSON.stringify(P)) + ')">\ud83dudccb 复制文案</button>'
     + '</div>';
   h += '<div class="cz-none" style="margin-top:14px">卡片上的每个数字都来自麦当劳 MCP 实测数据，'
-    + '稀有度按「预算使用率 + 热量达成率」评定，人设按最突出的营养特征判定——'
+    + '稀有度按「预算使用率 + 热量达成率」评定，人设按最突出的营养特征判定\u2014\u2014'
     + '<b>判定规则写在源码里，可以自己复算</b>。</div>';
   $("v3").innerHTML = h;
   show("v3");
   bindHolo($("holoStage"));
 }
-/* 生成这张卡的专属分享链接（指向轻量 card.html，317KB 秒开） */
+/* 方案卡 → 参数 → 渲染 */
+function showHolo(i) {
+  const p = PLANS[i]; if (!p) return;
+  const m = +$("m").value, k = +$("k").value;
+  const ps = holoPersona(p, m, k);
+  const pics = p.items.filter(function (x) { return x.img; });
+  renderHoloCard({
+    t: ps.title, e: ps.emoji, r: ps.rarity, rc: ps.rcol, l: ps.line,
+    p: p.price.toFixed(1), m: String(m),
+    k: p.unknown ? "?" : String(p.kcal), kt: String(k),
+    pr: p.pr ? p.pr.toFixed(1) : "0", na: String(p.na),
+    sub: pics.length ? pics[0].img : "", from: i
+  });
+}
 function holoLink(i) {
   const p = PLANS[i]; if (!p) return "";
   const m = +$("m").value, k = +$("k").value;
@@ -797,6 +928,46 @@ function holoLink(i) {
 }
 function copyHoloLink(i) {
   const u = holoLink(i);
+  (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject())
+    .then(function () { feedback("✅ 卡片链接已复制——发给别人，点开就能看到你这张卡"); })
+    .catch(function () {
+      const ta = document.createElement("textarea");
+      ta.value = u; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      feedback("✅ 卡片链接已复制");
+    });
+}
+/* ── 参数版：收藏的闪卡也能保存 / 复制 ── */
+function saveHoloP(Pjson) { saveHoloParams(JSON.parse(Pjson)); }
+function copyHoloLinkP(Pjson) { copyHoloLinkParams(JSON.parse(Pjson)); }
+function copyHoloP(Pjson) { copyHoloParams(JSON.parse(Pjson)); }
+function copyHoloParams(P) {
+  const t = "🃏 我的麦门人格鉴定结果\n"
+    + "━━━━━━━━━━━━\n"
+    + P.e + " " + P.t + "（" + P.r + "）\n"
+    + P.l + "\n"
+    + "━━━━━━━━━━━━\n"
+    + "💰 实付 ¥" + P.p + " / 预算 ¥" + P.m + "\n"
+    + "🔥 热量 " + P.k + " kcal" + ((+P.kt) >= 900 ? "" : " / 目标 " + P.kt) + "\n"
+    + "💪 蛋白 " + P.pr + " g ｜ 🧂 钠 " + P.na + " mg\n"
+    + "━━━━━━━━━━━━\n"
+    + "麦门双预算军师 · https://github.com/erikzeng2008-del/mcd-dual-budget-coach";
+  (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject())
+    .then(function () { feedback("✅ 文案已复制——发群/朋友圈都能用"); })
+    .catch(function () {
+      const ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); ta.remove();
+      feedback("✅ 文案已复制");
+    });
+}
+function copyHoloLinkParams(P) {
+  const base = location.href.replace(/[^/]*$/, "card.html");
+  const q = new URLSearchParams({
+    t: P.t, e: P.e, r: P.r, rc: P.rc, l: P.l,
+    p: P.p, m: P.m, k: P.k, kt: P.kt, pr: P.pr, na: P.na
+  });
+  const u = base + "?" + q.toString();
   (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject())
     .then(function () { feedback("✅ 卡片链接已复制——发给别人，点开就能看到你这张卡"); })
     .catch(function () {
@@ -836,7 +1007,17 @@ function saveHolo(i) {
   const p = PLANS[i]; if (!p) return;
   const m = +$("m").value, k = +$("k").value;
   const ps = holoPersona(p, m, k);
-  const noCap = k >= 900;
+  const pics = p.items.filter(function (x) { return x.img; });
+  saveHoloParams({
+    t: P.t, e: P.e, r: P.r, rc: P.rc, l: P.l,
+    p: P.p, m: String(m),
+    k: P.k, kt: String(k),
+    pr: p.pr ? p.pr.toFixed(1) : "0", na: P.na,
+    sub: pics.length ? pics[0].img : ""
+  });
+}
+function saveHoloParams(P) {
+  const noCap = (+P.kt) >= 900;
   const W = 680, H = 952;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const ctx = cv.getContext("2d");
@@ -856,9 +1037,8 @@ function saveHolo(i) {
   rg.addColorStop(0, "rgba(255,199,44,.34)"); rg.addColorStop(1, "rgba(255,199,44,0)");
   ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
   /* 主体图 */
-  const pics = p.items.filter(function (x) { return x.img; });
   const drawSub = function () {
-    if (!pics.length) return finish();
+    if (!P.sub) return finish();
     const im = new Image();
     im.onload = function () {
       const maxW = W * .74, maxH = H * .40;
@@ -877,7 +1057,7 @@ function saveHolo(i) {
       finish();
     };
     im.onerror = finish;
-    im.src = pics[0].img;
+    im.src = P.sub;
   };
   function finish() {
     /* 镭射光泽（静态） */
@@ -890,26 +1070,26 @@ function saveHolo(i) {
     ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);
     /* 稀有度徽章 */
     ctx.font = "900 26px 'Microsoft YaHei'";
-    const rw = ctx.measureText("✦ " + ps.rarity).width + 34;
-    ctx.fillStyle = ps.rcol;
+    const rw = ctx.measureText("✦ " + P.r).width + 34;
+    ctx.fillStyle = P.rc;
     roundRect(ctx, 40, 44, rw, 44, 22); ctx.fill();
     ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "left";
-    ctx.fillText("✦ " + ps.rarity, 57, 74);
+    ctx.fillText("✦ " + P.r, 57, 74);
     /* emoji + 称号 */
-    ctx.font = "72px 'Microsoft YaHei'"; ctx.fillText(ps.emoji, 40, 585);
+    ctx.font = "72px 'Microsoft YaHei'"; ctx.fillText(P.e, 40, 585);
     ctx.font = "900 62px 'Microsoft YaHei'"; ctx.fillStyle = "#fff";
     ctx.shadowColor = "rgba(0,0,0,.45)"; ctx.shadowBlur = 14; ctx.shadowOffsetY = 4;
-    ctx.fillText(ps.title, 40, 655);
+    ctx.fillText(P.t, 40, 655);
     ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
     /* 台词 */
     ctx.font = "26px 'Microsoft YaHei'"; ctx.fillStyle = "#FFE3C9";
-    ctx.fillText(ps.line, 40, 700);
+    ctx.fillText(P.l, 40, 700);
     /* 数据条：发丝线 + 四列大数字（跟页面一致） */
     const cells = [
-      ["¥" + p.price.toFixed(1), "实付"],
-      [p.unknown ? "?" : String(p.kcal), "kcal"],
-      [p.pr ? p.pr.toFixed(0) + "g" : "—", "蛋白"],
-      [String(p.na), "钠 mg"]
+      ["¥" + P.p, "实付"],
+      [P.k, "kcal"],
+      [(P.pr && P.pr !== "0" ? P.pr.replace(/\.0$/, "") + "g" : "—"), "蛋白"],
+      [P.na, "钠 mg"]
     ];
     const dx0 = 40, dw = (W - 80) / 4, dy = 726;
     ctx.strokeStyle = "rgba(255,255,255,.20)"; ctx.lineWidth = 1;
@@ -938,7 +1118,7 @@ function saveHolo(i) {
     cv.toBlob(function (b) {
       const u = URL.createObjectURL(b);
       const a = document.createElement("a");
-      a.href = u; a.download = "麦门人设卡-" + ps.title + "-" + ps.rarity + ".png";
+      a.href = u; a.download = "麦门人设卡-" + P.t + "-" + P.r + ".png";
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
       feedback("✅ 卡片已保存——发朋友圈/群都能用");
@@ -1045,6 +1225,8 @@ function renderPrefsUI() {  const p = getPrefs();
       $("m").value = p.m; $("k").value = p.k; syncNums();
     }
   }
+  /* 闪卡收藏计数 */
+  renderCardsUI();
 }
 
 function pick(moneyCap, kcalCap, proteinMin) {  const pmin = proteinMin || 0;
@@ -1989,6 +2171,9 @@ if (q.get("view")) {
   else if (v === "holo") { run(); showHolo(0); }
   else { run(); if (v === "detail") detail(0); }
 }
+/* 面板深链：?prefs=1 展开「我的空间」，?tab=cards 直接看闪卡收藏夹 */
+if (q.get("prefs") === "1" && typeof togglePrefs === "function") togglePrefs();
+if (q.get("tab") === "cards" && typeof switchPrefTab === "function") switchPrefTab(1);
 </script>
 </body>
 </html>
