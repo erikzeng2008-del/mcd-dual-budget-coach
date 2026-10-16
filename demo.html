@@ -416,9 +416,22 @@
   .ccal tr.cc-today .cc-name { background:#FFF3F1; }
   .cc-legend { display:flex; gap:16px; font-size:11.5px; color:#8a6d3b; margin-top:9px; flex-wrap:wrap; }
   /* ===== 麦门全息人设卡（四层视差 + 镭射 + 金边） ===== */
-  .holo-stage { perspective:1100px; margin:18px auto 6px; width:340px; max-width:92%; }
+  .holo-stage { perspective:1100px; margin:18px auto 6px; width:min(340px, 100%); }
   .holo-card { position:relative; width:100%; aspect-ratio:5/7; transform-style:preserve-3d;
     transition:transform .18s ease-out; cursor:grab; }
+  /* 自动呼吸：不交互时卡片自己轻转、镭射自己扫 —— 静态也像全息 */
+  @keyframes holoSway {
+    0%{transform:rotateY(-10deg) rotateX(5deg)} 50%{transform:rotateY(10deg) rotateX(-5deg)}
+    100%{transform:rotateY(-10deg) rotateX(5deg)} }
+  @keyframes laserSweep {
+    0%{background-position:0% 0%;opacity:.30} 50%{background-position:100% 100%;opacity:.55}
+    100%{background-position:0% 0%;opacity:.30} }
+  .holo-card.idle { animation:holoSway 8s ease-in-out infinite; }
+  .holo-card.idle .hl-laser { animation:laserSweep 8s ease-in-out infinite; }
+  .holo-card.hot .hl-laser { opacity:1; animation:none; }
+  .holo-tip { text-align:center; font-size:12px; font-weight:800; color:#8a6d3b; margin-top:10px;
+    transition:opacity .4s ease; }
+  .holo-tip.gone { opacity:0; }
   .holo-card:active { cursor:grabbing; }
   .hl { position:absolute; inset:0; border-radius:20px; overflow:hidden; }
   .hl-bg { transform:translateZ(-60px) scale(1.06);
@@ -825,7 +838,17 @@ function bindHolo(stage) {
   const card = stage.querySelector(".holo-card");
   const laser = stage.querySelector(".hl-laser");
   if (!card) return;
+  card.classList.add("idle");
+  let tipped = false;
+  function hideTip() {
+    if (tipped) return;
+    tipped = true;
+    const t = document.querySelector(".holo-tip");
+    if (t) { t.classList.add("gone"); setTimeout(function () { t.remove(); }, 500); }
+  }
   function move(e) {
+    card.classList.remove("idle");
+    hideTip();
     const r = stage.getBoundingClientRect();
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
     const cy = e.touches ? e.touches[0].clientY : e.clientY;
@@ -835,8 +858,9 @@ function bindHolo(stage) {
     card.classList.add("hot");
     if (laser) laser.style.backgroundPosition = ((px + 0.5) * 100).toFixed(1) + "% " + ((py + 0.5) * 100).toFixed(1) + "%";
   }
-  function leave() { card.style.transform = ""; card.classList.remove("hot"); }
+  function leave() { card.style.transform = ""; card.classList.remove("hot"); card.classList.add("idle"); }
   stage.addEventListener("mousemove", move);
+  stage.addEventListener("touchstart", hideTip, { passive: true });
   stage.addEventListener("touchmove", move, { passive: true });
   stage.addEventListener("mouseleave", leave);
   stage.addEventListener("touchend", leave);
@@ -869,7 +893,8 @@ function renderHoloCard(P) {
     + '</div>'
     + '<div class="hl hl-laser"></div>'
     + '<div class="hl hl-edge"></div>'
-    + '</div></div>';
+    + '</div></div>'
+    + '<div class="holo-tip">👆 拖动卡片 · 看四层视差错动与镭射流光</div>';
   const fromPlan = (typeof P.from === "number");
   h += '<div class="holo-actions">'
     + (fromPlan ? '<button class="oa-btn" onclick="saveCardToCollection(' + P.from + ')">\u2b50 收进我的闪卡</button>' : "")
