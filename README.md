@@ -239,4 +239,14 @@ mcd-dual-budget-coach/
 
 ---
 
+## 关键词
+
+> 方便搜索到这里。若你也在做麦当劳 MCP 相关的东西，欢迎在 Issues 交流。
+
+**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦门双预算军师 · 双预算 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡
+
+**English**：McDonald's China · McDonald's MCP · mcd-mcp-server · MCP server · Model Context Protocol · agent skill · WorkBuddy skill · AI agent · meal planner · budget meal · calorie budget · calorie tracking · macro friendly · high protein · nutrition · sodium · coupon optimizer · deal finder · meal combination · optimization · food ordering assistant · Three.js · holographic card · persona card · trading card
+
+---
+
 *项目输出仅供参考，不构成医疗或营养建议。餐品信息、价格及供应状态以麦当劳官方渠道实时结果为准。*
