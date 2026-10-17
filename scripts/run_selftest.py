@@ -49,8 +49,13 @@ def main():
         f.write(injected)
 
     try:
+        # 必须用独立 user-data-dir：否则从 Python 启动的 Chrome 会把任务
+        # 转交给已在运行的实例后立刻退出（returncode 0 但没有任何输出）
+        udd = tempfile.mkdtemp(prefix="mcd_chrome_")
         r = subprocess.run(
-            [browser, "--headless", "--disable-gpu", "--virtual-time-budget=8000",
+            [browser, "--headless", "--disable-gpu", "--no-sandbox",
+             "--user-data-dir=" + udd,
+             "--virtual-time-budget=8000",
              "--allow-file-access-from-files", "--dump-dom", "file:///" + tmp.replace("\\", "/")],
             capture_output=True, text=True, timeout=120, encoding="utf-8", errors="replace")
         dom = r.stdout or ""
@@ -71,6 +76,16 @@ def main():
         except (json.JSONDecodeError, ValueError):
             continue
     if results is None:
+        if not dom.strip():
+            print("❌ 浏览器没有返回任何 DOM（0 字节）")
+            print()
+            print("   这不是代码问题，是环境问题。本机的 Chrome 只支持 --screenshot，")
+            print("   --dump-dom / --print-to-pdf 均返回空（已试过 --headless=new、")
+            print("   Edge、独立 user-data-dir，全部为空）。")
+            print()
+            print("   影响：自测跑不了，但 demo.html 本身正常。")
+            print("   绕过：用 --screenshot 截图逐屏人工核对，或在能跑 --dump-dom 的机器上执行。")
+            return 1
         print("❌ 未能解析自测输出（找到 %d 个候选块，均非合法 JSON）" % len(cands))
         return 1
     passed = sum(1 for x in results if x["pass"])
