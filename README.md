@@ -1,6 +1,11 @@
-![麦门双预算军师 · 钱是一个预算，热量是另一个预算](./examples/banner.jpg)
+![减脂期还想吃麦当劳？说个预算和卡数，三档直接下单的组合](./examples/banner.jpg)
 
 # 🍔 麦门双预算军师 (McDualBudget Coach)
+
+> ### 减脂期还想吃麦当劳？
+> **说个预算和卡数，三档能直接下单的组合。**
+>
+> 例：「30 块、600 卡，中午想吃点扎实的」→ 三档方案 + 券后到手价 + 一张会闪的人设卡。
 
 ## ▶ 在线试玩（点这里就能用，不用下载、不用装）
 
@@ -31,7 +36,7 @@
 
 ## 🎬 先看一眼（四步跑通：设定 → 三档 → 明细 → 对话）
 
-![麦门双预算军师 · 四步流程动图](examples/demo-flow.gif)
+![四步流程：设定预算热量 → 三档战报 → 明细营养 → 一句话对话](examples/demo-flow.gif)
 
 > 说「多少钱 + 多少卡」，它给你三个能直接下单的组合——商品图全是 AI 抠图的真实照片，套餐按「主角优先」重新拼好，券会算清用完到手价。
 
@@ -243,7 +248,7 @@ mcd-dual-budget-coach/
 
 > 方便搜索到这里。若你也在做麦当劳 MCP 相关的东西，欢迎在 Issues 交流。
 
-**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦门双预算军师 · 双预算 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡
+**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦当劳预算及热量测算 · 麦门双预算军师 · 双预算 · 减脂期吃麦当劳 · 麦当劳点餐 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡
 
 **English**：McDonald's China · McDonald's MCP · mcd-mcp-server · MCP server · Model Context Protocol · agent skill · WorkBuddy skill · AI agent · meal planner · budget meal · calorie budget · calorie tracking · macro friendly · high protein · nutrition · sodium · coupon optimizer · deal finder · meal combination · optimization · food ordering assistant · Three.js · holographic card · persona card · trading card
 
