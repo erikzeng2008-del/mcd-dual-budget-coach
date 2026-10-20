@@ -274,7 +274,8 @@ mcd-dual-budget-coach/
 ├── demo-assets/               # 演示页用的商品图（86 张，来自麦当劳接口）
 ├── scripts/
 │   ├── run_selftest.py        # 自测运行器（注入页面上下文 + 无头 Chrome 实跑）
-│   └── selftest.js            # 43 项断言集（跑在发货页面里，不是镜像实现）
+│   ├── selftest.js            # 43 项断言集（跑在发货页面里，不是镜像实现）
+│   └── make_lite.py           # lite.html 生成脚本（把 demo 压到 965KB，可重跑）
 ├── examples/
 │   ├── demo-chat.png         # 产品界面：一次真实对话（首图）
 │   ├── battle_reports.png    # 4 场景真机实测战报图
@@ -296,9 +297,9 @@ mcd-dual-budget-coach/
 
 > 方便搜索到这里。若你也在做麦当劳 MCP 相关的东西，欢迎在 Issues 交流。
 
-**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦当劳预算及热量测算 · 麦门双预算军师 · 双预算 · 减脂期吃麦当劳 · 麦当劳点餐 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡
+**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦当劳预算及热量测算 · 麦门双预算军师 · 双预算 · 减脂期吃麦当劳 · 麦当劳点餐 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡 · 轻量版 · lite · 秒开 · 单文件
 
-**English**：McDonald's China · McDonald's MCP · mcd-mcp-server · MCP server · Model Context Protocol · agent skill · WorkBuddy skill · AI agent · meal planner · budget meal · calorie budget · calorie tracking · macro friendly · high protein · nutrition · sodium · coupon optimizer · deal finder · meal combination · optimization · food ordering assistant · Three.js · holographic card · persona card · trading card
+**English**：McDonald's China · McDonald's MCP · mcd-mcp-server · MCP server · Model Context Protocol · agent skill · WorkBuddy skill · AI agent · meal planner · budget meal · calorie budget · calorie tracking · macro friendly · high protein · nutrition · sodium · coupon optimizer · deal finder · meal combination · optimization · food ordering assistant · Three.js · holographic card · persona card · trading card · lightweight · single file · fast load
 
 ---
 
