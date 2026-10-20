@@ -11,9 +11,17 @@
 
 ## ▶ 在线试玩（点这里就能用，不用下载、不用装）
 
-### 👉 [点我进在线版](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html) →
+### 👉 [⚡ 点我进轻量版（965KB，秒开）](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html) →
 
-`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html`
+`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html`
+
+**功能与完整版一致，体积只有 1/12**——商品图是缩略图，手机流量也扛得住。三个入口按需选：
+
+| 入口 | 体积 | 适合谁 |
+|---|---|---|
+| **[lite.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html)** | **965KB** | **默认选它**。秒开，五屏功能齐全（预算→战报→明细→目录→对话）+ 人设卡 |
+| [demo.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html) | 11MB | 想看高清商品大图与套餐拼图，用电脑打开 |
+| [card.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/card.html) | 317KB | 只想看一眼会闪的全息人设卡 |
 
 手机浏览器直接打开也行。不想用 Demo？先看[落地页](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)。
 
@@ -49,10 +57,11 @@
 **👉 [素材档案审阅台](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/matting-review.html)** —— 每张商品「原图 vs 抠图」左右对照，可逐张查边缘干不干净。抠图脚本 `ai_cutout.py` 已开源在本仓库，换模型只改一行路径。
 
 <details>
-<summary><b>⚠️ 这两个别点（会报错）</b></summary>
+<summary><b>⚠️ 在 GitHub 仓库文件列表里，别点这个（会报错）</b></summary>
 
 - ❌ **仓库文件列表里的 `demo.html`** —— 它有 11 MB（真实商品图全部内嵌在单文件里），GitHub 的网页预览扛不住，会提示文件过大。
 - ✅ 想本地跑：先把 `demo.html` **下载**下来，再双击用浏览器打开——本地打开完全没问题。
+- ✅ **手机上想快点**：直接用上面的 `lite.html`（965KB），在线秒开，不用下载。
 
 </details>
 
@@ -78,7 +87,7 @@
 
 手机也能开。
 
-![WorkBuddy](https://img.shields.io/badge/Built_with-WorkBuddy-blue) ![MCP](https://img.shields.io/badge/Powered_by-麦当劳_MCP-orange) ![License](https://img.shields.io/badge/License-MIT-green) ![Data](https://img.shields.io/badge/Data-真实_MCP_实测-brightgreen)
+![WorkBuddy](https://img.shields.io/badge/Built_with-WorkBuddy-blue) ![MCP](https://img.shields.io/badge/Powered_by-麦当劳_MCP-orange) ![License](https://img.shields.io/badge/License-MIT-green) ![Data](https://img.shields.io/badge/Data-真实_MCP_实测-brightgreen) ![自测](https://img.shields.io/badge/自测-43%20项断言全绿-success) ![Lite](https://img.shields.io/badge/轻量版-965KB%20秒开-brightgreen)
 
 ## 它长什么样
 
@@ -87,6 +96,30 @@
 > 这就是它的全部「界面」——**一段对话**。你说「多少钱 + 多少卡 + 想吃啥」，它回你三个能直接下单的组合。
 > **在线 demo 的第 5 屏就是这个对话界面，可以亲手打字体验。**
 > 图中顶部那排工具调用链是真实调用麦当劳 MCP 的 5 步（时间→菜单→营养→套餐默认档→逐个核价），价格由 `calculate-price` 实付核验——不是模型编的。这是本项目与「菜单静态表 + 拍脑袋推荐」类工具的根本区别。
+
+## ⚙️ 数据流：从一句话到三档方案
+
+```mermaid
+flowchart TD
+    U["你说：30 块 600 卡，中午想吃点扎实的"] --> P["对话解析<br/>金额 / 热量上限 / 蛋白下限 / 换一批"]
+    P --> M["麦当劳 MCP 实时接口"]
+    M --> M1["now-time-info<br/>门店与时段"]
+    M --> M2["query-meals<br/>菜单与价格"]
+    M --> M3["list-nutrition-foods<br/>营养表"]
+    M --> M4["auto-bind-coupons + 三路券池<br/>可领券 / 我的券 / 门店券"]
+    M1 & M2 & M3 & M4 --> S["本地快照 DATA + COMBOS<br/>83 单品 · 88,788 组合"]
+    S --> G1{"① 金额闸门<br/>合计 ≤ 预算"}
+    G1 -->|超限| X["淘汰"]
+    G1 -->|通过| G2{"② 热量闸门<br/>合计 ≤ 上限"}
+    G2 -->|超限| X
+    G2 -->|通过| G3{"③ 蛋白闸门（可选）"}
+    G3 -->|不足| X
+    G3 -->|通过| T["三档评分<br/>最划算 / 最扎实 / 最均衡"]
+    T --> C["券匹配 + 运动等价换算<br/>calculate-price 逐个核价"]
+    C --> R["战报 + 全息人设卡<br/>8 人格 × 4 稀有度"]
+```
+
+**关键设计**：取数交给 MCP，**算术交给代码**，表达交给 Agent。菜单、营养、券都是 MCP 实时返回；组合枚举、双闸门过滤、三档评分全在本地算——不让大模型口算价格（点餐场景价格错一位就是事故）。
 
 ## 为什么做这个
 
@@ -119,7 +152,7 @@
 2. **战报屏**：三个过双闸门的组合（最划算 / 最扎实 / 最均衡），附预算执行、运动等价物、省钱心情，底部有「🔄 换一批」——同一预算再给你三个完全不同的组合（实测 30 元/600 卡有 40 个过闸组合，50 元不限卡 1280 个，三档只是入口不是上限）
 3. **点任意方案 → 明细屏**：每个餐品的**真实商品图**（麦当劳接口返回）、单价、热量、单项营养素；套餐还展开默认构成（哪几件、各多少卡）；底部是这一单的**营养拆解**——能量、蛋白质、脂肪、碳水化合物、钠、钙六项合计及占参考值百分比
 
-数据为 2026-10-10 的实测快照（83 个可配单品、88,192 个可组合），商品图与营养素均来自麦当劳 MCP 接口；真实版走实时接口，菜单随时段/门店变化。热量数据缺失的当季新品（约 35 个）会在「不设卡」场景参选并明确标注「未知」，不拿未知数字凑闸门。
+数据为 2026-10-12 的实测快照（83 个可配单品、88,788 个可组合），商品图与营养素均来自麦当劳 MCP 接口；真实版走实时接口，菜单随时段/门店变化。热量数据缺失的当季新品（约 35 个）会在「不设卡」场景参选并明确标注「未知」，不拿未知数字凑闸门。
 
 ## 使用示例
 
@@ -180,7 +213,7 @@
 
 ## 两个只有真数据才能得出的结论
 
-这两条不是设计出来的，是跑完 88,192 个组合后才发现的——**也是「静态菜单表 + 拍脑袋推荐」永远给不出的答案**：
+这两条不是设计出来的，是跑完 88,788 个组合后才发现的——**也是「静态菜单表 + 拍脑袋推荐」永远给不出的答案**：
 
 **① 「随心配 1+1」是麦当劳藏得最深的省钱漏洞。**
 同样吃「堡 + 可乐」，单买 ¥23.0 + ¥10.0 = ¥33.0，走随心配 1+1 只要 **¥13.9**——省 ¥19.1，够再买一个圆筒还剩。但菜单里它藏在「随心配」分类下，不枚举根本发现不了这个价差。
@@ -199,12 +232,20 @@
 5. **运动等价物按 70kg 成人估算**（慢跑 ≈10 kcal/分钟），非精确值。
 6. **本 Skill 只报价不下单**——这是设计取舍不是缺陷，杜绝误支付。
 
-## ✅ 自测：43 项断言全绿
+## ✅ 自测与验证记录（43 项断言，2026-10-20 实跑）
 
-逻辑不是「看起来对」，是「跑起来对」——自测直接跑在**发货的 demo.html 上**（不是另写一套镜像实现），覆盖数据完整性、双闸门、券匹配、边界诚实性、单文件自包含：
+逻辑不是「看起来对」，是「跑起来对」——自测直接跑在**发货的页面文件上**（不是另写一套镜像实现），覆盖数据完整性、双闸门、券匹配、边界诚实性、单文件自包含：
+
+| 验证对象 | 命令 | 实测结果 |
+|---|---|---|
+| 完整版 `demo.html` | `python scripts/run_selftest.py` | **共 43 项 · 通过 43 · 失败 0** |
+| 轻量版 `lite.html` | `python scripts/run_selftest.py lite.html` | **共 43 项 · 通过 43 · 失败 0**（证明压到 965KB 后功能无损） |
+| 页面渲染 | headless Chrome 截图 | 首页 + 战报屏渲染正常（2026-10-20 实拍） |
+| 单文件自包含 | 断言「整页零外部图片引用」 | 零外部依赖，通过 |
 
 ```bash
-python scripts/run_selftest.py
+python scripts/run_selftest.py             # 完整版 demo.html
+python scripts/run_selftest.py lite.html   # 轻量版 lite.html
 # 共 43 项 | 通过 43 | 失败 0
 ```
 
@@ -227,8 +268,13 @@ mcd-dual-budget-coach/
 ├── mcp-config.example.json   # 脱敏 MCP 配置示例（环境变量占位符）
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
 ├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
-├── demo.html                  # 可交互演示页（五屏：预算→战报→明细→目录→💬对话，零外链无凭证）
+├── index.html                 # 落地页（三个入口分流：lite / demo / card）
+├── lite.html                  # 轻量版演示页（965KB 秒开，五屏功能与完整版一致，零外链无凭证）
+├── demo.html                  # 完整版演示页（11MB 高清商品图，五屏：预算→战报→明细→目录→💬对话）
 ├── demo-assets/               # 演示页用的商品图（86 张，来自麦当劳接口）
+├── scripts/
+│   ├── run_selftest.py        # 自测运行器（注入页面上下文 + 无头 Chrome 实跑）
+│   └── selftest.js            # 43 项断言集（跑在发货页面里，不是镜像实现）
 ├── examples/
 │   ├── demo-chat.png         # 产品界面：一次真实对话（首图）
 │   ├── battle_reports.png    # 4 场景真机实测战报图

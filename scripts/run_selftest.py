@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """麦门双预算军师 · 自测运行器
-把 scripts/selftest.js 注入 demo.html 的副本，用无头 Chrome 跑断言，解析结果。
-用法: python scripts/run_selftest.py
+把 scripts/selftest.js 注入目标页面的副本，用无头 Chrome 跑断言，解析结果。
+用法: python scripts/run_selftest.py [目标文件]
+     默认跑 demo.html；也可传 lite.html 验证轻量版压缩后功能无损。
 退出码: 0=全过, 1=有失败
 """
 import json
@@ -13,7 +14,7 @@ import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-DEMO = os.path.join(ROOT, "demo.html")
+DEFAULT_DEMO = os.path.join(ROOT, "demo.html")
 TESTS = os.path.join(HERE, "selftest.js")
 CHROME_CANDIDATES = [
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -31,20 +32,23 @@ def find_browser():
 
 
 def main():
-    if not os.path.exists(DEMO):
-        print("❌ 找不到 demo.html:", DEMO)
+    target = sys.argv[1] if len(sys.argv) > 1 else "demo.html"
+    demo = target if os.path.isabs(target) else os.path.join(ROOT, target)
+    if not os.path.exists(demo):
+        print("❌ 找不到目标文件:", demo)
         return 1
     browser = find_browser()
     if not browser:
         print("❌ 未找到 Chrome/Edge，无法运行自测")
         return 1
 
-    html = open(DEMO, encoding="utf-8").read()
+    html = open(demo, encoding="utf-8").read()
     tests = open(TESTS, encoding="utf-8").read()
     injected = html.replace("</body>", "<script>" + tests + "</script></body>")
-    assert "</body>" in html, "demo.html 里没有 </body>，注入点缺失"
+    assert "</body>" in html, "目标文件里没有 </body>，注入点缺失"
 
-    tmp = os.path.join(tempfile.gettempdir(), "mcd_selftest.html")
+    tmp = os.path.join(tempfile.gettempdir(),
+                       "mcd_selftest_" + os.path.splitext(os.path.basename(demo))[0] + ".html")
     with open(tmp, "w", encoding="utf-8") as f:
         f.write(injected)
 
@@ -91,7 +95,7 @@ def main():
     passed = sum(1 for x in results if x["pass"])
     n = len(results)
     print("=" * 56)
-    print("麦门双预算军师 · 自测")
+    print("麦门双预算军师 · 自测 · 目标: " + os.path.basename(demo))
     print("=" * 56)
     for x in results:
         flag = "✅" if x["pass"] else "❌"

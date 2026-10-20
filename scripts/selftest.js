@@ -156,10 +156,12 @@
   var cutMissing = withImg2.filter(function (x) { return !(PIECES[x.n] && PIECES[x.n].a); });
   ok("所有带图单品都有拆件（主食片完备）", cutMissing.length === 0,
      "带图单品 " + withImg2.length + " 个，缺件 " + cutMissing.length + " 个");
-  ok("拆件均为内嵌 PNG data URI", withImg2.length > 0 && withImg2.every(function (x) {
+  /* 断言意图是「拆件内嵌、零外部依赖」，格式不限：
+     demo.html 用 PNG，lite.html 为压体积转 JPEG，两者都必须内嵌。 */
+  ok("拆件均为内嵌 data URI（零外部依赖）", withImg2.length > 0 && withImg2.every(function (x) {
        var pi = PIECES[x.n] || {};
-       return (pi.a || "").indexOf("data:image/png;base64,") === 0 &&
-              (!pi.b || pi.b.indexOf("data:image/png;base64,") === 0);
+       return (pi.a || "").indexOf("data:image/") === 0 &&
+              (!pi.b || pi.b.indexOf("data:image/") === 0);
      }), "抽查通过");
   var noA = withImg2.filter(function (x) { return !(PIECES[x.n] && PIECES[x.n].a); });
   var hasB = withImg2.filter(function (x) { return PIECES[x.n] && PIECES[x.n].b; });
