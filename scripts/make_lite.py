@@ -78,7 +78,15 @@ LITE_BAR = (
     '想要高清大图与素材审阅台，请开 '
     '<a href="demo.html" style="color:#DA291C;font-weight:700">完整版</a>'
     ' · <a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" '
-    'style="color:#DA291C;font-weight:700">GitHub 源码</a></div>'
+    'style="color:#DA291C;font-weight:700">GitHub 源码</a>'
+    '<div style="margin-top:7px;font-size:12.5px;color:#4a4034">'
+    '🏆 在参加麦当劳开发者大赛，<b>排名只看 GitHub Star 数</b>——'
+    '<a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" '
+    'target="_blank" rel="noopener" '
+    'style="display:inline-block;margin-left:6px;background:#FFC72C;color:#1a1a1a;'
+    'font-weight:800;padding:5px 14px;border-radius:999px;'
+    'border:2px solid #1a1a1a;text-decoration:none">⭐ 点一下 Star</a>'
+    '</div></div>'
 )
 out_html = out_html.replace("<body>", "<body>\n" + LITE_BAR, 1)
 

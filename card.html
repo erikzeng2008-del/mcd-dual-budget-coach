@@ -75,6 +75,12 @@ body{min-height:100vh;display:flex;flex-direction:column;align-items:center;just
 .hint b{color:#DA291C}
 .foot{margin-top:18px;font-size:11.5px;color:#b3a179;text-align:center;line-height:1.7}
 .foot a{color:#DA291C;text-decoration:none;font-weight:700}
+.vote{margin-top:16px;max-width:430px;margin-left:auto;margin-right:auto;background:#1a1a1a;border:2px solid #FFC72C;border-radius:14px;padding:14px 16px;text-align:center}
+.vote-t{font-size:13.5px;color:#FFC72C;font-weight:800;line-height:1.6}
+.vote-t b{color:#fff}
+.vote-b{display:inline-block;margin-top:10px;background:#FFC72C;color:#1a1a1a;font-size:13px;font-weight:800;padding:9px 20px;border-radius:999px;text-decoration:none;border:2px solid #1a1a1a}
+.vote-b:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 #FFC72C}
+.vote-s{font-size:11px;color:#8a7a5e;margin-top:9px;line-height:1.6}
 </style></head><body>
 <div class="kicker">🍔 麦当劳预算及热量测算 · <b>大赛参赛作品</b></div>
 <div class="holo-stage" id="stage"><div class="tip" id="tip">👆 拖动卡片 · 看全息效果</div><div class="holo-card" id="card">
@@ -101,6 +107,11 @@ body{min-height:100vh;display:flex;flex-direction:column;align-items:center;just
   <a class="btn" href="./demo.html?view=holo">🃏 测我自己的卡</a>
 </div>
 <div class="hint">拖动卡片看全息效果。卡上的每个数字都来自麦当劳 MCP 实测数据，人格与稀有度按预算使用率、热量达成率、蛋白、钠推导——<b>判定规则写在源码里，可以自己复算</b>。</div>
+<div class="vote">
+  <div class="vote-t">🏆 这张卡在参加麦当劳开发者大赛，<b>排名只看 GitHub Star 数</b></div>
+  <a class="vote-b" href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" target="_blank" rel="noopener">⭐ 点一下 Star，帮它往前挪一名</a>
+  <div class="vote-s">点右上角那个 Star 就行，一秒，不用下载任何东西</div>
+</div>
 <div class="foot">项目源码与完整实测清单：<a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach">github.com/erikzeng2008-del/mcd-dual-budget-coach</a></div>
 <script>
 var Q = new URLSearchParams(location.search);
