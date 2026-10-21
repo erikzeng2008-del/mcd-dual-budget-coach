@@ -69,7 +69,10 @@ out_html = re.sub(r"data:image/(\w+);base64,([A-Za-z0-9+/=]+)",
 # --- lite 版标识与入口提示 ---
 out_html = out_html.replace(
     "<title>",
-    "<title>麦当劳点餐测算 · 轻量版（秒开）| ", 1)
+    "<title>麦当劳预算及热量测算专家 · 轻量版（秒开）| ", 1)
+out_html = out_html.replace(
+    "<title>麦当劳预算及热量测算专家 · 轻量版（秒开）| 麦当劳预算及热量测算专家 · 现场试吃</title>",
+    "<title>麦当劳预算及热量测算专家 · 轻量版（秒开）</title>", 1)
 
 LITE_BAR = (
     '<div style="background:#fff3cd;border-bottom:2px solid #e3d9c3;'
