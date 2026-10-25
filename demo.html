@@ -13,8 +13,8 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   /* ===== 字体层级系统 ===== */
   :root{
-    --f-hero:'SmileySans','ZCOOLQingKeHuangYou',sans-serif;         /* 主标题·冲劲 */
-    --f-display:'ZCOOLQingKeHuangYou','SmileySans',sans-serif;      /* 区块标题·亲和 */
+    --f-hero:'HarmonyOSSC','Microsoft YaHei','PingFang SC',sans-serif;         /* 主标题·冲劲 */
+    --f-display:'HarmonyOSSC','Microsoft YaHei','PingFang SC',sans-serif;      /* 区块标题·亲和 */
     --f-body:'HarmonyOSSC','Microsoft YaHei','PingFang SC',sans-serif; /* 正文·现代清晰 */
     --f-mono:'JetBrainsMono',Consolas,'Courier New',monospace;       /* 数字·精细对齐 */
     --t-hero:48px;    --t-title:20px;  --t-section:16px;
@@ -556,6 +556,10 @@
     .cav { width:30px; height:30px; font-size:15px; margin-right:7px; }
     .cbub { font-size:13px; padding:10px 12px; }
   }
+
+  /* 标题回归正常黑体：不使用倾斜/宽扁美术字，字重显式加粗 */
+  .top h1,.rep-title,.ctitle{ font-weight:700; letter-spacing:.5px; }
+  .top h1{ letter-spacing:.5px; }
 </style>
 </head>
 <body>

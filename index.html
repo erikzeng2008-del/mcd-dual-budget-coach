@@ -83,6 +83,18 @@
     h1{font-size:26px}
     .btn{width:100%;justify-content:center}
   }
+
+  /* 场景分流：首屏只让用户选「一个人 / 一群人」，不再堆版本入口 */
+  .scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:14px}
+  .scene{display:block;text-decoration:none;background:#FFF6DC;border:2.5px solid var(--ink);
+         border-radius:14px;padding:18px 18px 20px;box-shadow:5px 5px 0 var(--yel);
+         transition:transform .12s ease,box-shadow .12s ease}
+  .scene:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--yel)}
+  .scene.alt{background:#fff}
+  .scene .emoji{font-size:30px;line-height:1.2}
+  .scene .t{font-size:21px;font-weight:800;margin:8px 0 3px;color:var(--ink)}
+  .scene .d{font-size:13px;font-weight:800;color:var(--red);margin-bottom:8px}
+  .scene .s{font-size:12.8px;color:#5a5044;line-height:1.7}
 </style>
 </head>
 <body>
@@ -91,38 +103,27 @@
   <header>
     <div class="kicker">麦当劳预算及热量测算 · MCDONALD'S × AI HACKATHON</div>
     <h1>减脂期还想吃麦当劳？<br><em>说个预算和卡数，三档能直接下单的组合</em></h1>
-    <p class="lede">不用自己想「今天吃啥」。说清两件事——花多少、要多少热量——它用真实的菜单、价格、营养和优惠券，算出三档可直接下单的套餐：最省钱的、最扛饿的、最不浪费的。</p>
+    <p class="lede">一个人吃，说清花多少、要多少热量，算出三档能直接下单的套餐；一群人吃，报个人数和预算，直接拼出整桌怎么点、比各点各的省多少。菜单、价格、营养、券全部来自麦当劳官方接口。</p>
   </header>
 
   <div class="cta">
-    <h2>▶ 在线试用（推荐）</h2>
-    <p>直接在线打开，无需下载、无需安装。手机上也能用。</p>
-    <a class="btn" style="background:#1f1a17;border-color:#1f1a17"
-       href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html" target="_blank" rel="noopener">
-      🍻 聚餐拼单（77KB · 新）→
-    </a>
-    <a class="btn" style="margin-left:10px" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html" target="_blank" rel="noopener">
-      ⚡ 秒开试算（965KB，推荐）→
-    </a>
-    <a class="btn" style="margin-left:10px;background:#FFC72C;color:#1a1a1a;border-color:#1a1a1a"
-       href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html" target="_blank" rel="noopener">
-      完整版（11MB 高清大图）→
-    </a>
-    <a class="btn" style="margin-left:10px;background:#fff;color:#1a1a1a;border-color:#1a1a1a"
-       href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/card.html" target="_blank" rel="noopener">
-      🃏 人设卡（317KB）
-    </a>
-    <p class="note" style="margin-top:18px">
-      <b>四个入口怎么选：</b><code>party.html</code> 是 <b>77KB 聚餐拼单</b>——2–12 人整桌怎么点、比各点各的省多少、一键复制接龙文案，聚会首选；<br>
-      <code>lite.html</code> 是 <b>965KB 轻量版</b>——一个人吃、要控热量选它，秒开、功能完整、商品图是缩略图；<br>
-      <code>demo.html</code> 是 <b>11MB 完整版</b>——真实商品大图 + 套餐拼图都在里面，但加载慢，适合用电脑看；<br>
-      <code>card.html</code> 是 <b>317KB 人设卡</b>——只想看一眼会闪的卡就点它。
-    </p>
-    <ul class="note" style="margin-top:8px;padding-left:20px;list-style:none">
-      <li>✅ <b>手机用户直接点第一个按钮</b>（lite.html）—— 秒开，不用等</li>
-      <li>❌ <b>不要点 GitHub 仓库文件列表里的 <code>demo.html</code></b> —— 11 MB 会超出 GitHub 网页预览的限制，会报错</li>
-      <li>✅ <b>确实想本地跑</b>：先下载文件，再双击用浏览器打开 —— 本地打开完全没问题</li>
-    </ul>
+    <h2>你是哪种吃法？</h2>
+    <p>不用挑版本，直接选场景。点进去就能用，手机上也一样。</p>
+    <div class="scenes">
+      <a class="scene" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html" target="_blank" rel="noopener">
+        <div class="emoji">🍔</div>
+        <div class="t">一个人吃</div>
+        <div class="d">双预算配餐 · 三档方案</div>
+        <div class="s">说清「多少钱 + 多少卡」，算出最划算、最扎实、最均衡的一顿</div>
+      </a>
+      <a class="scene alt" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html" target="_blank" rel="noopener">
+        <div class="emoji">🍻</div>
+        <div class="t">多人聚餐</div>
+        <div class="d">拼单省钱 · 点单接龙</div>
+        <div class="s">2–12 人整桌怎么点，比各点各的省多少，一键复制发群里</div>
+      </a>
+    </div>
+    <p class="note" style="margin-top:16px">只想看高清商品大图？<a href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html" target="_blank" rel="noopener">完整版</a>　·　想看会闪的卡片？<a href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/card.html" target="_blank" rel="noopener">全息人设卡</a></p>
   </div>
 
   <h3 class="sec">怎么玩</h3>
