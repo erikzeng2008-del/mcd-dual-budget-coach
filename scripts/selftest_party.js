@@ -198,6 +198,27 @@
     return '¥' + PLANS[0].t.price.toFixed(1) + '（预算 500 也不乱加）';
   });
 
+  t('换一批三档都会变化，图片随内容更新', function () {
+    S.shuffle = 0;
+    setScene(4, 'friends');
+    var before = PLANS.map(function (p) {
+      return { txt: p.t.items.map(function (x) { return x.it.name; }).join(','),
+               img: p.t.items[0].it.img, price: p.t.price };
+    });
+    S.shuffle++;
+    render();
+    var changed = PLANS.map(function (p, i) {
+      var txt = p.t.items.map(function (x) { return x.it.name; }).join(',');
+      return txt !== before[i].txt || p.t.price !== before[i].price;
+    });
+    ok(changed.every(Boolean), '只有部分档位变化: ' + changed.join(','));
+    var imgChanged = PLANS.some(function (p, i) {
+      return p.t.items[0].it.img !== before[i].img;
+    });
+    ok(imgChanged, '换一批后图片没有变化');
+    return '三档全变 / 图片已随内容更新';
+  });
+
   // ── 文案与诚实性 ──
   t('接龙文案含人数/门店/合计/人均', function () {
     setScene(4, 'friends');

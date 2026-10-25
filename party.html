@@ -100,6 +100,11 @@ footer a{color:var(--r)}
   .chip:active{transform:scale(.96)}
   .stepper button{transition:transform .1s ease}
   .stepper button:active{transform:scale(.9)}
+  .line .nm{font-weight:800}
+  .line .nm small{font-weight:400}
+  .more{margin-top:10px;font-size:12px;color:var(--mut)}
+  .more summary{cursor:pointer;font-weight:700;color:var(--ink)}
+  .more .kv{padding:2px 0}
 </style>
 </head>
 <body>
@@ -249,7 +254,7 @@ function pool(){
   const shareAll = ITEMS.filter(i=>/多人餐/.test(i.cat) && !/双人餐|亲子/.test(i.name));
   // 不要辣时把名字带辣的共享小食也剔掉，不能只换主食
   const share = (spicy?shareAll.filter(s=>!/辣/.test(s.name)):shareAll).sort((a,b)=>a.price-b.price);
-  const duo = ITEMS.filter(i=>/双人餐/.test(i.name));
+  const duoList = ITEMS.filter(i=>/双人餐|随心拼/.test(i.name));
   const family = ITEMS.filter(i=>/亲子|开心乐园/.test(i.name));
   const coffee = ITEMS.filter(i=>/麦咖啡/.test(i.cat) && i.price<20).sort((a,b)=>a.price-b.price);
   const dessert = ITEMS.filter(i=>/圆筒|麦旋风|新地/.test(i.name)).sort((a,b)=>a.price-b.price);
@@ -257,7 +262,7 @@ function pool(){
   const lightSet = ITEMS.filter(i=>/500/.test(i.cat)).sort((a,b)=>a.price-b.price);
   // 不要辣：BFF 双人餐默认含麦辣鸡腿汉堡，改用「主食任选」的随心拼
   const freeChoice = ITEMS.filter(i=>/随心拼/.test(i.name));
-  return {onePlus, share, duo, family, coffee, dessert, lightSet, freeChoice, spicy, light};
+  return {onePlus, share, duoList, family, coffee, dessert, lightSet, freeChoice, spicy, light};
 }
 
 function cheapest(list){ return list.length?list[0]:null; }
@@ -303,7 +308,7 @@ function shrink(plan, budget){
 // 这一行是不是「管饱的主食」（决定砍单顺序与人数覆盖校验）
 function isMainLine(l){
   const it=byCode[l.code]; if(!it) return false;
-  if(/双人餐|亲子|随心配|三件套|四件套|单人餐|开心乐园餐|套餐/.test(it.name)) return true;
+  if(/双人餐|亲子|随心拼|随心配|三件套|四件套|单人餐|开心乐园餐|套餐/.test(it.name)) return true;
   if(/多人餐/.test(it.cat)) return false;
   return /汉堡|鸡排|卷$|麦满分|鱼堡/.test(it.name);
 }
@@ -313,7 +318,7 @@ function covered(plan){
   let n=0;
   plan.forEach(l=>{
     const it=byCode[l.code]; if(!it||!isMainLine(l)) return;
-    n += (/双人餐|亲子/.test(it.name)?2:1)*l.qty;
+    n += (/双人餐|亲子|随心拼/.test(it.name)?2:1)*l.qty;
   });
   return n;
 }
@@ -345,8 +350,8 @@ function buildPlans(){
   // 🍗 最丰盛：双人餐打底 + 加菜，件数优先
   {
     let plan=[];
-    const duo = p.spicy ? (p.freeChoice[0]||p.duo[0])
-                        : (p.duo.find(d=>/BFF/.test(d.name)) || p.duo[0]);
+    const duoList = p.spicy ? p.freeChoice : p.duoList;
+    const duo = duoList.length ? duoList[S.shuffle % duoList.length] : null;
     if(isFamily && p.family.length){
       const fam=p.family.find(f=>/亲子/.test(f.name))||p.family[0];
       plan.push(line(fam.code,Math.max(1,Math.round(n/2))));
@@ -368,8 +373,8 @@ function buildPlans(){
   // ⚖️ 最均衡：双人餐 + 单人补足，奇数人不落空；有预算再考虑加菜
   {
     let plan=[];
-    const duo = p.spicy ? (p.freeChoice[0]||p.duo[0])
-                        : (p.duo.find(d=>/BFF/.test(d.name))||p.duo[0]);
+    const duoList = p.spicy ? p.freeChoice : p.duoList;
+    const duo = duoList.length ? duoList[(S.shuffle+1) % duoList.length] : null;
     const pairs=Math.floor(n/2), odd=n%2;
     if(isFamily && p.family.length){
       const fam=p.family.find(f=>/亲子/.test(f.name))||p.family[0];
@@ -431,17 +436,18 @@ function render(){
     const over=S.budget&&t.price>S.budget;
     const cov=covered(p.plan);
     const short=S.scene==='tea'?0:Math.max(0,S.n-cov);
-    const imgName={cheap:'精选超值随心配',feast:'BFF四宫格小食盘双人餐',balanced:'BFF四宫格小食盘'}[p.key];
-    const heroImg=imgName?((find(imgName)||{}).img||''):'';
+    const heroImg = t.items.length ? (t.items[0].it.img||'') : '';
     return `<div class="plan ${idx===0?'best':''}">
       <div class="pic"><img src="${heroImg}" alt=""></div>
       <div class="ph"><div class="t">${p.icon} ${p.title}${idx===0?'<span class="badge">推荐</span>':''}</div><div class="d">${p.desc}</div></div>
       <div class="pb">${rows}
         <div class="total"><span>整桌合计</span><span class="p">¥${money(t.price)} <small>/ 人均 ¥${money(per)}</small></span></div>
+        <details class="more"><summary>份数 · 热量 · 划线价 · 主食覆盖</summary>
         <div class="kv"><span>份数</span><b>${t.pieces} 份（主食${t.counts.主食} · 小食${t.counts.小食} · 饮品${t.counts.饮品}${t.counts.玩具?` · 玩具${t.counts.玩具}`:''}）</b></div>
         <div class="kv"><span>整桌热量</span><b>${t.kcal?t.kcal+' kcal':'部分未知'}${t.unknown?`（${t.unknown} 项营养未知）`:''}</b></div>
         <div class="kv"><span>对比划线价</span><b>¥${money(t.orig)}</b></div>
         ${S.scene!=='tea'?`<div class="kv"><span>主食覆盖</span><b>${cov} / ${S.n} 人</b></div>`:''}
+        </details>
         ${short>0?`<div class="warn">🍚 这个预算下主食只够 ${cov} 人，还差 ${short} 份。要么加预算、要么减人——不偷偷少给你。</div>`:''}
         ${saved>0?`<div class="save">🎫 比划线价省 ¥${money(saved)}${vsBase>0?` ｜ 比各点各的再省 ¥${money(vsBase)}`:''}</div>`:''}
         ${over?`<div class="warn">⚠️ 这一档超出预算 ¥${money(t.price-S.budget)}，人数和预算下只能配到这里；想不破顶就选最省钱档。</div>`:''}
