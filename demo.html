@@ -560,13 +560,31 @@
   /* 标题回归正常黑体：不使用倾斜/宽扁美术字，字重显式加粗 */
   .top h1,.rep-title,.ctitle{ font-weight:700; letter-spacing:.5px; }
   .top h1{ letter-spacing:.5px; }
+
+  /* 首屏海报化：大字 + 大图，减少说明文字 */
+  .hero{display:grid;grid-template-columns:1.05fr 1fr;gap:20px;align-items:center;
+        background:#fff;border:2.5px solid var(--ink);border-radius:18px;
+        padding:20px 22px;margin:14px 0 18px;box-shadow:6px 6px 0 var(--yel)}
+  .hero-kicker{font-size:12px;letter-spacing:.12em;color:#8a6d3b;font-weight:700;margin-bottom:9px}
+  .hero-text h1{font-family:var(--f-hero);font-size:clamp(25px,4.1vw,40px);line-height:1.22;
+        font-weight:800;letter-spacing:.5px;color:var(--ink);margin:0}
+  .hero-text h1 span{color:#DA291C}
+  .hero-sub{font-size:14px;color:#5a5044;margin-top:12px}
+  .hero-meta{font-size:12px;color:#8a6d3b;margin-top:8px}
+  .hero-visual img{width:100%;border-radius:14px;display:block}
+  @media(max-width:760px){.hero{grid-template-columns:1fr;padding:16px}.hero-visual{order:-1}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="top">
-    <h1>🍔 麦当劳预算及热量测算专家 · <span>现场试吃</span></h1>
-    <p>说得出「多少钱 + 多少卡」，它就配得出三个能直接下单的组合——点任意方案看<b>商品图与营养拆解</b>。<br>数据为 2026-10-12 12:07:57 真机实测快照。</p>
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-kicker">麦当劳预算及热量测算 · 现场试吃</div>
+      <h1>多少钱 + 多少卡<br><span>三档能下单的套餐</span></h1>
+      <p class="hero-sub">真实菜单 · 价格 · 营养 · 券，一算就出</p>
+      <div class="hero-meta">数据快照 2026-10-12 · 88,788 个组合</div>
+    </div>
+    <div class="hero-visual"><img src="assets/hero.jpg" alt="汉堡薯条可乐套餐" loading="lazy"></div>
   </div>
 
   <div class="tabs">
