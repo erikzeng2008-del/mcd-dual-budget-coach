@@ -60,6 +60,20 @@
   .product{display:block;color:inherit;text-decoration:none;cursor:pointer;transition:transform .12s ease}
   .product:hover{transform:translateY(-2px)}
   .product:hover span{background:#FFD54F}
+
+  .modal{position:fixed;inset:0;background:rgba(20,20,20,.45);display:none;align-items:center;justify-content:center;z-index:99;padding:20px}
+  .modal.show{display:flex}
+  .flashcard{position:relative;background:#fff;border:3px solid var(--ink);border-radius:18px;max-width:360px;width:100%;overflow:hidden;box-shadow:8px 8px 0 var(--ink)}
+  .fc-close{position:absolute;right:10px;top:8px;background:var(--yel);border:2px solid var(--ink);border-radius:50%;width:32px;height:32px;font-size:20px;font-weight:800;cursor:pointer;z-index:2}
+  .fc-img{height:250px;background:#fff;display:flex;align-items:center;justify-content:center;border-bottom:3px solid var(--ink)}
+  .fc-img img{max-width:100%;max-height:100%;object-fit:contain}
+  .fc-body{padding:16px 18px 18px;background:var(--yel)}
+  .fc-name{font-size:20px;font-weight:800}
+  .fc-price{margin-top:8px;display:flex;align-items:baseline;gap:10px}
+  .fc-price b{font-size:26px;color:var(--red)}
+  .fc-price s{color:#8a6d3b;font-size:14px}
+  .fc-kcal{margin-top:6px;font-size:12.5px;color:#5a5044}
+  .fc-go{display:block;margin-top:14px;background:var(--red);color:#fff;text-align:center;font-weight:800;padding:11px;border-radius:10px;border:2px solid var(--ink)}
 </style>
 </head>
 <body>
@@ -107,18 +121,47 @@
   </footer>
 
 <script>
-const PRODUCTS = [{"name": "麦辣鸡腿汉堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005456_320.png", "link": "lite.html"}, {"name": "泷盐星星麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521750_320.gif", "link": "lite.html"}, {"name": "龙焰芝士棒鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016075_320.png", "link": "lite.html"}, {"name": "龙焰鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png", "link": "lite.html"}, {"name": "板烧鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005462_320.png", "link": "lite.html"}, {"name": "巨无霸三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005466_320.png", "link": "lite.html"}, {"name": "泷愿成真麦旋风——大米风味", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521917_320.gif", "link": "lite.html"}, {"name": "巨无霸", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png", "link": "lite.html"}, {"name": "麦辣鸡翅4块套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504972_320.png", "link": "lite.html"}, {"name": "可乐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif", "link": "lite.html"}, {"name": "薄皮V翅双拼十翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260610/product/MS_9900006332_320.png", "link": "party.html"}, {"name": "派", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008752_320.gif", "link": "lite.html"}, {"name": "经典麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif", "link": "lite.html"}, {"name": "脆脆薯条", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_514782_320_1747877523158.png", "link": "lite.html"}, {"name": "麦乐鸡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260529/product/MS_G1401_320.png", "link": "lite.html"}, {"name": "板烧鸡腿堡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20241008/product/MS_1406_320.png", "link": "lite.html"}, {"name": "咖啡阿芙佳朵", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250324/product/MS_514851_320.png", "link": "lite.html"}, {"name": "金翼双飞蜜汁风味薄皮V翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_521389_320.png", "link": "lite.html"}, {"name": "龙焰鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016309_320.png", "link": "lite.html"}, {"name": "BFF四宫格小食盘", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900015730_320.gif", "link": "party.html"}, {"name": "龙焰芝士棒鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016310_320.png", "link": "lite.html"}, {"name": "麦乐鸡套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504969_320.png", "link": "lite.html"}, {"name": "鱼排堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250430/product/MS_9900005421_320_1745810420363.png", "link": "lite.html"}, {"name": "汉堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20240828/product/MS_9900005422_320.png", "link": "lite.html"}];
+const PRODUCTS = [{"name": "麦辣鸡腿汉堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005456_320.png", "link": "lite.html", "price": 33.5, "orig": 47.0, "kcal": 485.0, "kcalUnknown": 0}, {"name": "泷盐星星麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521750_320.gif", "link": "lite.html", "price": 16.0, "orig": 16.0, "kcal": null, "kcalUnknown": 1}, {"name": "龙焰芝士棒鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016075_320.png", "link": "lite.html", "price": 29.9, "orig": 51.5, "kcal": null, "kcalUnknown": 1}, {"name": "龙焰鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png", "link": "lite.html", "price": 26.9, "orig": 48.5, "kcal": 436, "kcalUnknown": 1}, {"name": "板烧鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005462_320.png", "link": "lite.html", "price": 34.5, "orig": 48.0, "kcal": 391.0, "kcalUnknown": 0}, {"name": "巨无霸三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005466_320.png", "link": "lite.html", "price": 37.5, "orig": 51.0, "kcal": 513.0, "kcalUnknown": 0}, {"name": "泷愿成真麦旋风——大米风味", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521917_320.gif", "link": "lite.html", "price": 16.0, "orig": 16.0, "kcal": null, "kcalUnknown": 1}, {"name": "巨无霸", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png", "link": "lite.html", "price": 26.5, "orig": 26.5, "kcal": 513.0, "kcalUnknown": 0}, {"name": "麦辣鸡翅4块套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504972_320.png", "link": "lite.html", "price": 37.0, "orig": 50.5, "kcal": null, "kcalUnknown": 1}, {"name": "可乐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif", "link": "lite.html", "price": 9.5, "orig": 9.5, "kcal": 107.0, "kcalUnknown": 0}, {"name": "薄皮V翅双拼十翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260610/product/MS_9900006332_320.png", "link": "party.html", "price": 49.9, "orig": 77.0, "kcal": 672, "kcalUnknown": 1}, {"name": "派", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008752_320.gif", "link": "lite.html", "price": 8.0, "orig": 8.0, "kcal": null, "kcalUnknown": 1}, {"name": "经典麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif", "link": "lite.html", "price": 15.0, "orig": 15.0, "kcal": null, "kcalUnknown": 1}, {"name": "脆脆薯条", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_514782_320_1747877523158.png", "link": "lite.html", "price": 16.5, "orig": 16.5, "kcal": 279.0, "kcalUnknown": 0}, {"name": "麦乐鸡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260529/product/MS_G1401_320.png", "link": "lite.html", "price": 14.5, "orig": 14.5, "kcal": null, "kcalUnknown": 1}, {"name": "板烧鸡腿堡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20241008/product/MS_1406_320.png", "link": "lite.html", "price": 23.5, "orig": 23.5, "kcal": 391.0, "kcalUnknown": 0}, {"name": "咖啡阿芙佳朵", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250324/product/MS_514851_320.png", "link": "lite.html", "price": 15.0, "orig": 15.0, "kcal": 139.0, "kcalUnknown": 0}, {"name": "金翼双飞蜜汁风味薄皮V翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_521389_320.png", "link": "lite.html", "price": 16.0, "orig": 16.0, "kcal": null, "kcalUnknown": 1}, {"name": "龙焰鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016309_320.png", "link": "lite.html", "price": 29.0, "orig": 57.5, "kcal": null, "kcalUnknown": 1}, {"name": "BFF四宫格小食盘", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900015730_320.gif", "link": "party.html", "price": 39.8, "orig": 54.5, "kcal": 882, "kcalUnknown": 0}, {"name": "龙焰芝士棒鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016310_320.png", "link": "lite.html", "price": 32.0, "orig": 57.5, "kcal": null, "kcalUnknown": 1}, {"name": "麦乐鸡套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504969_320.png", "link": "lite.html", "price": 25.5, "orig": 39.0, "kcal": null, "kcalUnknown": 1}, {"name": "鱼排堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250430/product/MS_9900005421_320_1745810420363.png", "link": "lite.html", "price": 24.0, "orig": 24.0, "kcal": null, "kcalUnknown": 1}, {"name": "汉堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20240828/product/MS_9900005422_320.png", "link": "lite.html", "price": 23.5, "orig": 23.5, "kcal": 515, "kcalUnknown": 0}];
 const grid = document.getElementById('productGrid');
 let page = 0;
 function renderProducts(){
   const per = 8;
-  grid.innerHTML = PRODUCTS.slice(page*per, page*per+per).map(p =>
-    `<a class="product" href="${p.link}" title="点我进去试算"><div class="ph"><img src="${p.img}" alt="${p.name}" loading="lazy"></div><span>${p.name}</span></a>`
+  const start = page*per;
+  grid.innerHTML = PRODUCTS.slice(start, start+per).map((p,i) =>
+    `<a class="product" href="javascript:void(0)" onclick="showCard(${start+i})" title="点我出闪卡"><div class="ph"><img src="${p.img}" alt="${p.name}" loading="lazy"></div><span>${p.name}</span></a>`
   ).join('');
   page = (page + 1) % Math.ceil(PRODUCTS.length / per);
 }
 document.getElementById('shuffleBtn').addEventListener('click', renderProducts);
 renderProducts();
+</script>
+
+
+<div class="modal" id="cardModal" onclick="if(event.target===this)closeCard()">
+  <div class="flashcard">
+    <button class="fc-close" onclick="closeCard()">×</button>
+    <div class="fc-img"><img id="fcImg" src="" alt=""></div>
+    <div class="fc-body">
+      <div class="fc-name" id="fcName"></div>
+      <div class="fc-price"><b id="fcPrice"></b><s id="fcOrig"></s></div>
+      <div class="fc-kcal" id="fcKcal"></div>
+      <a class="fc-go" id="fcGo" href="#">去试算 →</a>
+    </div>
+  </div>
+</div>
+<script>
+function showCard(i){
+  const p=PRODUCTS[i];
+  document.getElementById('fcImg').src=p.img;
+  document.getElementById('fcName').textContent=p.name;
+  document.getElementById('fcPrice').textContent='¥'+p.price.toFixed(1);
+  document.getElementById('fcOrig').textContent=p.orig>p.price?'¥'+p.orig.toFixed(1):'';
+  document.getElementById('fcKcal').textContent=p.kcal? p.kcal+' kcal（官方营养表）'+(p.kcalUnknown?'，含未知项':''):'热量未知（MCP 营养表暂无）';
+  document.getElementById('fcGo').href=p.link;
+  document.getElementById('cardModal').classList.add('show');
+}
+function closeCard(){document.getElementById('cardModal').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCard();});
 </script>
 
 </main>
