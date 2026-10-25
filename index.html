@@ -52,6 +52,10 @@
     .hero p{max-width:100%}
     .product-grid{grid-template-columns:repeat(2,1fr)}
   }
+
+  .sec-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .shuffle{background:var(--yel);border:2px solid var(--ink);border-radius:999px;padding:6px 16px;font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:3px 3px 0 var(--ink)}
+  .shuffle:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink)}
 </style>
 </head>
 <body>
@@ -72,38 +76,24 @@
   <div class="hero-text"><div class="inner">
     <div class="kicker">MCDONALD'S × AI HACKATHON</div>
     <h1>减脂期还想吃麦当劳？<br><em>说个预算和卡数，<br>三档能直接下单的组合</em></h1>
-    <p>一个人吃控热量，一群人吃拼单省钱。菜单、价格、营养、券全部来自麦当劳官方接口。</p>
-    <div class="hero-cta">
-      <a class="btn" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html">一个人吃 →</a>
-      <a class="btn alt" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html">多人聚餐 →</a>
-    </div>
-  </div></div>
+    <p>一个人吃控热量，一群人吃拼单省钱。菜单、价格、营养、券全部来自麦当劳官方接口。</p>  </div></div>
 </section>
 
 <main class="wrap">
 
   <div class="scene-grid">
     <a class="scene-card" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html">
-      <div class="pic"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png" alt="单人套餐"></div>
+      <div class="pic"><img src="assets/scene-single.jpg" alt="单人套餐"></div>
       <div class="cap"><div class="t">一个人吃</div><div class="d">多少钱 + 多少卡 → 三档方案</div></div>
     </a>
     <a class="scene-card" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html">
-      <div class="pic"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260304/product/MS_9900005321_320.png" alt="多人分享餐"></div>
+      <div class="pic"><img src="assets/scene-party.jpg" alt="多人分享餐"></div>
       <div class="cap"><div class="t">多人聚餐</div><div class="d">2–12 人拼单 → 比各点各的省多少</div></div>
     </a>
   </div>
 
-  <h3 class="sec">今天吃哪样？官方商品实拍</h3>
-  <div class="product-grid">
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png" alt="巨无霸"></div><span>巨无霸</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_G4810_320_1747877491921.png" alt="薯条"></div><span>金黄薯条</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif" alt="可乐"></div><span>冰可乐</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif" alt="麦旋风"></div><span>经典麦旋风</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png" alt="龙焰鸡腿堡三件套"></div><span>龙焰鸡腿堡三件套</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20240828/product/MS_9900005422_320.png" alt="开心乐园餐"></div><span>开心乐园餐</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260304/product/MS_9900005321_320.png" alt="BFF四宫格双人餐"></div><span>BFF四宫格双人餐</span></div>
-    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260610/product/MS_9900006332_320.png" alt="薄皮V翅双拼十翅"></div><span>薄皮V翅双拼十翅</span></div>
-  </div>
+  <div class="sec-row"><h3 class="sec">今天吃哪样？官方商品实拍</h3><button class="shuffle" id="shuffleBtn">换一波 ↻</button></div>
+  <div class="product-grid" id="productGrid"></div>
 
   <p class="note">菜单 / 价格 / 营养 / 券来自麦当劳官方接口快照（2026-10-25）· 单文件演示，打开即用</p>
 
@@ -111,6 +101,21 @@
     <span>麦当劳预算及热量测算 · 麦当劳 AI 创新挑战赛作品</span>
     <span><a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" target="_blank" rel="noopener">源码仓库</a> · <a href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html">聚餐拼单</a></span>
   </footer>
+
+<script>
+const PRODUCTS = [{"name": "麦辣鸡腿汉堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005456_320.png"}, {"name": "泷盐星星麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521750_320.gif"}, {"name": "龙焰芝士棒鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016075_320.png"}, {"name": "龙焰鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png"}, {"name": "板烧鸡腿堡三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005462_320.png"}, {"name": "巨无霸三件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_9900005466_320.png"}, {"name": "泷愿成真麦旋风——大米风味", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G521917_320.gif"}, {"name": "巨无霸", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png"}, {"name": "麦辣鸡翅4块套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504972_320.png"}, {"name": "可乐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif"}, {"name": "薄皮V翅双拼十翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260610/product/MS_9900006332_320.png"}, {"name": "派", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008752_320.gif"}, {"name": "经典麦旋风", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif"}, {"name": "脆脆薯条", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_514782_320_1747877523158.png"}, {"name": "麦乐鸡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260529/product/MS_G1401_320.png"}, {"name": "板烧鸡腿堡", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20241008/product/MS_1406_320.png"}, {"name": "咖啡阿芙佳朵", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250324/product/MS_514851_320.png"}, {"name": "金翼双飞蜜汁风味薄皮V翅", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_521389_320.png"}, {"name": "龙焰鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016309_320.png"}, {"name": "BFF四宫格小食盘", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900015730_320.gif"}, {"name": "龙焰芝士棒鸡腿堡四件套", "img": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016310_320.png"}, {"name": "麦乐鸡套餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20260824/product/MS_G504969_320.png"}, {"name": "鱼排堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20250430/product/MS_9900005421_320_1745810420363.png"}, {"name": "汉堡开心乐园餐", "img": "https://menu-img.mcd.cn/pcm/prod/menu/20240828/product/MS_9900005422_320.png"}];
+const grid = document.getElementById('productGrid');
+let page = 0;
+function renderProducts(){
+  const per = 8;
+  grid.innerHTML = PRODUCTS.slice(page*per, page*per+per).map(p =>
+    `<div class="product"><div class="ph"><img src="${p.img}" alt="${p.name}" loading="lazy"></div><span>${p.name}</span></div>`
+  ).join('');
+  page = (page + 1) % Math.ceil(PRODUCTS.length / per);
+}
+document.getElementById('shuffleBtn').addEventListener('click', renderProducts);
+renderProducts();
+</script>
 
 </main>
 </body>
