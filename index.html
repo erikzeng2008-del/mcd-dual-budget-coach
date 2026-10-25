@@ -8,50 +8,49 @@
 <style>
   :root{--ink:#141414;--red:#DA291C;--yel:#FFC72C;--cream:#FFF9EC;--line:#e3d9c3;--grey:#7a6a52}
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
-  a{color:var(--red);text-decoration:none}
-  .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;max-width:1240px;margin:0 auto;padding:18px 24px}
-  .brand{font-size:17px;font-weight:800;letter-spacing:.02em;white-space:nowrap}
+  body{font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;background:var(--yel);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:18px;max-width:1240px;margin:0 auto;padding:16px 24px;background:#fff;border-bottom:1px solid #eee}
+  .brand{font-size:17px;font-weight:800;white-space:nowrap}
   .brand b{color:var(--red)}
-  .navlinks{display:flex;gap:22px;font-size:13.5px;font-weight:700;color:#4a4034;flex-wrap:wrap}
-  .navlinks a{color:#4a4034;padding-bottom:3px;border-bottom:2px solid transparent}
+  .navlinks{display:flex;gap:20px;font-size:13px;font-weight:700;color:#4a4034;flex-wrap:wrap}
+  .navlinks a{padding-bottom:3px;border-bottom:2px solid transparent}
   .navlinks a:hover{color:var(--red);border-bottom-color:var(--red)}
-  .hero{position:relative;max-width:1440px;margin:0 auto;height:460px;overflow:hidden}
+  .hero{position:relative;max-width:1440px;margin:0 auto;height:430px;overflow:hidden;background:#fff}
   .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
   .hero-text{position:relative;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 24px;max-width:1240px;margin:0 auto}
-  .hero-text .inner{max-width:560px;background:rgba(255,249,236,.88);padding:22px 24px;border-radius:16px}
-  .kicker{font-size:12px;letter-spacing:.2em;color:#8a6d3b;font-weight:800;margin-bottom:12px}
-  .hero h1{font-size:clamp(28px,4vw,46px);line-height:1.25;font-weight:800;letter-spacing:.5px}
+  .hero-text .inner{max-width:560px;background:rgba(255,249,236,.9);padding:20px 24px;border-radius:16px}
+  .kicker{font-size:11px;letter-spacing:.2em;color:#8a6d3b;font-weight:800;margin-bottom:10px}
+  .hero h1{font-size:clamp(26px,3.6vw,42px);line-height:1.25;font-weight:800;letter-spacing:.5px}
   .hero h1 em{font-style:normal;color:var(--red)}
-  .hero p{margin-top:14px;font-size:15px;color:#4a4034;max-width:460px}
-  .hero-cta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:15px;font-weight:800;padding:13px 24px;border-radius:10px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease}
-  .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+  .hero p{margin-top:12px;font-size:14px;color:#4a4034;max-width:460px}
+  .hero-cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:#fff;font-size:14px;font-weight:800;padding:11px 22px;border-radius:10px;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
   .btn.alt{background:var(--yel);color:var(--ink)}
-  .wrap{max-width:1240px;margin:0 auto;padding:0 24px}
-  .sec{font-size:14px;letter-spacing:.14em;color:var(--grey);font-weight:800;margin:40px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line)}
-  .scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-  .scene{display:block;background:#fff;border:2.5px solid var(--ink);border-radius:14px;padding:20px;box-shadow:5px 5px 0 var(--yel);transition:transform .12s ease,box-shadow .12s ease}
-  .scene:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--yel)}
-  .scene .emoji{font-size:32px}
-  .scene .t{font-size:22px;font-weight:800;margin:8px 0 3px}
-  .scene .d{font-size:13px;font-weight:800;color:var(--red);margin-bottom:8px}
-  .scene .s{font-size:13px;color:#5a5044}
-  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
-  .feat{border-left:4px solid var(--yel);background:#fff;border-radius:0 10px 10px 0;padding:14px 16px;border-top:1.5px solid var(--line);border-right:1.5px solid var(--line);border-bottom:1.5px solid var(--line)}
-  .feat b{display:block;font-size:14px;margin-bottom:4px}
-  .feat span{font-size:12.5px;color:#5f5446}
-  .src{border:2px dashed #cdb98c;border-radius:12px;background:#FFFDF4;padding:16px 18px;font-size:13px;color:#4a4034}
-  .src b{color:var(--ink)}
-  .src ul{margin:8px 0 0 18px}
-  .src li{margin:3px 0}
-  footer{margin:44px 0 30px;padding-top:18px;border-top:2px solid var(--line);font-size:12px;color:var(--grey);display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between}
+  .wrap{max-width:1240px;margin:0 auto;padding:22px 24px 0}
+  .scene-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+  .scene-card{display:block;background:#fff;border:3px solid var(--ink);border-radius:16px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);transition:transform .12s ease,box-shadow .12s ease}
+  .scene-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+  .scene-card .pic{height:230px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .scene-card .pic img{width:100%;height:100%;object-fit:cover}
+  .scene-card .cap{padding:14px 16px 16px;background:var(--yel);border-top:3px solid var(--ink)}
+  .scene-card .t{font-size:22px;font-weight:800}
+  .scene-card .d{font-size:12.5px;font-weight:700;color:#8a6d3b;margin-top:2px}
+  .sec{font-size:14px;letter-spacing:.14em;color:#5a5044;font-weight:800;margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid rgba(20,20,20,.15)}
+  .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+  .product{background:#fff;border:2px solid var(--ink);border-radius:14px;overflow:hidden;text-align:center}
+  .product .ph{height:140px;display:flex;align-items:center;justify-content:center;background:#fff}
+  .product .ph img{max-width:100%;max-height:100%;object-fit:contain}
+  .product span{display:block;padding:8px 6px;font-size:12.5px;font-weight:700;background:var(--yel);border-top:2px solid var(--ink)}
+  .note{margin:26px 0 0;font-size:12px;color:#5a5044;text-align:center}
+  footer{margin:30px 0 26px;padding-top:16px;border-top:2px solid rgba(20,20,20,.15);font-size:12px;color:#4a4034;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
   @media(max-width:760px){
     .nav{flex-direction:column;align-items:flex-start;gap:10px}
-    .hero{height:520px}
-    .hero-text{justify-content:flex-end;padding-bottom:34px}
+    .hero{height:500px}
+    .hero-text{justify-content:flex-end;padding-bottom:28px}
     .hero-text .inner{max-width:100%}
     .hero p{max-width:100%}
+    .product-grid{grid-template-columns:repeat(2,1fr)}
   }
 </style>
 </head>
@@ -69,7 +68,7 @@
 </header>
 
 <section class="hero">
-  <img src="assets/hero-wide.jpg" alt="麦当劳汉堡薯条可乐组合海报">
+  <img src="assets/hero-wide.jpg" alt="麦当劳汉堡套餐海报">
   <div class="hero-text"><div class="inner">
     <div class="kicker">MCDONALD'S × AI HACKATHON</div>
     <h1>减脂期还想吃麦当劳？<br><em>说个预算和卡数，<br>三档能直接下单的组合</em></h1>
@@ -83,40 +82,30 @@
 
 <main class="wrap">
 
-  <h3 class="sec">你是哪种吃法？</h3>
-  <div class="scenes">
-    <a class="scene" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html">
-      <div class="emoji">🍔</div>
-      <div class="t">一个人吃</div>
-      <div class="d">双预算配餐 · 三档方案</div>
-      <div class="s">说清「多少钱 + 多少卡」，算出最划算、最扎实、最均衡的一顿</div>
+  <div class="scene-grid">
+    <a class="scene-card" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html">
+      <div class="pic"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png" alt="单人套餐"></div>
+      <div class="cap"><div class="t">一个人吃</div><div class="d">多少钱 + 多少卡 → 三档方案</div></div>
     </a>
-    <a class="scene" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html">
-      <div class="emoji">🍻</div>
-      <div class="t">多人聚餐</div>
-      <div class="d">拼单省钱 · 点单接龙</div>
-      <div class="s">2–12 人整桌怎么点，比各点各的省多少，一键复制发群里</div>
+    <a class="scene-card" href="https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html">
+      <div class="pic"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260304/product/MS_9900005321_320.png" alt="多人分享餐"></div>
+      <div class="cap"><div class="t">多人聚餐</div><div class="d">2–12 人拼单 → 比各点各的省多少</div></div>
     </a>
   </div>
 
-  <h3 class="sec">它做了什么</h3>
-  <div class="feats">
-    <div class="feat"><b>真数据，不是编的</b><span>菜单 / 价格 / 营养 / 券全部来自麦当劳官方接口快照，写明抓取时间</span></div>
-    <div class="feat"><b>三档而非一档</b><span>最省钱 / 最扎实 / 最均衡，分歧点说清楚，不替你做唯一决定</span></div>
-    <div class="feat"><b>券会算清账</b><span>今天哪张券能用、用完省多少、为什么某张券用不上</span></div>
-    <div class="feat"><b>聚餐会拼单</b><span>多人餐先拆构成再算人均，比各点各的省多少直接写出来</span></div>
+  <h3 class="sec">今天吃哪样？官方商品实拍</h3>
+  <div class="product-grid">
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png" alt="巨无霸"></div><span>巨无霸</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_G4810_320_1747877491921.png" alt="薯条"></div><span>金黄薯条</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif" alt="可乐"></div><span>冰可乐</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif" alt="麦旋风"></div><span>经典麦旋风</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900016073_320.png" alt="龙焰鸡腿堡三件套"></div><span>龙焰鸡腿堡三件套</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20240828/product/MS_9900005422_320.png" alt="开心乐园餐"></div><span>开心乐园餐</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260304/product/MS_9900005321_320.png" alt="BFF四宫格双人餐"></div><span>BFF四宫格双人餐</span></div>
+    <div class="product"><div class="ph"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260610/product/MS_9900006332_320.png" alt="薄皮V翅双拼十翅"></div><span>薄皮V翅双拼十翅</span></div>
   </div>
 
-  <h3 class="sec">数据来源</h3>
-  <div class="src">
-    <b>全部来自麦当劳官方接口的一次快照</b>，抓取时间 <b>2026-10-25</b>（北京）。
-    <ul>
-      <li>商品与价格：106 个单品，含套餐 / 单品 / 小食甜品 / 多人餐</li>
-      <li>营养：每单的热量、钠、蛋白质、脂肪</li>
-      <li>优惠券与活动：可领券、当周活动日历</li>
-      <li>页面为单文件演示，打开即用，无需安装</li>
-    </ul>
-  </div>
+  <p class="note">菜单 / 价格 / 营养 / 券来自麦当劳官方接口快照（2026-10-25）· 单文件演示，打开即用</p>
 
   <footer>
     <span>麦当劳预算及热量测算 · 麦当劳 AI 创新挑战赛作品</span>
