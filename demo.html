@@ -589,6 +589,15 @@
   .plan .body{gap:5px !important}
   .plan .metrics .mrow{font-size:11px !important}
   .plan .pr{font-size:19px !important}
+
+  /* 主按钮上移并突出：渐变 + 大字号 */
+  .cta-top{display:flex;flex-direction:column;align-items:center;gap:8px;margin:14px 0 16px}
+  .cta-top .go{width:min(560px,100%);font-size:21px !important;padding:16px 22px !important;
+    background:linear-gradient(135deg,#DA291C 0%,#FF7A1A 100%) !important;
+    box-shadow:0 6px 0 #8a1a12 !important;border:2px solid #1a1a1a !important}
+  .cta-top .go:hover{transform:translateY(-2px);box-shadow:0 8px 0 #8a1a12 !important}
+  .cta-top .pending{text-align:center}
+  input[type=range]{height:6px;border-radius:99px;background:linear-gradient(90deg,#DA291C,#FFC72C);outline:none}
 </style>
 </head>
 <body>
@@ -679,6 +688,8 @@
         <text x="340" y="144" fill="#8a6d3b" font-size="12.5" text-anchor="middle">两个闸门要同时过，才算过闸 —— 不是「不超预算就行」</text>
       </svg>
     </div>
+    <div class="cta-top"><button class="go" id="go">配一顿 →</button><div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div></div>
+
     <div class="presets">
       <button data-m="30" data-k="600">30 块 600 卡 · 正餐</button>
       <button data-m="25" data-k="900">25 块 · 不限卡</button>
@@ -694,8 +705,8 @@
         <div class="fld"><label>热量预算 <i>kcal，≥900 即不设限</i> · <span class="val" id="kv">600</span></label>
           <input type="range" id="k" min="200" max="1000" step="10" value="600"></div>
       </div>
-      <button class="go" id="go">配一顿 →</button>
-      <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
+      
+      
     </div>
 
 
@@ -704,7 +715,7 @@
     <div class="panel2">
       <div class="ctitle">🏪 取餐门店</div>
       <div class="sname">麦当劳福州金洲南路餐厅</div>
-      <div class="saddr">浦上大道万达广场室内步行街 2-2、3-33 号商铺 · storeCode 1410075</div>
+      <div class="saddr">storeCode 1410075 · 到店自提</div>
       <div class="snote">真实版按地址自动定位最近门店；本页为实测快照，固定该店数据。</div>
     </div>
 
@@ -725,9 +736,7 @@
   <div id="v5" class="hide"></div>
 
   <div class="warn">
-    ⚠️ 诚实说明：本页是<b>浏览器本地演示</b>，商品图、菜单、营养、价格均为 2026-10-12 12:07:57 在 麦当劳福州金洲南路餐厅 的实测快照
-    （组合枚举与「最划算/最扎实/最均衡」三档逻辑与 Skill 一致，「最均衡」的均衡点为通用启发式，个例可能与实跑略有差异）。
-    真实版 Skill 直连麦当劳 MCP 实时接口，价格经 <code>calculate-price</code> 券后核价，菜单随时段/门店变化。<b>本页不含任何 Token 或接口凭证。</b>
+    ⚠️ 本页为本地演示，数据来自麦当劳官方接口快照（2026-10-12）；不含任何 Token 或凭证。
   </div>
   <div class="foot">
     项目源码与完整实测案例（4 场景 11 方案）：<br>

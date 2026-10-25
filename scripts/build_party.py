@@ -296,6 +296,20 @@ footer a{color:var(--r)}
 .plan .pic{height:150px;background:#fff;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);overflow:hidden}
 .plan .pic img{max-width:100%;max-height:100%;object-fit:contain}
 @media(max-width:640px){.hero{grid-template-columns:1fr}.hero-img{order:-1}}
+
+  /* 交互增强：换一批、渐变主按钮、卡片与控件动效 */
+  .sec-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .shuffle{background:var(--y);border:1.5px solid var(--ink);border-radius:999px;padding:6px 16px;font-size:12.5px;font-weight:800;cursor:pointer}
+  .shuffle:active{transform:scale(.95)}
+  .big-save{font-size:23px;font-weight:800;color:var(--r);padding:0 3px}
+  .btn{background:linear-gradient(135deg,#DA291C,#FF7A1A);color:#fff;border:1.5px solid var(--ink)}
+  .btn.ghost{background:#fff;color:var(--ink)}
+  .plan{transition:transform .15s ease,box-shadow .15s ease}
+  .plan:hover{transform:translateY(-3px);box-shadow:0 6px 0 var(--y)}
+  .chip{transition:all .12s ease}
+  .chip:active{transform:scale(.96)}
+  .stepper button{transition:transform .1s ease}
+  .stepper button:active{transform:scale(.9)}
 </style>
 </head>
 <body>
@@ -342,7 +356,7 @@ footer a{color:var(--r)}
 </section>
 
 <section>
-<h2>② 三档整桌方案 <small>点开清单能看到每份套餐里面有什么</small></h2>
+<div class="sec-row"><h2>② 三档整桌方案 <small>点开清单能看到每份套餐里面有什么</small></h2><button class="shuffle" id="shufflePlans">换一批 ↻</button></div>
 <div class="plans" id="plans"></div>
 </section>
 
@@ -387,7 +401,7 @@ const has = n => !!find(n);
 const P = n => { const it=find(n); return it?it.price:0; };
 
 // ── 场景与偏好状态 ──
-const S = { n:4, budget:null, scene:'friends', prefs:new Set() };
+const S = { n:4, budget:null, scene:'friends', prefs:new Set(), shuffle:0 };
 
 // ── 拼单引擎：所有数字来自快照，不在前端写死价格 ──
 // 每个方案 = [{code, qty}]，展开 rounds 得到件数与构成
@@ -527,7 +541,7 @@ function buildPlans(){
     let plan=[];
     if(op && !isTea) plan.push(line(op.code,n));
     const shareCount=Math.max(1,Math.round(n/4));
-    const sh=cheapest(p.share);
+    const sh=p.share.length?p.share[S.shuffle % p.share.length]:cheapest(p.share);
     if(sh) plan.push(line(sh.code, isTea?Math.max(1,Math.round(n/3)):shareCount));
     if(p.light && p.lightSet.length && !isTea){
       plan=plan.filter(l=>l.code!==(op&&op.code));
@@ -553,7 +567,7 @@ function buildPlans(){
     }
     // 加菜优先「十翅」这种真正的分享装，其次鸡块
     const feast=p.share.filter(s=>/十翅/.test(s.name));
-    const add=feast[0]||p.share.filter(s=>/鸡块/.test(s.name))[0]||p.share[p.share.length-1];
+    const add=feast.length?feast[S.shuffle % feast.length]:(p.share.filter(s=>/鸡块/.test(s.name))[0]||p.share[p.share.length-1]);
     if(add) plan.push(line(add.code,Math.max(1,Math.round(n/4))));
     if(S.prefs.has('dessert')||isTea){ const d=cheapest(p.dessert); if(d) plan.push(line(d.code,n)); }
     if(S.prefs.has('coffee')||S.scene==='office'){ const c=cheapest(p.coffee); if(c) plan.push(line(c.code,Math.max(1,Math.round(n/2)))); }
@@ -608,7 +622,7 @@ function render(){
   const diff=base.price-cheapestPlan.t.price;
   $('compare').innerHTML = S.scene==='tea'
     ? `☕ 下午茶不按人头配主食，按「共享小食 + 饮品/甜品」来凑。当前最便宜的一桌 <b>¥${money(cheapestPlan.t.price)}</b>，人均 <b>¥${money(cheapestPlan.t.price/S.n)}</b>。`
-    : `🆚 <b>各点各的</b>：${S.n} × ${base.name}（¥${money(base.unit)}/人）= <b>¥${money(base.price)}</b><br>🧩 <b>拼单共享</b>：最便宜的一桌 ¥${money(cheapestPlan.t.price)}，人均 ¥${money(cheapestPlan.t.price/S.n)}${diff>0?` —— <b>这一桌省 ¥${money(diff)}</b>，相当于白得 ${Math.max(1,Math.floor(diff/5))} 个圆筒冰淇淋`:' —— 这个人数下拼单不一定更便宜，看清单挑你要的'}`;
+    : `🆚 <b>各点各的</b>：${S.n} × ${base.name}（¥${money(base.unit)}/人）= <b>¥${money(base.price)}</b><br>🧩 <b>拼单共享</b>：最便宜的一桌 ¥${money(cheapestPlan.t.price)}，人均 ¥${money(cheapestPlan.t.price/S.n)}${diff>0?` —— <span class="big-save">省 ¥${money(diff)}</span>，相当于白得 ${Math.max(1,Math.floor(diff/5))} 个圆筒冰淇淋`:' —— 这个人数下拼单不一定更便宜，看清单挑你要的'}`;
 
   if(S.prefs.has('noSpicy')) $('compare').innerHTML+='<br>🌶️ 已避开辣款：双人餐改走「堡堡随心拼」（主食可自选不辣），共享小食同步剔除辣款。';
   if(S.prefs.has('light')) $('compare').innerHTML+='<br>🥗 想轻一点：最省钱档已换成 500 大卡套餐，热量优先于价格——这一档可能更贵，是口味选择不是算错。';
@@ -705,6 +719,7 @@ document.querySelectorAll('#prefs .chip').forEach(c=>c.onclick=()=>{
 });
 document.querySelectorAll('#textWhich .chip').forEach(c=>c.onclick=()=>{window.TEXTIDX=Number(c.dataset.v);syncTextTabs();fillText();});
 $('copyBtn').onclick=copyText;
+$('shufflePlans').onclick=()=>{S.shuffle++;render();};
 
 $('storeName').textContent=SNAPSHOT.store+' · '+SNAPSHOT.address;
 $('snapAt').textContent=SNAPSHOT.at;
