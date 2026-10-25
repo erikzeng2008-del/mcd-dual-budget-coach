@@ -573,6 +573,14 @@
   .hero-meta{font-size:12px;color:#8a6d3b;margin-top:8px}
   .hero-visual img{width:100%;border-radius:14px;display:block}
   @media(max-width:760px){.hero{grid-template-columns:1fr;padding:16px}.hero-visual{order:-1}}
+
+  /* TAB 统一为下划线导航风（参考 Pure Sunfarms），去掉按钮感 */
+  .tabs{gap:18px !important;border-bottom:2px solid var(--line) !important;padding-bottom:0 !important}
+  .tab{background:transparent !important;border:none !important;border-bottom:3px solid transparent !important;
+       border-radius:0 !important;box-shadow:none !important;padding:10px 2px !important;
+       font-weight:700 !important;color:#6b5a3a !important}
+  .tab .n{display:none !important}
+  .tab.on{background:transparent !important;color:#DA291C !important;border-bottom-color:#DA291C !important}
 </style>
 </head>
 <body>
