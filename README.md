@@ -13,17 +13,58 @@
 
 ## ▶ 在线试玩（点这里就能用，不用下载、不用装）
 
-### 👉 [⚡ 点我进轻量版（965KB，秒开）](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html) →
+### 👉 [🍻 聚餐拼单（77KB，2–12 人整桌怎么点）](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html) →
 
-`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html`
+`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html`
 
-**功能与完整版一致，体积只有 1/12**——商品图是缩略图，手机流量也扛得住。三个入口按需选：
+**2026-10-25 新增第二条产品线**。一个人吃往下选轻量版，一群人吃直接点上面这个。
 
 | 入口 | 体积 | 适合谁 |
 |---|---|---|
-| **[lite.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html)** | **965KB** | **默认选它**。秒开，五屏功能齐全（预算→战报→明细→目录→对话）+ 人设卡 |
+| **[party.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/party.html)** | **77KB** | **聚餐首选**。人数+预算+场景 → 三档整桌方案、比各点各的省多少、点单接龙一键复制 |
+| [lite.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html) | 965KB | **一个人吃选它**。秒开，五屏功能齐全（预算→战报→明细→目录→对话）+ 人设卡 |
 | [demo.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/demo.html) | 11MB | 想看高清商品大图与套餐拼图，用电脑打开 |
 | [card.html](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/card.html) | 317KB | 只想看一眼会闪的全息人设卡 |
+
+## 🍻 新模块：麦门拼单军师（多人场景）
+
+单人版算的是「组合」，多人版算的是「分摊」。灵魂公式一句话：
+
+> **随心配解决「主食 + 饮品」，共享拼盘解决「小食」——别给每个人都点一份三件套。**
+
+实测（2026-10-25 福州金洲南路店，4 人朋友聚餐）：
+
+| 点法 | 整桌 | 人均 | 份数 |
+|---|---|---|---|
+| 各点各的：4 × 精选单人餐三件套 | ¥138.0 | ¥34.5 | 12 |
+| 🎉 拼单 · 最省钱（4×随心配 + 韩式鸡块8块） | **¥75.5** | **¥18.9** | 10 |
+| ⚖️ 拼单 · 最均衡（2×BFF四宫格双人餐） | ¥125.8 | ¥31.5 | 16 |
+| 🍗 拼单 · 最丰盛（2×双人餐 + 薄皮V翅十翅） | ¥175.7 | ¥43.9 | 21 |
+
+**最省钱这档直接省 ¥62.5（45%）**，而且小食从「每人一份薯条」变成「全桌分享」。
+
+它还多做了三件单人版没有的事：
+
+- **先查构成再算账**：多人餐名字看不出内容，`query-meal-detail` 的 `rounds` 拆开才知道 BFF 双人餐里有 2 汉堡 + 中薯条 + 麦乐鸡5块 + 2 份薄皮 V 翅 + 2 杯可乐。不拆就报人均是在猜。
+- **主食覆盖报数**：双人餐算 2 人、单人餐算 1 人，输出「主食覆盖 X / N 人」。预算不够时**明示还差几份**，不偷偷少给。
+- **点单接龙一键复制**：纯文本、留好空接龙行，直接发微信群。
+
+四个场景（朋友聚餐 / 办公室加班 / 家庭带娃 / 下午茶）+ 五个偏好（不要辣 / 有小孩 / 来杯咖啡 / 想轻一点 / 加甜品）。下午茶不硬塞主食，不要辣连共享小食里的辣款一起剔。
+
+数据管线也开源了，三条命令复现一整页真实数据：
+
+```bash
+python scripts/fetch_party_data.py        # MCP 直连拉菜单/营养/活动/券 → party-data.json
+python scripts/fetch_meal_details.py      # 拆多人餐构成 → party-details.json
+python scripts/build_party.py             # 组装单文件 party.html
+python scripts/run_party_selftest.py      # 33 项断言实跑
+```
+
+## ▶ 单人版入口
+
+`https://erikzeng2008-del.github.io/mcd-dual-budget-coach/lite.html`
+
+**功能与完整版一致，体积只有 1/12**——商品图是缩略图，手机流量也扛得住。
 
 手机浏览器直接打开也行。不想用 Demo？先看[落地页](https://erikzeng2008-del.github.io/mcd-dual-budget-coach/)。
 
@@ -253,6 +294,27 @@ python scripts/run_selftest.py lite.html   # 轻量版 lite.html
 
 实测抓过的真问题：**「麦乐鸡」没被识别为小食**，导致「王牌小食拼」券匹配不到——关键词表补上后修复。这类漏洞肉眼看不见，只有断言能逮住。
 
+### 多人拼单模式（33 项断言，2026-10-25 实跑）
+
+```bash
+python scripts/run_party_selftest.py
+# 共 33 项 | 通过 33 | 失败 0
+```
+
+| 验证项 | 实测结果 |
+|---|---|
+| 数据完整性 | 106 个 SKU 进算法、157 条营养、14 个含构成套餐、12 个活动 |
+| **核心卖点** | 4 人各点各的 ¥138.0 → 拼单 **¥75.5，省 ¥62.5（45.3%）** |
+| 价格复算 | 三档总价均等于各行之和；划线价 ≥ 实付 |
+| 档序 | 最省钱 75.5 ≤ 最均衡 125.8 ≤ 最丰盛 175.7 |
+| 人数弹性 | 2/4/6/8/12 人均可出方案，最省钱档总价随人数递增 |
+| 主食覆盖 | 默认三档均覆盖 4/4 人；预算 ¥60 时明示「只够 2 人，还差 2 份」 |
+| 预算闸门 | 预算 500 不乱加菜、预算 100 能压进、超支必挂警告 |
+| 场景偏好 | 家庭带娃出亲子餐、下午茶不硬塞主食、不要辣连小食也不带辣 |
+| 诚实性 | 营养未知项显式标注、无下单入口、单文件零外部 JS/CSS 依赖 |
+
+这轮自测还抓到两个**肉眼根本看不见**的数据层 bug：「人气热卖」营销分类覆盖真实品类导致套餐被过滤掉、营养文本的字面 `\n` 导致 157 条营养解析成 0 条。
+
 ## 安全设计
 
 - **只配餐不下单**：默认不调用 `create-order`，杜绝误支付（用户两次明确确认后才放行）
@@ -270,11 +332,20 @@ mcd-dual-budget-coach/
 ├── mcp-config.example.json   # 脱敏 MCP 配置示例（环境变量占位符）
 ├── CONTEST_DECLARATION.md    # 参赛声明（官方原文）
 ├── workbuddy.md              # WorkBuddy 开发过程记录（专项奖励）
-├── index.html                 # 落地页（三个入口分流：lite / demo / card）
+├── index.html                 # 落地页（四个入口分流：party / lite / demo / card）
+├── party.html                 # 聚餐拼单页（77KB，2–12 人整桌方案 + 点单接龙，2026-10-25 新增）
+├── party-data.json            # 多人模式数据快照（菜单/营养/活动/券 + MCP 调用日志）
+├── party-details.json         # 多人餐 rounds 构成快照
 ├── lite.html                  # 轻量版演示页（965KB 秒开，五屏功能与完整版一致，零外链无凭证）
 ├── demo.html                  # 完整版演示页（11MB 高清商品图，五屏：预算→战报→明细→目录→💬对话）
 ├── demo-assets/               # 演示页用的商品图（86 张，来自麦当劳接口）
 ├── scripts/
+│   ├── mcp_client.py          # 麦当劳 MCP 最小客户端（initialize 握手 + tools/call + SSE 解析）
+│   ├── fetch_party_data.py    # 一键拉取多人模式全量真实数据
+│   ├── fetch_meal_details.py  # 拆多人餐内部构成
+│   ├── build_party.py         # 把快照组装成 party.html
+│   ├── run_party_selftest.py  # 拼单自测运行器
+│   ├── selftest_party.js      # 33 项拼单断言（跑在发货页面里）
 │   ├── run_selftest.py        # 自测运行器（注入页面上下文 + 无头 Chrome 实跑）
 │   ├── selftest.js            # 43 项断言集（跑在发货页面里，不是镜像实现）
 │   └── make_lite.py           # lite.html 生成脚本（把 demo 压到 965KB，可重跑）
@@ -284,9 +355,11 @@ mcd-dual-budget-coach/
 │   ├── case-1-30元600卡.md    # 双闸门实测：数字级溯源
 │   ├── case-2-25元性价比.md   # 只限金额实测
 │   ├── case-3-500卡健身餐.md  # 只限热量实测
-│   └── case-4-20元紧预算与券日历.md # 紧预算 + 券日历诚实版
+│   ├── case-4-20元紧预算与券日历.md # 紧预算 + 券日历诚实版
+│   └── case-5-4人聚餐拼单.md  # 多人拼单实测：省 45% 是怎么算出来的
 └── references/
-    └── tools.md              # 本 Skill 使用的 MCP 工具速查
+    ├── tools.md              # 本 Skill 使用的 MCP 工具速查
+    └── party-mcp-log.md      # 多人模式 MCP 调用证据（逐条工具/参数/耗时）
 ```
 
 ## 参赛信息
@@ -299,7 +372,7 @@ mcd-dual-budget-coach/
 
 > 方便搜索到这里。若你也在做麦当劳 MCP 相关的东西，欢迎在 Issues 交流。
 
-**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦当劳预算及热量测算 · 麦门双预算军师 · 双预算 · 减脂期吃麦当劳 · 麦当劳点餐 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡 · 轻量版 · lite · 秒开 · 单文件
+**中文**：麦当劳 · 麦当劳 MCP · 麦当劳中国 · 麦门 · 麦当劳预算及热量测算 · 麦门双预算军师 · 麦门拼单军师 · 聚餐拼单 · 聚餐一键点麦当劳 · 多人点餐 · 拼单省钱 · 点单接龙 · 办公室团建点餐 · 家庭聚餐 · 双人餐 · 多人餐 · 小食拼盘 · 双预算 · 减脂期吃麦当劳 · 麦当劳点餐 · 预算配餐 · 预算点餐 · 热量控制 · 卡路里 · 减脂餐 · 增肌餐 · 蛋白质 · 钠含量 · 营养配餐 · 优惠券 · 券后价 · 组合优化 · 最划算 · 性价比 · 点餐助手 · 智能点餐 · 配餐算法 · 穷举组合 · 麦当劳菜单 · 随心配 · 巨无霸 · 麦乐送 · 外送 · 到店自取 · 麦当劳程序员创意开发大赛 · WorkBuddy · 技能 · 智能体 · 全息卡 · 人设卡 · 闪卡 · 轻量版 · lite · 秒开 · 单文件
 
 **English**：McDonald's China · McDonald's MCP · mcd-mcp-server · MCP server · Model Context Protocol · agent skill · WorkBuddy skill · AI agent · meal planner · budget meal · calorie budget · calorie tracking · macro friendly · high protein · nutrition · sodium · coupon optimizer · deal finder · meal combination · optimization · food ordering assistant · Three.js · holographic card · persona card · trading card · lightweight · single file · fast load
 
