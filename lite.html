@@ -22,8 +22,8 @@
     --lh-tight:1.25;  --lh-normal:1.6;  --lh-loose:1.9;
     --ink:#1a1a1a;    --ink-2:#5a4a32;  --ink-3:#8a7a5c;  --ink-4:#b3a179;
   }
-  body { font-family:var(--f-body); font-size:var(--t-body); line-height:var(--lh-normal);
-    background:#FFF6E3; color:var(--ink); padding:22px 16px 46px; -webkit-font-smoothing:antialiased; }
+  body { font-family:var(--f-body); font-size:var(--t-body); line-height:var(--lh-normal); background:#FFC72C;
+    background:#FFC72C; color:var(--ink); padding:22px 16px 46px; -webkit-font-smoothing:antialiased; }
   /* 数字统一等宽，跨浏览器对齐 */
   .pr,.cp2,.val,.m,.status,.cpv,.saddr,.code{ font-family:var(--f-mono); font-variant-numeric:tabular-nums; }
   .top h1 { font-family:var(--f-hero); font-size:var(--t-hero); line-height:var(--lh-tight);
@@ -613,6 +613,35 @@
   </div>
 
   <div id="v1">
+    <!-- 两个模块并排：我的偏好 ｜ 我的闪卡 -->
+    <div class="duo">
+    <div class="panel prefs">
+      <div class="ctitle">🧡 我的偏好 <span class="csub">记住，下次自动用</span></div>
+      <div class="pref-row">
+        <span class="pref-k">忌口</span>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
+        <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
+      </div>
+      <div class="pref-row">
+        <span class="pref-k">常点</span>
+        <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
+      </div>
+      <div class="pref-actions">
+        <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
+        <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
+        <span class="pref-note" id="prefNote">记住后自动过滤忌口、优先常点</span>
+      </div>
+    </div>
+    <div class="panel prefs">
+      <div class="ctitle">🃏 我的闪卡 <i class="pcount" id="cardCount"></i>
+        <span class="csub">配完餐点「⭐ 收进我的闪卡」</span></div>
+      <div class="cards-wrap" id="cardsWrap"><div id="cardsList"></div></div>
+    </div>
+    </div>
+
     <!-- 双闸门示意图：一句话讲透「双预算」——两扇门都过了才放行 -->
     <div class="gate">
       <svg viewBox="0 0 680 150" class="gate-svg" role="img" aria-label="双闸门示意">
@@ -670,34 +699,7 @@
       <div class="pending" id="pending">拖动滑块或点上方场景设定预算，点「配一顿」出方案</div>
     </div>
 
-    <!-- 两个模块并排：我的偏好 ｜ 我的闪卡 -->
-    <div class="duo">
-    <div class="panel prefs">
-      <div class="ctitle">🧡 我的偏好 <span class="csub">记住，下次自动用</span></div>
-      <div class="pref-row">
-        <span class="pref-k">忌口</span>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="la">🌶 不吃辣</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="niu">🐂 不吃牛</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="zhu">🐖 不吃猪</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="rou">🥬 蛋奶素</label>
-        <label class="pref-opt"><input type="checkbox" class="pv" value="su">🌱 纯素</label>
-      </div>
-      <div class="pref-row">
-        <span class="pref-k">常点</span>
-        <span class="pref-favs" id="prefFavs"><i class="pref-none">在商品目录点 ⭐ 收藏</i></span>
-      </div>
-      <div class="pref-actions">
-        <button class="pref-btn" onclick="savePrefsUI()">💾 记住偏好</button>
-        <button class="pref-btn ghost" onclick="clearPrefs()">🗑 清空</button>
-        <span class="pref-note" id="prefNote">记住后自动过滤忌口、优先常点</span>
-      </div>
-    </div>
-    <div class="panel prefs">
-      <div class="ctitle">🃏 我的闪卡 <i class="pcount" id="cardCount"></i>
-        <span class="csub">配完餐点「⭐ 收进我的闪卡」</span></div>
-      <div class="cards-wrap" id="cardsWrap"><div id="cardsList"></div></div>
-    </div>
-    </div>
+
 
     <!-- 门店 -->
     <div class="panel2">

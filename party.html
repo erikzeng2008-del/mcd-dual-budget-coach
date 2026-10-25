@@ -7,17 +7,17 @@
 <style>
 :root{--y:#FFC72C;--r:#DA291C;--ink:#1f1a17;--mut:#7a6f66;--line:#e8e0d5;--bg:#faf7f2;--card:#fff;--ok:#0F6E56}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.65;font-size:15px;-webkit-text-size-adjust:100%}
+body{font-family:'HarmonyOSSC','Microsoft YaHei','PingFang SC',sans-serif;background:var(--y);color:var(--ink);line-height:1.65;font-size:15px;-webkit-text-size-adjust:100%}
 .wrap{max-width:1060px;margin:0 auto;padding:0 16px 70px}
-header{background:var(--ink);color:#fff;padding:26px 0 30px;border-bottom:5px solid var(--y)}
+header{background:#fff;color:var(--ink);padding:20px 0 22px;border-bottom:5px solid var(--y)}
 header .wrap{padding-bottom:0}
 h1{font-size:27px;letter-spacing:.5px;font-weight:800}
 h1 .dot{color:var(--y)}
-.sub{color:#d9d0c6;font-size:13.5px;margin-top:7px}
-.meta{margin-top:13px;font-size:12px;color:#a89d92;line-height:1.8}
-.meta b{color:var(--y);font-weight:600}
+.sub{color:#5a5044;font-size:13.5px;margin-top:7px}
+.meta{margin-top:13px;font-size:12px;color:#8a6d3b;line-height:1.8}
+.meta b{color:var(--r);font-weight:600}
 nav.quick{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-nav.quick a{color:#fff;text-decoration:none;font-size:12.5px;border:1px solid #4a423b;padding:4px 12px;border-radius:999px}
+nav.quick a{color:var(--ink);text-decoration:none;font-size:12.5px;border:1.5px solid var(--ink);padding:4px 12px;border-radius:999px}
 nav.quick a:hover{background:var(--y);color:var(--ink);border-color:var(--y)}
 section{margin-top:26px}
 h2{font-size:19px;font-weight:800;display:flex;align-items:center;gap:8px}
@@ -81,16 +81,24 @@ footer a{color:var(--r)}
 .cpn span b{color:var(--r)}
 @media(max-width:640px){h1{font-size:23px}.plans{grid-template-columns:1fr}.total .p{font-size:24px}}
 @media print{header,nav.quick,.panel,.btn,footer{display:none}}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:18px;align-items:center}
+.hero-img img{width:100%;border-radius:14px;display:block}
+.plan .pic{height:150px;background:#fff;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);overflow:hidden}
+.plan .pic img{max-width:100%;max-height:100%;object-fit:contain}
+@media(max-width:640px){.hero{grid-template-columns:1fr}.hero-img{order:-1}}
 </style>
 </head>
 <body>
-<header><div class="wrap">
-<h1>🍔 麦门拼单军师<span class="dot"> · </span>聚餐一键点麦当劳</h1>
-<div class="sub">几个人、多少钱、什么场景 —— 一次算出整桌怎么点，比各点各的省多少直接写给你看。</div>
-<div class="meta">📍 <b id="storeName"></b><br>数据快照 <b id="snapAt"></b> · 来源：麦当劳官方 MCP（query-meals / query-meal-detail / list-nutrition-foods / campaign-calendar）</div>
-<nav class="quick">
-<a href="lite.html">← 单人双预算（轻量版）</a><a href="demo.html">完整版</a><a href="card.html">全息人设卡</a><a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" target="_blank" rel="noopener">GitHub 源码</a>
-</nav>
+<header><div class="wrap hero">
+  <div class="hero-text">
+    <h1>🍔 麦门拼单军师</h1>
+    <div class="sub">聚餐一键点麦当劳 · 比各点各的省多少，直接写给你看</div>
+    <div class="meta">📍 <b id="storeName"></b> · 数据快照 <b id="snapAt"></b></div>
+    <nav class="quick">
+      <a href="lite.html">← 单人双预算</a><a href="demo.html">完整版</a><a href="card.html">全息人设卡</a><a href="https://github.com/erikzeng2008-del/mcd-dual-budget-coach" target="_blank" rel="noopener">GitHub 源码</a>
+    </nav>
+  </div>
+  <div class="hero-img"><img src="https://menu-img.mcd.cn/pcm/prod/menu/20260304/product/MS_9900005321_320.png" alt="多人分享餐"></div>
 </div></header>
 <div class="wrap">
 
@@ -409,7 +417,10 @@ function render(){
     const over=S.budget&&t.price>S.budget;
     const cov=covered(p.plan);
     const short=S.scene==='tea'?0:Math.max(0,S.n-cov);
+    const imgName={cheap:'精选超值随心配',feast:'BFF四宫格小食盘双人餐',balanced:'BFF四宫格小食盘'}[p.key];
+    const heroImg=imgName?((find(imgName)||{}).img||''):'';
     return `<div class="plan ${idx===0?'best':''}">
+      <div class="pic"><img src="${heroImg}" alt=""></div>
       <div class="ph"><div class="t">${p.icon} ${p.title}${idx===0?'<span class="badge">推荐</span>':''}</div><div class="d">${p.desc}</div></div>
       <div class="pb">${rows}
         <div class="total"><span>整桌合计</span><span class="p">¥${money(t.price)} <small>/ 人均 ¥${money(per)}</small></span></div>
