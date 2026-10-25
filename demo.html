@@ -598,6 +598,17 @@
   .cta-top .go:hover{transform:translateY(-2px);box-shadow:0 8px 0 #8a1a12 !important}
   .cta-top .pending{text-align:center}
   input[type=range]{height:6px;border-radius:99px;background:linear-gradient(90deg,#DA291C,#FFC72C);outline:none}
+
+  /* 热量滑块：绿→黄→红，直观表示热量高低 */
+  #k{background:linear-gradient(90deg,#2E9B47 0%,#FFC72C 55%,#DA291C 100%) !important}
+  #m{background:linear-gradient(90deg,#DA291C,#FFC72C) !important}
+
+  /* 自定义滑块轨道：必须关闭浏览器默认 appearance 才能显示渐变 */
+  input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;height:24px}
+  input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:#e8dcc0}
+  #k::-webkit-slider-runnable-track{background:linear-gradient(90deg,#2E9B47 0%,#FFC72C 55%,#DA291C 100%)}
+  #m::-webkit-slider-runnable-track{background:linear-gradient(90deg,#DA291C,#FFC72C)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#DA291C;margin-top:-5px;box-shadow:0 0 0 2px #fff}
 </style>
 </head>
 <body>
@@ -700,10 +711,10 @@
     </div>
     <div class="panel">
       <div class="fields">
-        <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
-          <input type="range" id="m" min="10" max="100" step="1" value="30"></div>
         <div class="fld"><label>热量预算 <i>kcal，≥900 即不设限</i> · <span class="val" id="kv">600</span></label>
           <input type="range" id="k" min="200" max="1000" step="10" value="600"></div>
+        <div class="fld"><label>金额预算 <i>元</i> · <span class="val" id="mv">30</span></label>
+          <input type="range" id="m" min="10" max="100" step="1" value="30"></div>
       </div>
       
       
